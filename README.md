@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IRMA-Verse
 
-## Getting Started
+IRMA-Verse adalah sebuah platform ekstrakurikuler Ikatan Remaja Masjid di SMK 13 Bandung. Platform ini dirancang untuk mendukung kegiatan remaja masjid dengan fitur-fitur seperti berita, pembelajaran, jadwal kajian, chatbot, dan lainnya yang akan ditambahkan di masa depan.
 
-First, run the development server:
+## Fitur Utama
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Berita**: Menyediakan informasi terkini terkait kegiatan remaja masjid.
+- **Pembelajaran**: Materi pembelajaran yang relevan untuk anggota.
+- **Jadwal Kajian**: Informasi jadwal kajian rutin dan acara lainnya.
+- **Chatbot**: Asisten virtual untuk menjawab pertanyaan umum.
+- **Dan lainnya**: Fitur tambahan akan dikembangkan sesuai kebutuhan.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Instalasi dan Pengembangan
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini di lingkungan pengembangan:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prasyarat
 
-## Learn More
+Pastikan Anda telah menginstal:
+- [Node.js](https://nodejs.org) (disarankan versi terbaru LTS)
+- [PostgreSQL](https://www.postgresql.org) untuk database
 
-To learn more about Next.js, take a look at the following resources:
+### Langkah Instalasi
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone repository ini:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/Raditt10/IRMA-Verse.git
+   cd IRMA-Verse
+   ```
 
-## Deploy on Vercel
+2. Instal dependensi:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   pnpm install
+   # atau
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Konfigurasi database:
+   - Salin file `.env.example` menjadi `.env`.
+   - Atur variabel lingkungan sesuai dengan konfigurasi database PostgreSQL Anda.
+
+4. Jalankan migrasi Prisma untuk mengatur skema database:
+
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Jalankan server pengembangan:
+
+   ```bash
+   pnpm dev
+   # atau
+   npm run dev
+   ```
+
+6. Buka [http://localhost:3000](http://localhost:3000) di browser Anda untuk melihat hasilnya.
+
+## Kontribusi
+
+Kami menyambut kontribusi dari siapa pun! Jika Anda ingin menambahkan fitur atau memperbaiki bug, silakan buat pull request atau buka issue di repository ini.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+---
+
+Dukungan Anda sangat berarti bagi pengembangan IRMA-Verse. Terima kasih telah menjadi bagian dari perjalanan ini!
