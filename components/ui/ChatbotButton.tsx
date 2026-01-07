@@ -1,3 +1,5 @@
+"use client";
+
 const ChatbotButton = () => {
   return (
     <div className="fixed bottom-8 right-8 z-40 group">

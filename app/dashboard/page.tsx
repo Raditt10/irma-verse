@@ -1,6 +1,7 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import {
   BookOpen,
   Calendar,
@@ -37,30 +38,41 @@ import Sidebar from "@/components/ui/Sidebar";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import ChatbotButton from "@/components/ui/ChatbotButton";
 
-const Dashboard = () => {
-  const [user, setUser] = useState<any>(null);
-  const [stats, setStats] = useState({
+const Dashboard = async () => {
+  // Get session from server side
+  const session = await auth();
+  
+  // Redirect to auth if not authenticated
+  if (!session?.user) {
+    redirect("/auth");
+  }
+
+  // Get user data from database
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id as string,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      notelp: true,
+      address: true,
+      bio: true,
+      role: true,
+    },
+  });
+
+  if (!user) {
+    redirect("/auth");
+  }
+
+  const stats = {
     totalPoints: 2450,
     totalBadges: 8,
     totalQuizzes: 24,
     averageScore: 87,
     streak: 7,
-  });
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
-  const loadDashboard = async () => {
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS"
-    });
-    setLoading(false);
   };
 
   const quickActions = [
@@ -143,18 +155,6 @@ const Dashboard = () => {
     red: "text-red-600 dark:text-red-400",
   };
 
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-        <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin">
-            <div className="h-12 w-12 border-4 border-slate-200 border-t-emerald-500 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
       {/* Header */}
@@ -170,7 +170,7 @@ const Dashboard = () => {
           <div className="mb-12">
             <div className="mb-8">
               <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">          
-              ٱلسَّلَامُ عَلَيْكُمْ, {user.full_name}
+              ٱلسَّلَامُ عَلَيْكُمْ, {user.name}
               </h1>
               <p className="text-lg text-slate-600">
                 Tingkatkan pengetahuan dan raih prestasi bersama IRMA Verse
@@ -271,9 +271,9 @@ const Dashboard = () => {
                   const IconComponent = action.icon;
 
                   return (
-                    <button
+                    <Link
                       key={index}
-                      onClick={() => router.push(action.link)}
+                      href={action.link}
                       className="group relative flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                       <div className="relative">
@@ -291,7 +291,7 @@ const Dashboard = () => {
                           {action.title}
                         </p>
                       </div>
-                    </button>
+                    </Link>
                   );
                 })}
               </div>

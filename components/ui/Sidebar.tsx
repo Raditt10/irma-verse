@@ -19,14 +19,22 @@ import {
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isExpanded, setIsExpanded] = useState(() => {
-    const saved = localStorage.getItem('sidebar-expanded');
-    return saved ? JSON.parse(saved) : true;
-  });
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('sidebar-expanded', JSON.stringify(isExpanded));
-  }, [isExpanded]);
+    const saved = localStorage.getItem('sidebar-expanded');
+    if (saved) {
+      setIsExpanded(JSON.parse(saved));
+    }
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('sidebar-expanded', JSON.stringify(isExpanded));
+    }
+  }, [isExpanded, mounted]);
 
   const menuItems = [
     { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },

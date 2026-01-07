@@ -14,9 +14,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DashboardHeaderProps {
   user: {
-    full_name: string;
+    name?: string | null;
     email: string;
-    avatar?: string;
+    avatar?: string | null;
   };
 }
 
@@ -24,6 +24,10 @@ const DashboardHeader = ({ user }: DashboardHeaderProps) => {
   const router = useRouter();
   const avatarUrl = "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatimah";
 
+  if (!user) {
+    return null;
+  }
+  
   return (
     <div className="border-b border-slate-200 backdrop-blur-xl bg-white/80 sticky top-0 z-40 shadow-sm">
       <div className="flex items-center justify-between gap-8 h-20">
@@ -72,25 +76,25 @@ const DashboardHeader = ({ user }: DashboardHeaderProps) => {
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 h-10 px-2 rounded-lg hover:bg-green-100 transition-colors">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={avatarUrl} alt={user.full_name} />
+                  <AvatarImage src={avatarUrl} alt={user.name ?? user.email} />
                   <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white text-sm font-semibold">
-                    {user.full_name?.substring(0, 2).toUpperCase() || user.email?.substring(0, 2).toUpperCase()}
+                    {(user.name ?? user.email)?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:inline text-sm font-semibold text-slate-900">{user.full_name}</span>
+                <span className="hidden sm:inline text-sm font-semibold text-slate-900">{user.name ?? user.email}</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
               <DropdownMenuLabel>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={avatarUrl} alt={user.full_name} />
+                    <AvatarImage src={avatarUrl} alt={user.name ?? user.email} />
                     <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white font-semibold">
-                      {user.full_name?.substring(0, 2).toUpperCase() || user.email?.substring(0, 2).toUpperCase()}
+                      {(user.name ?? user.email)?.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-slate-900">{user.full_name}</span>
+                    <span className="text-sm font-semibold text-slate-900">{user.name ?? user.email}</span>
                     <span className="text-xs text-slate-500">{user.email}</span>
                   </div>
                 </div>

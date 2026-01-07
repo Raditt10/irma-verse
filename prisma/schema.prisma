@@ -13,11 +13,21 @@ datasource db {
   provider = "mysql"
 }
 
+enum Role {
+  user
+  admin
+  instruktur
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
   password  String
+  notelp    String?  // Nomor telepon (opsional)
+  address   String?  // Alamat (opsional) 
+  bio       String?  // Bio (opsional)
+  role      Role     @default(user) // Role: user, admin, instruktur
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
