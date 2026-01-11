@@ -113,7 +113,7 @@ const Auth = () => {
         const userData = await response.json();
         
         // Redirect based on role
-        let redirectUrl = "/dashboard"; // default
+        let redirectUrl = "/overview"; // default
         
         if (userData.role === "ADMIN") {
           redirectUrl = "/admin";

@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
   
   const isLoggedIn = !!sessionToken;
   const isAuthPage = pathname.startsWith("/auth") || pathname.startsWith("/register");
-  const isDashboard = pathname.startsWith("/dashboard");
+  const isOverview = pathname.startsWith("/overview");
   const isHomePage = pathname === "/";
   const isApiRoute = pathname.startsWith("/api");
 
@@ -19,19 +19,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect to dashboard if logged in and accessing home page
+  // Redirect to overview if logged in and accessing home page
   if (isHomePage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/overview", request.url));
   }
 
-  // Redirect to login if accessing dashboard without session
-  if (isDashboard && !isLoggedIn) {
+  // Redirect to login if accessing overview without session
+  if (isOverview && !isLoggedIn) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
-  // Redirect to dashboard if accessing auth pages while logged in
+  // Redirect to overview if accessing auth pages while logged in
   if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/overview", request.url));
   }
 
   return NextResponse.next();

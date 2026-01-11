@@ -37,7 +37,7 @@ const Sidebar = () => {
   }, [isExpanded, mounted]);
 
   const menuItems = [
-    { icon: LayoutGrid, label: "Dashboard", path: "/dashboard" },
+    { icon: LayoutGrid, label: "Dashboard", path: "/overview" },
     { icon: BookOpen, label: "Kajian", path: "/materials" },
     { icon: Calendar, label: "Event", path: "/schedule" },
     { icon: Users, label: "Daftar Instruktur", path: "/instructors" },
