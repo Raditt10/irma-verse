@@ -230,12 +230,7 @@ const ChatPage = () => {
 								</div>
 								<div className="flex items-center gap-3">
 									<div className="rounded-xl bg-white/15 px-4 py-3 backdrop-blur">
-										<p className="text-xs text-white/70">Instruktur aktif</p>
-										<p className="text-lg font-semibold">2 sedang online</p>
-									</div>
-									<div className="rounded-xl bg-white/15 px-4 py-3 backdrop-blur hidden sm:block">
-										<p className="text-xs text-white/70">Antrian pesan</p>
-										<p className="text-lg font-semibold">Balasan &lt; 5 menit</p>
+										<p className="text-lg font-bold">2 sedang online</p>
 									</div>
 								</div>
 							</div>
