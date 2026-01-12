@@ -43,7 +43,7 @@ const Instructors = () => {
     try {
       const mockInstructors: Instructor[] = [
         {
-          id: "1",
+          id: "ustadz-1",
           name: "Ustadz Ahmad Zaki",
           specialization: "Ahli Akhlak & Tasawuf",
           description: "Lulusan Al-Azhar University dengan pengalaman mengajar 10 tahun",
@@ -55,7 +55,7 @@ const Instructors = () => {
           verified: true
         },
         {
-          id: "2",
+          id: "ustadzah-2",
           name: "Ustadzah Fatimah",
           specialization: "Pakar Fiqih Wanita",
           description: "Spesialis fiqih wanita dan hukum keluarga Islam",
@@ -68,7 +68,7 @@ const Instructors = () => {
           featured: true
         },
         {
-          id: "3",
+          id: "ustadz-3",
           name: "Ustadz Muhammad Rizki",
           specialization: "Ahli Tafsir Al-Quran",
           description: "Hafidz 30 juz dengan sanad qiraah dari Mesir",
@@ -80,7 +80,7 @@ const Instructors = () => {
           verified: true
         },
         {
-          id: "4",
+          id: "ustadz-4",
           name: "Ustadz Abdullah Hakim",
           specialization: "Sejarah Islam & Sirah",
           description: "Pakar sejarah peradaban Islam dan biografi Nabi",
@@ -92,7 +92,7 @@ const Instructors = () => {
           verified: true
         },
         {
-          id: "5",
+          id: "ustadzah-5",
           name: "Ustadzah Khadijah",
           specialization: "Aqidah & Tauhid",
           description: "Lulusan Universitas Islam Madinah bidang Aqidah",
@@ -104,7 +104,7 @@ const Instructors = () => {
           verified: true
         },
         {
-          id: "6",
+          id: "ustadz-6",
           name: "Ustadz Umar Faruq",
           specialization: "Hadits & Ilmu Hadits",
           description: "Ahli hadits dengan sanad dari Darul Hadits Yemen",
@@ -149,14 +149,6 @@ const Instructors = () => {
                   Para instruktur terbaik kami yang siap membimbing kamu!
                 </p>
               </div>
-
-              <Link
-                href="/instructor-dashboard/kajian"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:from-teal-600 hover:to-cyan-600 transition-all duration-200"
-              >
-                <Plus className="h-4 w-4" />
-                Buat Kajian Baru
-              </Link>
             </div>
 
             {loading ? (
@@ -245,10 +237,13 @@ const Instructors = () => {
 
                       {/* Buttons */}
                       <div className="space-y-2">
-                        <button className="w-full py-3 rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
+                        <Link
+                          href={`/instructors/chat?instructorId=${encodeURIComponent(instructor.id)}`}
+                          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
                           <MessageCircle className="h-4 w-4" />
                           Mulai Chat
-                        </button>
+                        </Link>
                         <button className="w-full py-3 rounded-xl bg-white border-2 border-teal-500 text-teal-600 font-semibold hover:bg-teal-50 transition-all duration-300 flex items-center justify-center gap-2">
                           <BookOpen className="h-4 w-4" />
                           Lihat Kajian
