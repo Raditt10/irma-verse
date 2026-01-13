@@ -62,9 +62,8 @@ export default function AdminDashboard() {
             {/* Welcome Section */}
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-2">
-                <Shield className="h-8 w-8 text-blue-600" />
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-                  Admin Dashboard 
+                  Admin Dashboard
                 </h1>
               </div>
               <p className="text-lg text-gray-600">

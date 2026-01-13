@@ -87,7 +87,6 @@ export default function InstructorAcademy() {
             {/* Welcome Section */}
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-2">
-                <Award className="h-8 w-8 text-emerald-500" />
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
                  Academy 
                 </h1>
