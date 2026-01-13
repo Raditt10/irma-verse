@@ -39,18 +39,11 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching user data...");
         const response = await fetch("/api/users/profile");
-        console.log("Response status:", response.status);
-        
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error response:", errorData);
-          throw new Error(errorData.error || "Gagal memuat data pengguna");
+          throw new Error("Gagal memuat data pengguna");
         }
-        
         const data = await response.json();
-        console.log("User data received:", data);
         setUser(data.user);
         setEditedUser(data.user);
         setError(null);
@@ -63,11 +56,7 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
     };
 
     if (session?.user?.email) {
-      console.log("Session user email:", session.user.email);
       fetchUserData();
-    } else {
-      console.log("No session user email found");
-      setIsLoading(false);
     }
   }, [session?.user?.email]);
 
