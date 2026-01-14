@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { Bell, LogOut, Settings, User as UserIcon } from "lucide-react";
+import { Bell, LogOut, Settings, User as UserIcon, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,13 +26,21 @@ export default function DashboardHeader() {
     <div className="border-b border-slate-200 backdrop-blur-xl bg-white/80 sticky top-0 z-40 shadow-sm">
       <div className="flex items-center justify-between gap-4 h-16">
         {/* Logo - Left (aligned with sidebar) */}
-        <div className="flex items-center gap-3 flex-shrink-0 pl-6 lg:pl-8">
+        <div className="flex items-center gap-3 shrink-0 pl-6 lg:pl-8">
+          {/* Mobile burger button */}
+          <button
+            className="lg:hidden mr-1 inline-flex items-center justify-center h-10 w-10 rounded-md bg-emerald-500 text-white shadow-md hover:bg-emerald-600 active:scale-95 transition-transform"
+            onClick={() => window.dispatchEvent(new Event('open-mobile-sidebar'))}
+            aria-label="Buka menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
           <img src="/logo.png" alt="IRMA Verse" className="h-10 w-10 object-contain" />
-          <div className="hidden sm:block">
-            <h2 className="text-lg font-black leading-tight text-white uppercase tracking-wide bg-gradient-to-r from-teal-600 to-emerald-600 px-3 py-1 rounded-lg">
+          <div className="block">
+            <h2 className="text-base sm:text-lg font-black leading-tight text-white uppercase tracking-wide bg-linear-to-r from-teal-600 to-emerald-600 px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg">
               IRMA VERSE
             </h2>
-            <p className="text-xs text-slate-600 mt-1">Platform digital Irma 13</p>
+            <p className="block text-[10px] sm:text-xs text-slate-600 mt-0.5 sm:mt-1">Platform digital Irma 13</p>
           </div>
         </div>
 
@@ -58,7 +66,7 @@ export default function DashboardHeader() {
         </div>
 
         {/* Right Icons & Profile */}
-        <div className="flex items-center gap-4 flex-shrink-0 pr-6 lg:pr-8">
+        <div className="flex items-center gap-4 shrink-0 pr-6 lg:pr-8">
           {/* Notification Bell */}
           <button className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
             <Bell className="h-5 w-5 text-slate-700" />
@@ -71,7 +79,7 @@ export default function DashboardHeader() {
               <button className="flex items-center gap-2 h-10 px-2 rounded-lg hover:bg-green-100 transition-colors">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={avatarUrl} alt={session?.user.name ?? session?.user.email} />
-                  <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white text-sm font-semibold">
+                  <AvatarFallback className="bg-linear-to-br from-emerald-500 to-cyan-500 text-white text-sm font-semibold">
                     {(session?.user.name ?? session?.user.email)?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -83,7 +91,7 @@ export default function DashboardHeader() {
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={avatarUrl} alt={session?.user.name ?? session?.user.email} />
-                    <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white font-semibold">
+                    <AvatarFallback className="bg-linear-to-br from-emerald-500 to-cyan-500 text-white font-semibold">
                       {(session?.user.name ?? session?.user.email)?.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

@@ -88,14 +88,14 @@ const Dashboard = async () => {
       title: "Jadwal Kajian Kamu",
       description: "Cek jadwal minggu ini",
       icon: Calendar,
-      link: "/schedule",
+      link: "/materials",
       color: "purple",
     },
     {
       title: "Materi Kajian",
       description: "Akses materi pembelajaran",
       icon: BookOpen,
-      link: "/materials",
+      link: "/archivesch",
       color: "green",
     },
     {
