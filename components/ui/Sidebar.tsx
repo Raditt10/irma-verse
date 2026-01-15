@@ -85,15 +85,15 @@ const Sidebar = () => {
               <button
                 key={idx}
                 onClick={() => router.push(item.path)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-left transform ${
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-left ${
                   isActive
-                    ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg scale-105"
-                    : "text-slate-700 hover:bg-gradient-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 hover:shadow-md hover:scale-105 hover:-translate-x-1"
+                    ? "bg-emerald-600 text-white"
+                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                 } ${!isExpanded && 'justify-center'}`}
                 title={!isExpanded ? item.label : ''}
               >
-                <IconComponent className={`h-5 w-5 flex-shrink-0 transition-transform duration-300 ${!isActive && "group-hover:rotate-12 group-hover:scale-110"}`} />
-                {isExpanded && <span className="text-sm font-semibold">{item.label}</span>}
+                <IconComponent className="h-5 w-5 flex-shrink-0" />
+                {isExpanded && <span className="text-sm font-medium">{item.label}</span>}
               </button>
             );
           })}

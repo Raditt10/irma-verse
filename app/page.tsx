@@ -176,7 +176,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-teal-600 to-cyan-500 text-white relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-teal-600 to-cyan-500 text-white relative overflow-hidden" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
       <div
         className="absolute inset-0 opacity-35"
         style={{
@@ -219,7 +219,7 @@ export default function Home() {
                 <p className="text-[10px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white/70">
                   Platform Rohis Digital
                 </p>
-                <h1 className="text-lg sm:text-2xl font-black leading-tight">
+                <h1 className="text-lg sm:text-2xl font-bold leading-tight">
                   IRMA Verse
                 </h1>
               </div>
@@ -290,7 +290,7 @@ export default function Home() {
                   ROHIS DIGITAL SEKOLAH
                 </p>
                 <div className="text-left">
-                  <span className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight drop-shadow-xl align-top">
+                  <span className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-none tracking-tight drop-shadow-xl align-top">
                     IRMA{" "}
                     <span className="bg-gradient-to-r from-emerald-300 via-white to-cyan-200 bg-clip-text text-transparent align-top">
                       VERSE
@@ -345,7 +345,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative -mr-0 lg:-mr-6 -mb-4 self-end overflow-hidden">
+            <div className="hidden sm:block relative -mr-0 lg:-mr-6 -mb-4 self-end overflow-hidden">
               <div className="absolute -inset-6 bg-gradient-to-br from-white/25 via-emerald-200/25 to-cyan-200/25 blur-3xl" />
               <div className="relative h-[350px] sm:h-[450px] md:h-[600px] lg:h-[700px] w-full flex items-end justify-center lg:justify-end">
                 <img
@@ -364,7 +364,7 @@ export default function Home() {
       <section className="py-20 relative bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-4">Fitur Tersedia</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-2 sm:mb-4">Fitur Tersedia</h2>
             <p className="text-lg text-slate-600">Berbagai fitur yang memudahkan aktivitas IRMA Anda</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-10 gap-4 sm:gap-6">
@@ -538,7 +538,7 @@ export default function Home() {
             <span className="text-sm font-bold text-white uppercase tracking-wider">Bergabung Sekarang</span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-8 leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-8 leading-tight">
             Siap Memulai Perjalanan
             <br />
             <span className="relative inline-block mt-2">
@@ -593,7 +593,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <div className="font-black text-xl bg-gradient-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">
+                  <div className="font-bold text-lg sm:text-xl bg-gradient-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">
                     IRMAVerse
                   </div>
                   <div className="text-xs text-white/60 font-medium">
