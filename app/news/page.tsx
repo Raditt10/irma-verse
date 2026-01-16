@@ -61,12 +61,17 @@ const News = () => {
   const fetchNews = async () => {
     try {
       const response = await fetch("/api/news");
-      if (!response.ok) throw new Error("Failed to fetch news");
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        throw new Error(errorData.error || "Failed to fetch news");
+      }
       const data = await response.json();
       setNews(data);
       setFilteredNews(data);
     } catch (error: any) {
       console.error("Error fetching news:", error);
+      toast.error(`Gagal memuat berita: ${error.message}`);
     } finally {
       setLoading(false);
     }
