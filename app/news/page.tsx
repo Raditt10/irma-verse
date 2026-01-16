@@ -45,29 +45,18 @@ const News = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadUser();
     fetchNews();
   }, []);
 
   useEffect(() => {
     filterNews();
   }, [selectedCategory, searchTerm, news]);
-
-  const loadUser = async () => {
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS"
-    });
-  };
 
   const fetchNews = async () => {
     try {
@@ -132,14 +121,6 @@ const News = () => {
   };
 
   const categories = ["all", "Prestasi", "Kerjasama", "Update", "Event", "Pengumuman"];
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <p className="text-slate-500">Memuat...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>

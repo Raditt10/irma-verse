@@ -39,21 +39,10 @@ export default function NewsDetailPage() {
   const slug = params.slug as string;
   const [news, setNews] = useState<NewsDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    loadUser();
     fetchNewsDetail();
   }, [slug]);
-
-  const loadUser = async () => {
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS",
-    });
-  };
 
   const fetchNewsDetail = async () => {
     try {
@@ -79,32 +68,19 @@ export default function NewsDetailPage() {
 
     try {
       if (navigator.share) {
-        // Use Web Share API if available (mobile devices)
         await navigator.share(shareData);
       } else {
-        // Fallback: Copy to clipboard
         await navigator.clipboard.writeText(window.location.href);
         alert("Link berita berhasil disalin ke clipboard!");
       }
     } catch (error) {
-      console.error("Error sharing:", error);
-      // Fallback if share fails: copy to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
-        alert("Link berita berhasil disalin ke clipboard!");
       } catch (clipboardError) {
         console.error("Clipboard error:", clipboardError);
       }
     }
   };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <p className="text-slate-500">Memuat...</p>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
