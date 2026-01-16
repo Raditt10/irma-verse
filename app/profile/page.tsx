@@ -76,7 +76,7 @@ const Profile = () => {
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100"
       style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
-      {session?.user && <DashboardHeader />}
+      <DashboardHeader />
 
       <div className="flex">
         <Sidebar />
