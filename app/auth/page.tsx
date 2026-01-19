@@ -135,14 +135,50 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-100 flex flex-col" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
-      <div className="flex flex-1 items-center justify-center px-4 py-12">
+    <div
+      className="min-h-screen w-full relative flex flex-col justify-center items-center overflow-hidden"
+      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+    >
+     
+      <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none select-none">
+      
+        <svg
+          className="absolute inset-0 w-full h-full"
+          width="100%"
+          height="100%"
+          viewBox="0 0 400 800"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          style={{ minWidth: '100vw', minHeight: '100vh', objectFit: 'cover' }}
+        >
+          <defs>
+            <pattern id="ketupat-auth" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
+              <rect x="0" y="0" width="60" height="60" fill="none" />
+              <rect x="10" y="10" width="40" height="40" rx="8" fill="#d1fae5" fillOpacity="0.18" stroke="#10b981" strokeWidth="2" />
+              <rect x="20" y="20" width="20" height="20" rx="4" fill="#34d399" fillOpacity="0.22" stroke="#059669" strokeWidth="1.5" />
+              <line x1="30" y1="0" x2="30" y2="60" stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" />
+              <line x1="0" y1="30" x2="60" y2="30" stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#ketupat-auth)" />
+        </svg>
+
+        <div className="absolute inset-0 w-full h-full bg-linear-to-br from-emerald-100 via-white/90 to-emerald-200/80" />
+        <svg className="absolute inset-0 w-full h-full" width="100%" height="100%" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <circle cx="80" cy="120" r="60" fill="#a7f3d0" fillOpacity="0.18" />
+          <circle cx="320" cy="200" r="40" fill="#6ee7b7" fillOpacity="0.13" />
+          <circle cx="200" cy="600" r="90" fill="#d1fae5" fillOpacity="0.13" />
+          <circle cx="350" cy="700" r="50" fill="#99f6e4" fillOpacity="0.10" />
+        </svg>
+      </div>
+      <div className="flex flex-1 items-center justify-center px-2 py-8 relative z-10 w-full min-h-screen">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl">
-          {/* Card Form login */}
-          <div className="bg-white rounded-2xl shadow-2xl p-10 flex flex-col justify-center w-full max-w-md border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
+    
+          <div className="bg-white/95 rounded-3xl shadow-xl p-6 sm:p-8 flex flex-col justify-center w-full max-w-md border border-emerald-100 backdrop-blur-md">
+            <div className="flex flex-col items-center gap-2 mb-6">
               <img src="/logo.png" alt="IRMA Verse" className="h-8 w-8 object-contain" />
-              <div>
+              <div className="text-center">
                 <div className="font-black text-xl text-emerald-600">IRMA Verse</div>
                 <div className="text-xs text-gray-400 font-medium">Platform Rohis Digital</div>
               </div>
@@ -204,7 +240,7 @@ const Auth = () => {
                     </div>
                     <a href="#" className="text-emerald-500 hover:underline">Lupa kata sandi?</a>
                   </div>
-                  <Button type="submit" className="w-full rounded-xl py-2.5 text-base font-semibold bg-gradient-to-r from-emerald-400 to-teal-400 shadow-lg" disabled={isLoading}>
+                  <Button type="submit" className="w-full rounded-xl py-2.5 text-base font-semibold bg-linear-to-r from-emerald-400 to-teal-400 shadow-lg" disabled={isLoading}>
                     {isLoading ? "Memproses..." : "Masuk"}
                   </Button>
                 </form>
@@ -261,7 +297,7 @@ const Auth = () => {
                       minLength={6}
                     />
                   </div>
-                  <Button type="submit" className="w-full rounded-xl py-2.5 text-base font-semibold bg-gradient-to-r from-emerald-400 to-teal-400 shadow-lg" disabled={isLoading}>
+                  <Button type="submit" className="w-full rounded-xl py-2.5 text-base font-semibold bg-linear-to-r from-emerald-400 to-teal-400 shadow-lg" disabled={isLoading}>
                     {isLoading ? "Memproses..." : "Daftar"}
                   </Button>
                 </form>
