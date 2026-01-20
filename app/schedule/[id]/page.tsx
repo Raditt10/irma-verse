@@ -215,7 +215,7 @@ const ScheduleDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
-        <DashboardHeader user={user} />
+        <DashboardHeader />
         <div className="flex">
           <Sidebar />
           <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6">
@@ -233,7 +233,7 @@ const ScheduleDetail = () => {
   if (!schedule) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
-        <DashboardHeader user={user} />
+        <DashboardHeader />
         <div className="flex">
           <Sidebar />
           <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6">
@@ -266,7 +266,7 @@ const ScheduleDetail = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
-      <DashboardHeader user={user} />
+      <DashboardHeader />
       <div className="flex">
         <Sidebar />
         <ChatbotButton />

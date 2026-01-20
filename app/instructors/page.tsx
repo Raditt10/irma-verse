@@ -45,74 +45,74 @@ const Instructors = () => {
         {
           id: "ustadz-1",
           name: "Ustadz Ahmad Zaki",
-          specialization: "Ahli Akhlak & Tasawuf",
+          specialization: "Keahlian Instruktur",
           description: "Lulusan Al-Azhar University dengan pengalaman mengajar 10 tahun",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmad",
           rating: 4.9,
           studentsCount: 245,
           kajianCount: 32,
-          tags: ["Akhlak", "Tasawuf", "Adab"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true
         },
         {
           id: "ustadzah-2",
           name: "Ustadzah Fatimah",
-          specialization: "Pakar Fiqih Wanita",
+          specialization: "Keahlian Instruktur",
           description: "Spesialis fiqih wanita dan hukum keluarga Islam",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatimah",
           rating: 4.8,
           studentsCount: 198,
           kajianCount: 28,
-          tags: ["Fiqih", "Ibadah", "Hukum Islam"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true,
           featured: true
         },
         {
           id: "ustadz-3",
           name: "Ustadz Muhammad Rizki",
-          specialization: "Ahli Tafsir Al-Quran",
+          specialization: "Keahlian Instruktur",
           description: "Hafidz 30 juz dengan sanad qiraah dari Mesir",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rizki",
           rating: 5.0,
           studentsCount: 312,
           kajianCount: 45,
-          tags: ["Tafsir", "Ulumul Quran", "Tahfidz"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true
         },
         {
           id: "ustadz-4",
           name: "Ustadz Abdullah Hakim",
-          specialization: "Sejarah Islam & Sirah",
+          specialization: "Keahlian Instruktur",
           description: "Pakar sejarah peradaban Islam dan biografi Nabi",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Abdullah",
           rating: 4.7,
           studentsCount: 167,
           kajianCount: 24,
-          tags: ["Sejarah", "Sirah", "Peradaban"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true
         },
         {
           id: "ustadzah-5",
           name: "Ustadzah Khadijah",
-          specialization: "Aqidah & Tauhid",
+          specialization: "Keahlian Instruktur",
           description: "Lulusan Universitas Islam Madinah bidang Aqidah",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Khadijah",
           rating: 4.9,
           studentsCount: 203,
           kajianCount: 31,
-          tags: ["Aqidah", "Tauhid", "Manhaj"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true
         },
         {
           id: "ustadz-6",
           name: "Ustadz Umar Faruq",
-          specialization: "Hadits & Ilmu Hadits",
+          specialization: "Keahlian Instruktur",
           description: "Ahli hadits dengan sanad dari Darul Hadits Yemen",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Umar",
           rating: 4.8,
           studentsCount: 189,
           kajianCount: 27,
-          tags: ["Hadits", "Ulumul Hadits", "Riwayat"],
+          tags: ["Alumni SMKN 13 Bandung"],
           verified: true
         }
       ];
@@ -175,11 +175,6 @@ const Instructors = () => {
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          {instructor.verified && (
-                            <div className="absolute bottom-0 right-0 w-7 h-7 bg-teal-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white">
-                              <Award className="h-4 w-4 text-white" />
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -198,7 +193,7 @@ const Instructors = () => {
                       {/* Description */}
                       <p className="text-slate-500 text-sm text-center mb-4 line-clamp-2">
                         {instructor.description}
-                      </p>
+                      </p> 
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 justify-center mb-4">
@@ -213,7 +208,7 @@ const Instructors = () => {
                       </div>
 
                       {/* Stats */}
-                      <div className="grid grid-cols-3 gap-4 mb-6 pt-4 border-t border-slate-100">
+                      <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-slate-100 justify-items-center">
                         <div className="text-center">
                           <div className="flex items-center justify-center gap-1 text-amber-500 mb-1">
                             <Star className="h-4 w-4 fill-current" />
@@ -221,17 +216,12 @@ const Instructors = () => {
                           </div>
                           <p className="text-xs text-slate-500">Rating</p>
                         </div>
-                        <div className="text-center">
-                          <div className="flex items-center justify-center gap-1 mb-1">
-                            <span className="font-bold text-slate-700">{instructor.studentsCount}</span>
-                          </div>
-                          <p className="text-xs text-slate-500">Murid</p>
-                        </div>
+                        {/* Murid stat removed */}
                         <div className="text-center">
                           <div className="flex items-center justify-center gap-1 mb-1">
                             <span className="font-bold text-slate-700">{instructor.kajianCount}</span>
                           </div>
-                          <p className="text-xs text-slate-500">Kajian</p>
+                          <p className="text-xs text-slate-500">Mengisi Kajian Mingguan</p>
                         </div>
                       </div>
 
