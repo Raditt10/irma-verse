@@ -65,7 +65,13 @@ const Competitions = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <p className="text-slate-500">Memuat...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-3">
+            <span className="inline-block w-6 h-6 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
+            <p className="text-slate-500 text-lg font-medium">Memuat...</p>
+          </div>
+          <p className="text-xs text-slate-400">Mohon tunggu, data sedang diproses</p>
+        </div>
       </div>
     );
   }
@@ -75,7 +81,7 @@ const Competitions = () => {
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
       style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
-      <DashboardHeader user={user} />
+      <DashboardHeader/>
       <div className="flex">
         <Sidebar />
         <div className="flex-1 px-6 lg:px-10 py-12">
