@@ -104,6 +104,8 @@ model ChatMessage {
   @@index([conversationId])
   @@index([senderId])
   @@map("chat_messages")
+}
+
 enum ScheduleStatus {
   segera_hadir
   ongoing
