@@ -11,19 +11,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all instructors
-    const instructors = await prisma.user.findMany({
-      where: {
-        role: "instruktur",
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        bidangKeahlian: true,
-        pengalaman: true,
-      },
-      orderBy: { name: "asc" },
-    });
+      const instructors = await prisma.user.findMany({
+        where: {
+          role: "instruktur",
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          bidangKeahlian: true,
+          pengalaman: true,
+          avatar: true,
+        },
+        orderBy: { name: "asc" },
+      });
 
     // Get existing conversations for this user
     const userConversations = await prisma.chatConversation.findMany({
