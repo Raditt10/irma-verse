@@ -5,6 +5,7 @@ import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
 import { Star, BookOpen, Users, MessageCircle, Award, Plus } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface Instructor {
   id: string;
@@ -23,108 +24,39 @@ interface Instructor {
 const Instructors = () => {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
-    loadUser();
     fetchInstructors();
   }, []);
 
-  const loadUser = async () => {
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS"
-    });
-  };
-
   const fetchInstructors = async () => {
     try {
-      const mockInstructors: Instructor[] = [
-        {
-          id: "ustadz-1",
-          name: "Ustadz Ahmad Zaki",
-          specialization: "Keahlian Instruktur",
-          description: "Lulusan Al-Azhar University dengan pengalaman mengajar 10 tahun",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmad",
-          rating: 4.9,
-          studentsCount: 245,
-          kajianCount: 32,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true
-        },
-        {
-          id: "ustadzah-2",
-          name: "Ustadzah Fatimah",
-          specialization: "Keahlian Instruktur",
-          description: "Spesialis fiqih wanita dan hukum keluarga Islam",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatimah",
-          rating: 4.8,
-          studentsCount: 198,
-          kajianCount: 28,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true,
-          featured: true
-        },
-        {
-          id: "ustadz-3",
-          name: "Ustadz Muhammad Rizki",
-          specialization: "Keahlian Instruktur",
-          description: "Hafidz 30 juz dengan sanad qiraah dari Mesir",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rizki",
-          rating: 5.0,
-          studentsCount: 312,
-          kajianCount: 45,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true
-        },
-        {
-          id: "ustadz-4",
-          name: "Ustadz Abdullah Hakim",
-          specialization: "Keahlian Instruktur",
-          description: "Pakar sejarah peradaban Islam dan biografi Nabi",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Abdullah",
-          rating: 4.7,
-          studentsCount: 167,
-          kajianCount: 24,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true
-        },
-        {
-          id: "ustadzah-5",
-          name: "Ustadzah Khadijah",
-          specialization: "Keahlian Instruktur",
-          description: "Lulusan Universitas Islam Madinah bidang Aqidah",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Khadijah",
-          rating: 4.9,
-          studentsCount: 203,
-          kajianCount: 31,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true
-        },
-        {
-          id: "ustadz-6",
-          name: "Ustadz Umar Faruq",
-          specialization: "Keahlian Instruktur",
-          description: "Ahli hadits dengan sanad dari Darul Hadits Yemen",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Umar",
-          rating: 4.8,
-          studentsCount: 189,
-          kajianCount: 27,
-          tags: ["Alumni SMKN 13 Bandung"],
-          verified: true
-        }
-      ];
-      setInstructors(mockInstructors);
-    } catch (error: any) {
+      const res = await fetch("/api/instructors");
+      if (!res.ok) throw new Error("Gagal mengambil data instruktur");
+      const data = await res.json();
+      // Map jika ada field yang tidak sesuai
+      const mapped = data.map((u: any) => ({
+        id: u.id,
+        name: u.name || "-",
+        specialization: u.bidangKeahlian || "-",
+        description: u.pengalaman || "-",
+        avatar: u.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name || "user"}`,
+        rating: u.rating || 0,
+        studentsCount: u.studentsCount || 0,
+        kajianCount: u.kajianCount || 0,
+        tags: [],
+        verified: true,
+      }));
+      setInstructors(mapped);
+    } catch (error) {
       console.error("Error fetching instructors:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) {
+  if (!session?.user?.id) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
         <p className="text-slate-500">Memuat...</p>
@@ -227,17 +159,23 @@ const Instructors = () => {
 
                       {/* Buttons */}
                       <div className="space-y-2">
-                        <Link
-                          href={`/instructors/chat?instructorId=${encodeURIComponent(instructor.id)}`}
-                          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                          <MessageCircle className="h-4 w-4" />
-                          Mulai Chat
-                        </Link>
-                        <button className="w-full py-3 rounded-xl bg-white border-2 border-teal-500 text-teal-600 font-semibold hover:bg-teal-50 transition-all duration-300 flex items-center justify-center gap-2">
-                          <BookOpen className="h-4 w-4" />
-                          Lihat Kajian
-                        </button>
+                        {session?.user?.id !== instructor.id ? (
+                          <>
+                            <Link
+                              href={`/instructors/chat?instructorId=${encodeURIComponent(instructor.id)}`}
+                              className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-md hover:from-teal-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 mb-2"
+                            >
+                              Mulai Chat
+                            </Link>
+                            <button className="w-full py-3 rounded-xl bg-white border-2 border-teal-500 text-teal-600 font-semibold hover:bg-teal-50 transition-all duration-300 flex items-center justify-center gap-2">
+                              Lihat Kajian
+                            </button>
+                          </>
+                        ) : (
+                          <button className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-md hover:from-teal-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2">
+                            Lihat profile saya
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
