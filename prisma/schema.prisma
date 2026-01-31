@@ -33,6 +33,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Dashboard progress fields
+  points        Int      @default(0) // Total points
+  badges        Int      @default(0) // Total badges
+  quizzes       Int      @default(0) // Total quizzes completed
+  streak        Int      @default(0) // Current streak (days)
+  averageScore  Int      @default(0) // Average quiz score
+  level         Int      @default(1) // User level
+
   // Instruktur profile
   bidangKeahlian String?  // Bidang keahlian (hanya untuk instruktur)
   pengalaman     String?  // Pengalaman (hanya untuk instruktur)

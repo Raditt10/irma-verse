@@ -24,9 +24,9 @@ const Sidebar = () => {
   const [mounted, setMounted] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Cek apakah user adalah instruktur
-  // Pastikan di database role-nya tertulis persis "instruktur" (huruf kecil)
-  const isInstruktur = session?.user?.role === "instruktur";
+  // Ambil role user untuk pengecekan logic
+  const role = session?.user?.role;
+  const isInstruktur = role === "instruktur";
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-expanded');
@@ -54,16 +54,23 @@ const Sidebar = () => {
     };
   }, []);
 
+  // --- LOGIC MENENTUKAN PATH DASHBOARD ---
+  const getDashboardPath = () => {
+    if (role === "instruktur") return "/academy";
+    if (role === "admin") return "/admin";
+    return "/overview"; // 
+  };
+
   // --- MENU ITEMS ---
   const menuItems = [
     { 
       icon: LayoutGrid, 
       label: "Dashboard", 
-      path: "/academy" 
+      path: getDashboardPath() // Path dinamis sesuai role
     },
     { 
       icon: BookOpen, 
-      // Logika: Jika instruktur -> Kelola Kajian, Jika user biasa -> Kajian Mingguanku
+      // Jika instruktur -> Kelola Kajian, User/Admin -> Kajian Mingguanku
       label: isInstruktur ? "Kelola Kajian" : "Kajian Mingguanku", 
       path: "/materials" 
     },
@@ -79,7 +86,7 @@ const Sidebar = () => {
     },
     { 
       icon: MessageCircle, 
-      // Logika: Jika instruktur -> Chat Anggota, Jika user biasa -> Chat Instruktur
+      // Jika instruktur -> Chat Anggota, User/Admin -> Chat Instruktur
       label: isInstruktur ? "Chat Anggota" : "Chat Instruktur", 
       path: isInstruktur ? "/academy/chat" : "/instructors/chat" 
     },
@@ -100,7 +107,7 @@ const Sidebar = () => {
     },
     { 
       icon: Newspaper, 
-      // Logika: Jika instruktur -> Kelola Berita, Jika user biasa -> Berita IRMA
+      // Jika instruktur -> Kelola Berita, User/Admin -> Berita IRMA
       label: isInstruktur ? "Kelola Berita" : "Berita IRMA", 
       path: "/news" 
     },
