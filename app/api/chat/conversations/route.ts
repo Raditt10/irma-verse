@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
               id: true,
               name: true,
               email: true,
+              avatar: true,
             },
           },
           messages: {
@@ -65,6 +66,7 @@ export async function GET(request: NextRequest) {
               name: true,
               email: true,
               bidangKeahlian: true,
+              avatar: true,
             },
           },
           messages: {

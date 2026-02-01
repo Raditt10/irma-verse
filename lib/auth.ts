@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import prisma from "@/lib/prisma";
+import prisma from "@/lib/prisma"; // Pastikan import prisma ini benar (tanpa kurung kurawal {})
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -39,9 +39,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
-          phone: user.notelp,
+          phone: user.notelp,   // Pastikan field di schema prisma namanya 'notelp'
           address: user.address,
           bio: user.bio,
+          avatar: user.avatar,  // Pastikan field di schema prisma namanya 'avatar' (atau 'image')
         };
       },
     }),
@@ -53,17 +54,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/auth",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // 1. Saat login pertama kali
       if (user) {
         token.id = user.id;
         token.role = (user as any).role;
+        token.avatar = (user as any).avatar;
       }
+
+      // 2. 🔥 HANDLING UPDATE SESSION TANPA LOGOUT 🔥
+      // Bagian ini akan jalan ketika frontend memanggil await update({...})
+      if (trigger === "update" && session) {
+        // Update Avatar
+        if (session.user.avatar) {
+          token.avatar = session.user.avatar;
+        }
+        // Update Nama
+        if (session.user.name) {
+          token.name = session.user.name;
+        }
+      }
+
       return token;
     },
+
     async session({ session, token }) {
+      // Mengirim data dari token (yang sudah diupdate) ke session frontend
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.avatar = token.avatar as string;
       }
       return session;
     },

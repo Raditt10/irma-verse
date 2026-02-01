@@ -20,20 +20,20 @@ type MaterialDetail = {
 };
 
 export default function MaterialDetailPage() {
-  const { id } = useParams();
+  const { matId } = useParams();
   const router = useRouter();
   const [material, setMaterial] = useState<MaterialDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetail = async () => {
-      const res = await fetch(`/api/materials/${id}`);
+      const res = await fetch(`/api/materials/${matId}`);
       if (!res.ok) return setLoading(false);
       setMaterial(await res.json());
       setLoading(false);
     };
     fetchDetail();
-  }, [id]);
+  }, [matId]);
   const { data: session } = useSession({
     required: false,
     onUnauthenticated() {

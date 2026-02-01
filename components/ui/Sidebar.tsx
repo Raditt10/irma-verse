@@ -10,11 +10,8 @@ import {
   GraduationCap,
   Trophy,
   Newspaper,
-  ChevronLeft,
-  ChevronRight,
   Menu,
   PanelLeftClose,
-  PanelLeftOpen,
   X,
   MessageCircle,
 } from "lucide-react";
@@ -26,6 +23,10 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Ambil role user untuk pengecekan logic
+  const role = session?.user?.role;
+  const isInstruktur = role === "instruktur";
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-expanded');
@@ -41,7 +42,7 @@ const Sidebar = () => {
     }
   }, [isExpanded, mounted]);
 
-  // Listen for global events to open/close mobile sidebar (triggered from header)
+  // Listen for global events to open/close mobile sidebar
   useEffect(() => {
     const openHandler = () => setIsMobileOpen(true);
     const closeHandler = () => setIsMobileOpen(false);
@@ -53,30 +54,64 @@ const Sidebar = () => {
     };
   }, []);
 
-  // Base menu items for all users
-  const baseMenuItems = [
-    { icon: LayoutGrid, label: "Dashboard", path: "/overview" },
-    { icon: BookOpen, label: "Kajian Mingguanku", path: "/materials" },
-    { icon: Calendar, label: "Event", path: "/schedule" },
-    { icon: Users, label: "Daftar Instruktur", path: "/instructors" },
-    { icon: GraduationCap, label: "Program Kurikulum", path: "/programs" },
-    { icon: Trophy, label: "Info Perlombaan", path: "/competitions" },
-    { icon: Users, label: "Daftar Anggota", path: "/members" },
-    { icon: Newspaper, label: "Berita IRMA", path: "/news" },
-  ];
+  // --- LOGIC MENENTUKAN PATH DASHBOARD ---
+  const getDashboardPath = () => {
+    if (role === "instruktur") return "/academy";
+    if (role === "admin") return "/admin";
+    return "/overview"; // 
+  };
 
-  // Add chat menu item based on role
-  const menuItems = session?.user?.role === "instruktur"
-    ? [
-        ...baseMenuItems.slice(0, 4),
-        { icon: MessageCircle, label: "Pesan Masuk", path: "/overview/academy/chat" },
-        ...baseMenuItems.slice(4),
-      ]
-    : [
-        ...baseMenuItems.slice(0, 4),
-        { icon: MessageCircle, label: "Chat Instruktur", path: "/instructors/chat" },
-        ...baseMenuItems.slice(4),
-      ];
+  // --- MENU ITEMS ---
+  const menuItems = [
+    { 
+      icon: LayoutGrid, 
+      label: "Dashboard", 
+      path: getDashboardPath() // Path dinamis sesuai role
+    },
+    { 
+      icon: BookOpen, 
+      // Jika instruktur -> Kelola Kajian, User/Admin -> Kajian Mingguanku
+      label: isInstruktur ? "Kelola Kajian" : "Kajian Mingguanku", 
+      path: "/materials" 
+    },
+    { 
+      icon: Calendar, 
+      label: "Event", 
+      path: "/schedule" 
+    },
+    { 
+      icon: Users, 
+      label: "Daftar Instruktur", 
+      path: "/instructors" 
+    },
+    { 
+      icon: MessageCircle, 
+      // Jika instruktur -> Chat Anggota, User/Admin -> Chat Instruktur
+      label: isInstruktur ? "Chat Anggota" : "Chat Instruktur", 
+      path: isInstruktur ? "/academy/chat" : "/instructors/chat" 
+    },
+    { 
+      icon: GraduationCap, 
+      label: "Program Kurikulum", 
+      path: "/programs" 
+    },
+    { 
+      icon: Trophy, 
+      label: "Info Perlombaan", 
+      path: "/competitions" 
+    },
+    { 
+      icon: Users, 
+      label: "Daftar Anggota", 
+      path: "/members" 
+    },
+    { 
+      icon: Newspaper, 
+      // Jika instruktur -> Kelola Berita, User/Admin -> Berita IRMA
+      label: isInstruktur ? "Kelola Berita" : "Berita IRMA", 
+      path: "/news" 
+    },
+  ];
 
   return (
     <>
@@ -132,9 +167,10 @@ const Sidebar = () => {
               <div className="flex items-center gap-2">
                 <img src="/logo.png" alt="IRMA Verse" className="h-8 w-8 object-contain" />
                 <div>
-                  <h2 className="text-xs font-black leading-tight text-white uppercase tracking-wide bg-linear-to-r from-teal-600 to-emerald-600 px-2 py-0.5 rounded-lg">
+                  <h2 className="text-xs font-black leading-tight text-white uppercase tracking-wide bg-gradient-to-r from-teal-600 to-emerald-600 px-2 py-0.5 rounded-lg">
                     IRMA VERSE
-                  </h2><p className="text-[10px] text-slate-600 mt-0.5\">Platform Rohis Digital Irma 13</p>
+                  </h2>
+                  <p className="text-[10px] text-slate-600 mt-0.5">Platform Rohis Digital Irma 13</p>
                 </div>
               </div>
               <button

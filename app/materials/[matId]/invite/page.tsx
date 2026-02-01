@@ -8,7 +8,7 @@ type User = {
 }
 
 export default function InvitePage({ params }: { params: { id: string } }) {
-  const materialId = params.id
+  const materialId = params.matId
 
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<User[]>([])
