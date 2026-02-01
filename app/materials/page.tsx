@@ -146,13 +146,6 @@ const Materials = () => {
     ...filteredMaterials.filter(m => ["3","4"].includes(m.id))
   ];
 
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <p className="text-slate-500 font-bold animate-pulse">Memuat...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
@@ -223,7 +216,7 @@ const Materials = () => {
                   placeholder="Cari materi / ustadz..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 py-6 rounded-2xl border-2 border-slate-200 focus:border-teal-400 focus:shadow-[0_0_0_3px_rgba(45,212,191,0.2)] bg-white"
+                  className="pl-12 py-6 rounded-2xl border-2 border-slate-200 focus:border-teal-400 focus:shadow-[0_0_0_3px_rgba(45,212,191,0.2)] bg-white transition-colors duration-200 hover:border-emerald-500"
                 />
               </div>
             </div>
@@ -232,7 +225,7 @@ const Materials = () => {
             {loading ? (
               <div className="text-center py-20">
                 <Sparkles className="h-10 w-10 text-teal-400 animate-spin mx-auto mb-4" />
-                <p className="text-slate-500 font-bold">Sedang memuat kajian...</p>
+                <p className="text-slate-500 font-bold">Memuat kajian...</p>
               </div>
             ) : filteredMaterials.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-[3rem] border-4 border-slate-100 border-dashed">
@@ -330,9 +323,9 @@ const Materials = () => {
                         ) : (
                           // Tombol untuk User Biasa
                           ["3","4"].includes(material.id) ? (
-                            <div className="space-y-3">
-                               <div className="flex items-center justify-center gap-2 text-emerald-500 font-bold text-xs bg-emerald-50 py-1 rounded-lg">
-                                  <span>✅ Kamu sudah ikut</span>
+                             <div className="space-y-3">
+                               <div className="flex items-center justify-center gap-2 text-emerald-500 font-bold text-xs bg-emerald-50 py-1 rounded-lg justify-center text-center">
+                                 <span className="w-full text-center">Kamu sudah mengikuti kajian ini, pada tanggal {material.date}.</span>
                                </div>
                                <button
                                  onClick={() => router.push(`/rekapan/${material.id}`)}
