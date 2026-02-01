@@ -13,35 +13,10 @@ interface CompetitionItem {
   date: string;
   prize: string;
   category: "Tahfidz" | "Seni" | "Bahasa" | "Lainnya";
-  image: string;
+  thumbnailUrl?: string;
+  status: "upcoming" | "ongoing" | "finished";
+  location: string;
 }
-
-const competitions: CompetitionItem[] = [
-  {
-    id: "1",
-    title: "Lomba Tahfidz Tingkat Nasional",
-    date: "15 Des 2024",
-    prize: "Rp 10.000.000",
-    category: "Tahfidz",
-    image: "https://images.unsplash.com/photo-1585779034823-7e9ac8faec70?auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: "2",
-    title: "Kompetisi Kaligrafi Islam",
-    date: "20 Des 2024",
-    prize: "Rp 5.000.000",
-    category: "Seni",
-    image: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: "3",
-    title: "Lomba Pidato Bahasa Arab",
-    date: "25 Des 2024",
-    prize: "Rp 7.500.000",
-    category: "Bahasa",
-    image: "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?auto=format&fit=crop&w=1000&q=80"
-  }
-];
 
 const badgeStyles: Record<CompetitionItem["category"], string> = {
   Tahfidz: "bg-emerald-100 text-emerald-700 border-emerald-200",
@@ -50,22 +25,47 @@ const badgeStyles: Record<CompetitionItem["category"], string> = {
   Lainnya: "bg-slate-100 text-slate-700 border-slate-200"
 };
 
+const statusColors: Record<CompetitionItem["status"], string> = {
+  upcoming: "bg-blue-100 text-blue-700",
+  ongoing: "bg-green-100 text-green-700",
+  finished: "bg-gray-100 text-gray-700"
+};
+
 const Competitions = () => {
-  const [user, setUser] = useState<any>(null);
+  const [competitions, setCompetitions] = useState<CompetitionItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { data: session } = useSession();
 
   useEffect(() => {
-    // Simulasi fetch user
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS"
-    });
+    fetchCompetitions();
   }, []);
 
-  if (!user) {
+  const fetchCompetitions = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/competitions");
+      if (response.ok) {
+        const data = await response.json();
+        setCompetitions(data);
+      }
+    } catch (error) {
+      console.error("Error fetching competitions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -107,69 +107,70 @@ const Competitions = () => {
               )}
             </div>
 
-            {/* Grid */}
-            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-              {competitions.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col"
-                >
-                  {/* Image Section */}
-                  <div className="relative h-60 border-b-2 border-slate-100 overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    
-                    {/* Badge Category */}
-                    <span
-                      className={`absolute top-4 left-4 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wide border-2 shadow-sm ${badgeStyles[item.category]}`}
-                    >
-                      {item.category}
-                    </span>
-                  </div>
-
-                  {/* Content Section */}
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-xl font-black text-slate-800 leading-tight mb-4 group-hover:text-teal-600 transition-colors line-clamp-2">
-                      {item.title}
-                    </h3>
-
-                    <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-100">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-slate-500 font-bold">
-                          <Calendar className="w-4 h-4 text-teal-400" />
-                          <span>Tanggal</span>
-                        </div>
-                        <span className="text-slate-800 font-black">{item.date}</span>
-                      </div>
-                      
-                      <div className="w-full h-px bg-slate-200 dashed"></div>
-
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-slate-500 font-bold">
-                          <Trophy className="w-4 h-4 text-amber-400" />
-                          <span>Hadiah</span>
-                        </div>
-                        <span className="text-emerald-600 font-black bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
-                          {item.prize}
+            {competitions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-slate-500 text-lg">Belum ada perlombaan yang tersedia</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {competitions.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  >
+                    <div className="relative h-64">
+                      <img
+                        src={
+                          item.thumbnailUrl ||
+                          "https://images.unsplash.com/photo-1585779034823-7e9ac8faec70?auto=format&fit=crop&w=1000&q=80"
+                        }
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${badgeStyles[item.category]}`}
+                        >
+                          {item.category}
+                        </span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[item.status]}`}
+                        >
+                          {item.status === "upcoming" ? "Segera" : item.status === "ongoing" ? "Berlangsung" : "Selesai"}
                         </span>
                       </div>
                     </div>
 
-                    <button 
-                      onClick={() => router.push(`/competitions/${item.id}`)}
-                      className="w-full mt-auto py-3 rounded-2xl bg-teal-400 text-white font-black border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn shadow-md hover:shadow-teal-100"
-                    >
-                      <span>Lihat Detail Lomba</span>
-                      <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />
-                    </button>
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-xl font-bold text-slate-800 leading-tight">
+                        {item.title}
+                      </h3>
+                      <div className="flex flex-col gap-2 text-slate-600 text-base">
+                        <div className="flex items-center justify-between">
+                          <span>Tanggal</span>
+                          <span className="text-slate-900 font-semibold">{formatDate(item.date)}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Hadiah</span>
+                          <span className="text-emerald-600 font-semibold">{item.prize}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Lokasi</span>
+                          <span className="text-slate-900 font-semibold text-sm">{item.location}</span>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => router.push(`/competitions/${item.id}`)}
+                        className="w-full rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 transition-all duration-300 shadow-md hover:shadow-lg hover:from-teal-600 hover:to-cyan-600 flex items-center justify-center gap-2"
+                      >
+                        <span>Lihat Detail</span>
+                        <ArrowRight className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
