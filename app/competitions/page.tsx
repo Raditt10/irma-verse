@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Trophy, Calendar, Sparkles } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface CompetitionItem {
@@ -19,10 +19,10 @@ interface CompetitionItem {
 }
 
 const badgeStyles: Record<CompetitionItem["category"], string> = {
-  Tahfidz: "bg-emerald-100 text-emerald-700",
-  Seni: "bg-teal-100 text-teal-700",
-  Bahasa: "bg-cyan-100 text-cyan-700",
-  Lainnya: "bg-slate-100 text-slate-700"
+  Tahfidz: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  Seni: "bg-purple-100 text-purple-700 border-purple-200",
+  Bahasa: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  Lainnya: "bg-slate-100 text-slate-700 border-slate-200"
 };
 
 const statusColors: Record<CompetitionItem["status"], string> = {
@@ -67,13 +67,10 @@ const Competitions = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-3">
-            <span className="inline-block w-6 h-6 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
-            <p className="text-slate-500 text-lg font-medium">Memuat...</p>
-          </div>
-          <p className="text-xs text-slate-400">Mohon tunggu, data sedang diproses</p>
+          <Sparkles className="h-10 w-10 text-teal-400 animate-spin" />
+          <p className="text-slate-500 font-bold animate-pulse">Memuat data lomba...</p>
         </div>
       </div>
     );
@@ -81,7 +78,7 @@ const Competitions = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
+      className="min-h-screen bg-[#FDFBF7]"
       style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader/>
@@ -89,26 +86,25 @@ const Competitions = () => {
         <Sidebar />
         <div className="flex-1 px-6 lg:px-8 py-12 lg:ml-0">
           <div className="max-w-7xl mx-auto">
+            
             {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h1 className="text-4xl font-black text-slate-800 mb-2">
-                    Info Perlombaan
-                  </h1>
-                  <p className="text-slate-600 text-lg">
-                    Informasi lomba keagamaan tingkat daerah hingga nasional
-                  </p>
-                </div>
-                {session?.user?.role === "instruktur" && (
-                  <button
-                    onClick={() => router.push("/competitions/create")}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all"
-                  >
-                    + Tambahkan Info Perlombaan
-                  </button>
-                )}
+            <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-2">
+                  Info Perlombaan
+                </h1>
+                <p className="text-slate-500 text-lg font-medium">
+                  Tunjukkan bakatmu di ajang bergengsi ini! 🏆
+                </p>
               </div>
+              {session?.user?.role === "instruktur" && (
+                <button
+                  onClick={() => router.push("/competitions/create")}
+                  className="px-6 py-3 rounded-2xl bg-teal-400 text-white font-black border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all shadow-lg hover:shadow-teal-200"
+                >
+                  + Tambah Lomba
+                </button>
+              )}
             </div>
 
             {competitions.length === 0 ? (
