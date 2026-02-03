@@ -5,8 +5,8 @@ import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
-import { Search, X, Plus, AlertCircle, CheckCircle } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import SearchInput from "@/components/ui/SearchInput";
+import { X, Plus, AlertCircle, CheckCircle } from "lucide-react";
 
 interface User {
   id: string;
@@ -22,7 +22,7 @@ interface Toast {
 
 export default function InvitePage() {
   const params = useParams();
-  const matId = params?.matId as string;
+  const id = params?.id as string;
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -48,7 +48,7 @@ export default function InvitePage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/materials/${matId}/invite?q=${searchQuery}`);
+      const res = await fetch(`/api/materials/${id}/invite?q=${searchQuery}`);
       const data = await res.json();
       setResults(data);
     } catch (error) {
@@ -92,7 +92,7 @@ export default function InvitePage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/materials/${matId}/invite`, {
+      const res = await fetch(`/api/materials/${id}/invite`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ export default function InvitePage() {
   return (
     <div
       className="min-h-screen bg-[#FDFBF7]"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+
     >
       <DashboardHeader />
       <div className="flex">
@@ -181,16 +181,12 @@ export default function InvitePage() {
                 <label className="block text-sm font-bold text-slate-700 mb-3">
                   Cari User yang Akan Di-Invite
                 </label>
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-500" />
-                  <Input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Ketik nama atau email..."
-                    className="pl-12 py-3 rounded-2xl border-2 border-slate-300 focus:border-teal-400"
-                  />
-                </div>
+                <SearchInput
+                  value={query}
+                  onChange={setQuery}
+                  placeholder="Ketik nama atau email..."
+                  className="w-full"
+                />
 
                 {/* Search Results */}
                 {results.length > 0 && (

@@ -57,8 +57,7 @@ const LeaderboardPage = async () => {
 
   return (
     <div 
-      className="min-h-screen bg-slate-50/50" 
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+      className="min-h-screen bg-slate-50/50"
     >
       <DashboardHeader />
 

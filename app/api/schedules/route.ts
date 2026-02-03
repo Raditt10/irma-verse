@@ -80,14 +80,50 @@ export async function POST(req: NextRequest) {
       date,
       time,
       location,
-      pemateri,
+      penanggungjawab,
       thumbnailUrl,
     } = body;
 
-    // Validation
-    if (!title || !description || !date || !time || !location || !pemateri) {
+    // Detailed validation
+    if (!title || !title.toString().trim()) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Judul jadwal harus diisi" },
+        { status: 400 }
+      );
+    }
+    if (title.toString().trim().length < 3) {
+      return NextResponse.json(
+        { error: "Judul jadwal minimal 3 karakter" },
+        { status: 400 }
+      );
+    }
+    if (!description || !description.toString().trim()) {
+      return NextResponse.json(
+        { error: "Deskripsi jadwal harus diisi" },
+        { status: 400 }
+      );
+    }
+    if (!date) {
+      return NextResponse.json(
+        { error: "Tanggal jadwal harus dipilih" },
+        { status: 400 }
+      );
+    }
+    if (!time) {
+      return NextResponse.json(
+        { error: "Jam jadwal harus dipilih" },
+        { status: 400 }
+      );
+    }
+    if (!location || !location.toString().trim()) {
+      return NextResponse.json(
+        { error: "Lokasi jadwal harus diisi" },
+        { status: 400 }
+      );
+    }
+    if (!penanggungjawab || !penanggungjawab.toString().trim()) {
+      return NextResponse.json(
+        { error: "Penanggung jawab harus diisi" },
         { status: 400 }
       );
     }
@@ -100,7 +136,7 @@ export async function POST(req: NextRequest) {
         date: new Date(date),
         time,
         location,
-        pemateri,
+        pemateri: penanggungjawab,
         thumbnailUrl,
         instructorId: session.user.id,
         status: "segera_hadir",
@@ -120,7 +156,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error creating schedule:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to create schedule" },
+      { error: error instanceof Error ? error.message : "Gagal membuat jadwal" },
       { status: 500 }
     );
   }

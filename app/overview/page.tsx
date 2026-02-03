@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 
 // --- KOMPONEN LEVEL CARD YANG DIPERBARUI ---
 const LevelCardContent = () => (
-  <div className="bg-gradient-to-r from-teal-400 to-cyan-400 p-5 rounded-[2rem] text-white shadow-[0_6px_0_0_#0e7490] border-2 border-teal-600 relative overflow-hidden group transition-transform hover:scale-[1.02]">
+  <div className="bg-gradient-to-r from-emerald-400 to-teal-400 p-5 rounded-[2rem] text-white shadow-[0_6px_0_0_#047857] border-2 border-emerald-600 relative overflow-hidden group transition-transform hover:scale-[1.02]">
     {/* Dekorasi background */}
     <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-10 -mt-10 blur-sm" />
     <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8 blur-sm" />
@@ -34,7 +34,7 @@ const LevelCardContent = () => (
     <div className="flex justify-between items-start mb-4 relative z-10">
       <div>
         <span className="font-black text-2xl tracking-tight drop-shadow-md block">LEVEL 5</span>
-        <span className="text-[10px] font-bold text-teal-100 uppercase tracking-widest bg-teal-600/30 px-2 py-0.5 rounded-md">Explorer</span>
+        <span className="text-[10px] font-bold text-emerald-100 uppercase tracking-widest bg-emerald-600/30 px-2 py-0.5 rounded-md">Explorer</span>
       </div>
 
       {/* --- BADGE MASHAALLAH SESUAI GAMBAR --- */}
@@ -49,8 +49,8 @@ const LevelCardContent = () => (
         <span>2450 XP</span>
         <span>3000 XP</span>
       </div>
-      <div className="h-5 bg-black/20 rounded-full overflow-hidden border-2 border-teal-600/30 p-[2px]">
-        <div className="h-full bg-yellow-400 w-3/4 rounded-full shadow-[0_2px_0_0_#ca8a04] relative relative">
+      <div className="h-5 bg-black/20 rounded-full overflow-hidden border-2 border-emerald-600/30 p-[2px]">
+        <div className="h-full bg-emerald-400 w-3/4 rounded-full shadow-[0_2px_0_0_#059669] relative relative">
             {/* Kilau pada progress bar */}
             <div className="absolute top-0 right-2 w-2 h-full bg-white/40 rounded-full skew-x-[-20deg]" />
             <div className="absolute top-0 right-5 w-1 h-full bg-white/30 rounded-full skew-x-[-20deg]" />
@@ -58,7 +58,7 @@ const LevelCardContent = () => (
       </div>
     </div>
     
-    <p className="text-[11px] mt-3 font-bold text-teal-50 text-center bg-teal-700/20 py-1.5 rounded-xl border border-teal-300/20">
+    <p className="text-[11px] mt-3 font-bold text-emerald-50 text-center bg-emerald-700/20 py-1.5 rounded-xl border border-emerald-300/20">
        Semangat! 550 XP lagi naik level
     </p>
   </div>
@@ -125,7 +125,7 @@ const Dashboard = () => {
 
   return (
     // Background hangat (Warm White)
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -134,7 +134,7 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div className="w-full md:w-auto">
               <h1 className="text-2xl md:text-4xl font-black text-slate-800 tracking-tight">
-                ٱلسَّلَامُ عَلَيْكُمْ, <span className="text-teal-500 underline decoration-wavy decoration-2 underline-offset-4">{session?.user?.name}</span>
+                ٱلسَّلَامُ عَلَيْكُمْ, <span className="text-emerald-500 underline decoration-wavy decoration-2 underline-offset-4">{session?.user?.name}</span>
               </h1>
               <p className="text-slate-500 mt-2 font-bold text-lg">Siap menambah ilmu hari ini?</p>
               
@@ -146,7 +146,7 @@ const Dashboard = () => {
 
             {/* Date Badge - Cartoon Style */}
             <div className="hidden md:flex items-center gap-2 bg-white px-5 py-3 rounded-full border-2 border-slate-200 shadow-[0_4px_0_0_#e2e8f0] transform hover:-translate-y-1 transition-transform">
-              <Calendar className="w-5 h-5 text-teal-600" strokeWidth={3} />
+              <Calendar className="w-5 h-5 text-emerald-600" strokeWidth={3} />
               <span className="text-sm font-black text-slate-700">
                 {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </span>
@@ -199,7 +199,7 @@ const Dashboard = () => {
 
               {/* FITUR PINTAR */}
               <div className="bg-white p-6 rounded-[2.5rem] border-2 border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400" />
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-emerald-400 to-teal-400" />
                 
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 bg-slate-50 border-2 border-slate-200 rounded-2xl">
@@ -254,15 +254,15 @@ const Dashboard = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {newsItems.map((news) => (
-                    <div key={news.id} className="flex gap-4 p-4 bg-white rounded-[2rem] border-2 border-slate-100 hover:border-teal-400 hover:shadow-[0_6px_0_0_#2dd4bf] hover:-translate-y-1 transition-all cursor-pointer group">
-                      <div className="w-24 h-24 rounded-2xl bg-slate-200 overflow-hidden shrink-0 border-2 border-slate-100 group-hover:border-teal-200">
+                    <div key={news.id} className="flex gap-4 p-4 bg-white rounded-[2rem] border-2 border-slate-100 hover:border-emerald-400 hover:shadow-[0_6px_0_0_#10b981] hover:-translate-y-1 transition-all cursor-pointer group">
+                      <div className="w-24 h-24 rounded-2xl bg-slate-200 overflow-hidden shrink-0 border-2 border-slate-100 group-hover:border-emerald-200">
                         <img src={`https://picsum.photos/200/200?random=${news.imageId}`} alt={news.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="inline-block w-fit px-2 py-0.5 rounded-md bg-teal-50 text-teal-600 text-[10px] font-black border border-teal-100 mb-2 uppercase tracking-wide">
+                        <span className="inline-block w-fit px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-black border border-emerald-100 mb-2 uppercase tracking-wide">
                           {news.category}
                         </span>
-                        <h3 className="font-bold text-slate-800 leading-snug mb-2 text-base group-hover:text-teal-600 transition-colors line-clamp-2">
+                        <h3 className="font-bold text-slate-800 leading-snug mb-2 text-base group-hover:text-emerald-600 transition-colors line-clamp-2">
                           {news.title}
                         </h3>
                         <span className="text-xs text-slate-400 font-bold flex items-center gap-1.5">
@@ -301,7 +301,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Ci Irma Chatbot Promo */}
-                <div className="bg-[#f0f9ff] p-5 rounded-[2rem] border-2 border-cyan-200 relative overflow-hidden group">
+                <div className="bg-emerald-50 p-5 rounded-[2rem] border-2 border-emerald-200 relative overflow-hidden group">
                   {/* Decorative blobs */}
                   <div className="absolute top-[-20%] right-[-10%] w-24 h-24 bg-cyan-200 rounded-full opacity-20 group-hover:scale-125 transition-transform" />
                   

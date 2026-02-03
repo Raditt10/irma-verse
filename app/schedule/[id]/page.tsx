@@ -10,7 +10,7 @@ import {
   MapPin, 
   User, 
   Clock, 
-  ArrowLeft, 
+  ArrowLeft,
   Phone, 
   Mail, 
   Sparkles,
@@ -98,7 +98,7 @@ const ScheduleDetail = () => {
   // --- LOADING STATE ---
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+      <div className="min-h-screen bg-[#FDFBF7]">
         <DashboardHeader />
         <div className="flex">
           <Sidebar />
@@ -116,7 +116,7 @@ const ScheduleDetail = () => {
   // --- NOT FOUND STATE ---
   if (!schedule) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+      <div className="min-h-screen bg-[#FDFBF7]">
         <DashboardHeader />
         <div className="flex">
           <Sidebar />
@@ -141,7 +141,7 @@ const ScheduleDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -152,11 +152,11 @@ const ScheduleDetail = () => {
             {/* --- HEADER NAVIGATION --- */}
             <div className="flex items-center justify-between">
                 <button
-                onClick={() => router.push('/schedule')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:border-teal-400 hover:text-teal-600 hover:shadow-[4px_4px_0_0_#cbd5e1] active:translate-y-[2px] active:shadow-none transition-all"
+                  onClick={() => router.back()}
+                  className="self-start inline-flex items-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-500 font-bold hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#cbd5e1] active:translate-y-0.5 active:shadow-none transition-all text-sm lg:text-base"
                 >
-                <ArrowLeft className="h-5 w-5" strokeWidth={3} />
-                Kembali
+                  <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3} />
+                  Kembali
                 </button>
                 <button className="p-2 bg-white rounded-xl border-2 border-slate-200 text-slate-400 hover:text-teal-500 hover:border-teal-400 transition-all">
                     <Share2 className="h-5 w-5" strokeWidth={2.5} />

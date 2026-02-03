@@ -23,19 +23,26 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   // Ambil role user untuk pengecekan logic
   const role = session?.user?.role;
   const isInstruktur = role === "instruktur";
 
+  // Load sidebar state from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-expanded');
-    if (saved) {
+    if (saved !== null) {
       setIsExpanded(JSON.parse(saved));
+    } else {
+      // Default: collapse on mobile, expand on desktop
+      const isMobile = window.innerWidth < 1024;
+      setIsExpanded(!isMobile);
     }
     setMounted(true);
   }, []);
 
+  // Persist sidebar state to localStorage
   useEffect(() => {
     if (mounted) {
       localStorage.setItem('sidebar-expanded', JSON.stringify(isExpanded));

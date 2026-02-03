@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
+import Loading from "@/components/ui/Loading";
+import SuccessDataFound from "@/components/ui/SuccessDataFound";
 import { 
   ArrowRight, 
   CheckCircle2, 
   Clock3, 
   Hourglass, 
   BookOpen, 
-  Sparkles, 
   ChevronDown,
   SearchX, 
   RefreshCcw,
@@ -84,7 +85,7 @@ const OurPrograms = () => {
   };
 
   const filteredPrograms = programs.filter((program) =>
-    program.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (program?.title?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) &&
     (statusFilter === "all" || program.status === statusFilter)
   );
 
@@ -97,7 +98,7 @@ const OurPrograms = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -194,8 +195,7 @@ const OurPrograms = () => {
 
             {loading ? (
               <div className="text-center py-20">
-                <Sparkles className="h-10 w-10 text-teal-400 animate-spin mx-auto mb-4" />
-                <p className="text-slate-500 font-bold">Menyiapkan program...</p>
+                <Loading text="Memuat program..." />
               </div>
             ) : programs.length === 0 ? (
                 /* ---- GLOBAL EMPTY STATE (Database Kosong) ---- */
@@ -235,14 +235,11 @@ const OurPrograms = () => {
                 {/* ---- SUCCESS HEADER ---- */}
                 {searchTerm && (
                   <div className="mb-8">
-                    <div className="inline-flex items-center gap-3 bg-teal-50 border-2 border-teal-100 px-5 py-3 rounded-2xl shadow-sm">
-                       <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border-2 border-teal-200 shrink-0">
-                          <Sparkles className="h-4 w-4 text-teal-500" />
-                       </div>
-                       <p className="text-teal-800 font-bold text-sm">
-                         Hore! Ditemukan <span className="underline decoration-wavy decoration-teal-400">{filteredPrograms.length} program</span> yang cocok!
-                       </p>
-                    </div>
+                    <SuccessDataFound 
+                      message={`Hore! Ditemukan ${filteredPrograms.length} program`}
+                      subMessage="Data berhasil ditemukan dan siap untuk digunakan"
+                      icon="sparkles"
+                    />
                   </div>
                 )}
 
@@ -250,11 +247,11 @@ const OurPrograms = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredPrograms.map((program) => {
                     const statusMeta: Record<Program["status"], { label: string; icon: any; color: string; bg: string; border: string }> = {
-                      "in-progress": { label: "Berlangsung", icon: Clock3, color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300" },
+                      "in-progress": { label: "Berlangsung", icon: Clock3, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" },
                       done: { label: "Selesai", icon: CheckCircle2, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" },
-                      upcoming: { label: "Mendatang", icon: Hourglass, color: "text-slate-700", bg: "bg-slate-100", border: "border-slate-300" }
+                      upcoming: { label: "Mendatang", icon: Hourglass, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" }
                     };
-                    const meta = statusMeta[program.status];
+                    const meta = statusMeta[program.status] || statusMeta["upcoming"];
 
                     return (
                       <div
@@ -301,8 +298,8 @@ const OurPrograms = () => {
                               </div>
                               <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                               <div className="flex items-center gap-1.5">
-                                 <BookOpen className="h-4 w-4 text-teal-400" />
-                                 <span>{program.quota.filled}/{program.quota.total} Siswa</span>
+                                 <BookOpen className="h-4 w-4 text-emerald-500" />
+                                 <span>{program.quota?.filled ?? 0}/{program.quota?.total ?? 0} Siswa</span>
                               </div>
                             </div>
                           </div>

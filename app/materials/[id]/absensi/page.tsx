@@ -97,7 +97,7 @@ const Absensi = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         // Validasi sederhana jika status hadir tapi tidak ada bukti
@@ -108,12 +108,58 @@ const Absensi = () => {
 
         setIsSubmitting(true);
 
-        setTimeout(() => {
-            setIsSubmitting(false);
-            console.log("Absensi terkirim:", { ...attendance, proofFile });
-            alert("Absensi terkirim! Terima kasih, absensi dan angket sudah dicatat.");
-            router.push("/dashboard");
-        }, 600);
+        try {
+          // Get material ID from URL
+          const materialId = window.location.pathname.split("/")[2];
+          
+          // Prepare attendance data
+          const attendanceData = {
+            session: attendance.session,
+            date: attendance.date,
+            time: attendance.time,
+            location: attendance.location,
+            status: attendance.status,
+            notes: attendance.notes,
+            reason: attendance.reason,
+            instructorArrival: attendance.instructorArrival,
+            startTime: attendance.startTime,
+            endTime: attendance.endTime,
+          };
+
+          // Prepare survey data
+          const surveyData = {
+            rating: survey.rating,
+            clarity: survey.clarity,
+            relevance: survey.relevance,
+            feedback: survey.feedback,
+          };
+
+          // Call attendance API with all form data
+          const response = await fetch("/api/materials/attendance", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ 
+              materialId,
+              attendanceData,
+              surveyData
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to record attendance");
+          }
+
+          console.log("Absensi terkirim:", { attendanceData, surveyData, proofFile });
+          alert("Absensi terkirim! Terima kasih, absensi dan angket sudah dicatat.");
+          router.push("/materials");
+        } catch (error) {
+          console.error("Error submitting attendance:", error);
+          alert("Gagal menyimpan absensi. Silakan coba lagi.");
+        } finally {
+          setIsSubmitting(false);
+        }
     };
 
     if (!user) {
@@ -127,7 +173,6 @@ const Absensi = () => {
     return (
         <div
             className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
-            style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
         >
             <DashboardHeader />
             <div className="flex">

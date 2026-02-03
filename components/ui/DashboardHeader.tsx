@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { 
@@ -10,9 +10,8 @@ import {
   User as UserIcon, 
   Menu, 
   TrendingUp,
-  Check,
   Clock,
-  Sparkles
+  X // Pastikan X diimport
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -23,43 +22,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SearchBar from "@/components/ui/SearchBar";
+import InvitationNotifications from "@/components/ui/InvitationNotifications";
 
 export default function DashboardHeader() {
   const router = useRouter();
-  
-  // Data Dummy Notifikasi
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Kajian Baru Tersedia",
-      message: "Materi 'Adab Penuntut Ilmu' telah ditambahkan.",
-      time: "Baru saja",
-      read: false,
-      type: "info"
-    },
-    {
-      id: 2,
-      title: "Pengingat Kuis",
-      message: "Kuis Mingguan akan ditutup dalam 2 jam.",
-      time: "2 jam lalu",
-      read: false,
-      type: "alert"
-    },
-    {
-      id: 3,
-      title: "Selamat!",
-      message: "Kamu telah naik ke Level 5.",
-      time: "1 hari lalu",
-      read: true,
-      type: "success"
-    }
-  ]);
-
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
-  };
+  const [invitationCount, setInvitationCount] = useState(0);
+  const [showInvitations, setShowInvitations] = useState(false);
+  const [invitations, setInvitations] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loadingInvites, setLoadingInvites] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
   const { data: session } = useSession({
     required: true,
@@ -70,11 +42,79 @@ export default function DashboardHeader() {
     }
   });
 
+  // Listen for invitation count updates
+  useEffect(() => {
+    const handleInvitationCountUpdate = () => {
+      const count = (typeof window !== "undefined" ? (window as any).invitationCount : 0) || 0;
+      setInvitationCount(count);
+    };
+
+    if (typeof window !== "undefined") {
+      handleInvitationCountUpdate();
+      window.addEventListener("invitationCountUpdate", handleInvitationCountUpdate);
+      return () => {
+        window.removeEventListener("invitationCountUpdate", handleInvitationCountUpdate);
+      };
+    }
+  }, []);
+
+  // Fetch invitations
+  const fetchInvitations = async () => {
+    setLoadingInvites(true);
+    try {
+      const res = await fetch("/api/materials/invitations");
+      if (res.ok) {
+        const data = await res.json();
+        setInvitations(data.invitations || []);
+      } else {
+        setInvitations([]);
+      }
+    } catch (error) {
+      console.error("[DashboardHeader] Error:", error);
+      setInvitations([]);
+    } finally {
+      setLoadingInvites(false);
+    }
+  };
+
+  const handleBellClick = () => {
+    setShowInvitations(true);
+    fetchInvitations();
+    if (session?.user?.role !== "instruktur") {
+      fetchMessages();
+    }
+  };
+
+  // Fetch messages
+  const fetchMessages = async () => {
+    setLoadingMessages(true);
+    try {
+      const res = await fetch("/api/chat/conversations");
+      if (res.ok) {
+        const data = await res.json();
+        const mappedMessages = data.map((conv: any) => ({
+          id: conv.id,
+          instructor: conv.participant,
+          instructorId: conv.participant?.id,
+          messages: conv.lastMessage ? [conv.lastMessage] : [],
+          updatedAt: conv.updatedAt,
+          unreadCount: conv.unreadCount,
+        }));
+        setMessages(mappedMessages || []);
+      } else {
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error("[DashboardHeader] Error:", error);
+      setMessages([]);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
   const userName = session?.user?.name || "User";
   const userAvatar = (session?.user as any)?.avatar;
-  // Fallback ke dicebear jika tidak ada avatar dari database
   const displayAvatar = userAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userName)}`;
-  // Fallback email jika tidak ada data session
   const userEmail = session?.user?.email || "user@irmaverse.com"; 
   const userInitials = userName.substring(0, 2).toUpperCase();
 
@@ -112,75 +152,110 @@ export default function DashboardHeader() {
         {/* --- RIGHT: ACTIONS --- */}
         <div className="flex items-center gap-3 shrink-0">
           
-          {/* Notification Button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="relative h-11 w-11 flex items-center justify-center rounded-xl bg-white border-2 border-slate-200 text-slate-600 shadow-[3px_3px_0_0_#cbd5e1] hover:border-emerald-400 hover:text-emerald-600 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-[2px] active:shadow-none transition-all outline-none">
-                <Bell className="h-5 w-5" strokeWidth={2.5} />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 flex items-center justify-center bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white shadow-sm animate-bounce">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            
-            <DropdownMenuContent align="end" className="w-80 p-0 rounded-2xl border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] mt-2 overflow-hidden bg-white" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
-              {/* Header Notifikasi */}
-              <div className="flex items-center justify-between px-4 py-3 border-b-2 border-slate-100 bg-slate-50">
-                <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-emerald-500" />
-                    <span className="font-black text-slate-800">Notifikasi</span>
-                </div>
-                {unreadCount > 0 && (
-                  <button 
-                    onClick={markAllAsRead}
-                    className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg font-bold hover:bg-emerald-200 transition-colors flex items-center gap-1"
-                  >
-                    <Check className="h-3 w-3" /> Baca Semua
-                  </button>
-                )}
-              </div>
+          {/* Notification Bell */}
+          <div className="relative">
+            <button 
+              onClick={handleBellClick}
+              className="relative h-11 w-11 rounded-xl bg-white border-2 border-slate-200 shadow-[3px_3px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-[2px] active:shadow-none transition-all inline-flex items-center justify-center outline-none"
+              aria-label="Lihat notifikasi"
+            >
+              <Bell className="h-5 w-5 text-slate-600 hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
+              {invitationCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center shadow-[2px_2px_0_0_#fff]">
+                  {invitationCount > 9 ? "9+" : invitationCount}
+                </span>
+              )}
+            </button>
 
-              {/* List Notifikasi */}
-              <div className="max-h-[350px] overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="p-8 text-center flex flex-col items-center">
-                    <div className="h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center mb-3 text-2xl">💤</div>
-                    <p className="text-slate-500 font-bold text-sm">Belum ada notifikasi baru</p>
-                  </div>
-                ) : (
-                  notifications.map((item) => (
-                    <DropdownMenuItem 
-                      key={item.id} 
-                      className={`
-                        cursor-pointer px-4 py-3 border-b border-slate-100 last:border-0 flex items-start gap-3
-                        ${!item.read ? 'bg-emerald-50/40' : 'bg-white'} 
-                        hover:bg-slate-50 focus:bg-slate-50 transition-colors
-                      `}
-                    >
-                      <div className={`
-                        mt-1 h-3 w-3 rounded-full shrink-0 border-2
-                        ${!item.read ? 'bg-emerald-400 border-emerald-600' : 'bg-slate-200 border-slate-300'}
-                      `} />
-                      <div className="flex-1 space-y-1">
-                        <p className={`text-sm leading-tight ${!item.read ? 'font-black text-slate-800' : 'font-bold text-slate-600'}`}>
-                          {item.title}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium leading-snug">
-                          {item.message}
-                        </p>
-                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-1">
-                          <Clock className="h-3 w-3" />
-                          {item.time}
-                        </div>
+            {/* Dropdown Menu Notifikasi */}
+            {showInvitations && (
+              <>
+                {/* Dropdown Card */}
+                <div className="fixed left-4 right-4 top-20 z-50 sm:absolute sm:right-0 sm:left-auto sm:top-full sm:mt-2 sm:w-96 sm:rounded-2xl flex flex-col bg-white rounded-2xl border-2 border-slate-200 shadow-[0_4px_20px_rgba(0,0,0,0.15)] max-h-[80vh] sm:max-h-[600px] overflow-hidden sm:shadow-xl animate-in fade-in-0 zoom-in-95 sm:fade-in-0 sm:zoom-in-100 duration-200" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+                
+                {/* Header Dropdown */}
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-100 px-5 py-4 flex items-center justify-between flex-shrink-0">
+                  <p className="font-black text-sm text-emerald-800 tracking-wide flex items-center gap-2">
+                     PESAN MASUK
+                  </p>
+                  
+                  {/* TOMBOL CLOSE DIPERBAIKI */}
+                  <button
+                    onClick={() => setShowInvitations(false)}
+                    className="h-9 w-9 flex items-center justify-center bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border-2 border-slate-200 hover:border-red-200 shadow-sm active:scale-95 shrink-0"
+                    aria-label="Tutup notifikasi"
+                  >
+                    <X className="h-5 w-5" strokeWidth={3} />
+                  </button>
+                </div>
+
+                {/* Content - Scrollable */}
+                <div className="overflow-y-auto flex-1 p-3 space-y-3 bg-slate-50/50">
+                  {(loadingInvites || loadingMessages) ? (
+                    <div className="flex flex-col items-center justify-center py-10">
+                      <div className="animate-spin h-8 w-8 border-4 border-emerald-400 border-t-transparent rounded-full mb-3"></div>
+                      <p className="text-xs text-slate-500 font-bold">Sedang memuat...</p>
+                    </div>
+                  ) : (invitations.length === 0 && messages.length === 0) ? (
+                    <div className="text-center py-10">
+                      <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center mx-auto mb-3 border-2 border-slate-200 shadow-sm">
+                        <Bell className="h-8 w-8 text-slate-300" />
                       </div>
-                    </DropdownMenuItem>
-                  ))
-                )}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                      <p className="text-slate-600 text-sm font-black">Sepi banget...</p>
+                      <p className="text-slate-400 text-xs mt-1 font-medium">Belum ada notifikasi baru untukmu.</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Undangan Section */}
+                      {invitations.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-wider">Undangan Masuk</p>
+                          {invitations.map((inv) => (
+                            <div key={inv.id} className="border-2 border-emerald-100 rounded-2xl p-4 bg-white shadow-sm">
+                              <div className="mb-3">
+                                <p className="font-black text-slate-800 text-sm">{inv.material?.title || "Materi Kajian"}</p>
+                                <p className="text-xs text-slate-500 mt-1 font-medium flex items-center gap-1">
+                                  Diundang oleh <span className="font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{inv.instructor?.name}</span>
+                                </p>
+                              </div>
+                              <div className="flex gap-2">
+                                <button className="flex-1 px-3 py-2 bg-emerald-500 text-white font-bold text-xs rounded-xl hover:bg-emerald-600 active:translate-y-0.5 transition-all border-b-4 border-emerald-700 active:border-b-0 shadow-lg shadow-emerald-200">
+                                  Terima
+                                </button>
+                                <button className="flex-1 px-3 py-2 bg-white text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-50 active:translate-y-0.5 transition-all border-2 border-slate-200 border-b-4 active:border-b-2">
+                                  Tolak
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Pesan Section */}
+                      {session?.user?.role !== "instruktur" && messages.length > 0 && (
+                        <div className="space-y-2 pt-2">
+                          {invitations.length > 0 && <div className="h-px bg-slate-200 my-2 mx-2" />}
+                          <p className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-wider">Pesan Baru</p>
+                          {messages.map((msg) => (
+                            <div key={msg.id} className="border-2 border-emerald-100 rounded-2xl p-4 bg-white shadow-sm hover:border-emerald-300 transition-colors group cursor-pointer" onClick={() => router.push(`/instructors/chat?instructorId=${msg.instructorId}`)}>
+                              <div className="flex justify-between items-start mb-1">
+                                <p className="font-black text-slate-800 text-sm">{msg.instructor?.name}</p>
+                                <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">Chat</span>
+                              </div>
+                              <p className="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed">
+                                {msg.messages?.[0]?.content || "Mengirim pesan..."}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Profile Button */}
           <DropdownMenu>
@@ -193,7 +268,6 @@ export default function DashboardHeader() {
                   </AvatarFallback>
                 </Avatar>
                 
-                {/* --- BAGIAN INI DIPERBARUI: Tampilkan Nama & Email --- */}
                 <div className="hidden sm:flex flex-col items-start justify-center text-left">
                     <span className="text-xs font-black text-slate-700 leading-none group-hover:text-emerald-700 truncate max-w-[100px] mb-0.5">
                       {userName.split(" ")[0]}
@@ -202,7 +276,6 @@ export default function DashboardHeader() {
                       {userEmail}
                     </span>
                 </div>
-                {/* ---------------------------------------------------- */}
 
                 <Settings className="h-4 w-4 text-slate-300 group-hover:text-emerald-400 transition-colors ml-1" />
               </button>
@@ -255,12 +328,15 @@ export default function DashboardHeader() {
         </div>
       </div>
 
-      {/* Mobile Search Bar - Slide down effect */}
+      {/* Mobile Search Bar */}
       <div className="md:hidden px-4 pb-4 pt-0 border-t-2 border-slate-100 bg-white/50 backdrop-blur-sm">
         <div className="mt-4">
             <SearchBar />
         </div>
       </div>
+      
+      {/* Toast Notification (Floating) */}
+      <InvitationNotifications />
     </div>
   );
 };

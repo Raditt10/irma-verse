@@ -5,18 +5,24 @@ import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
+import CartoonNotification from "@/components/ui/CartoonNotification";
 import DatePicker from "@/components/ui/DatePicker";
 import TimePicker from "@/components/ui/TimePicker";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar, MapPin, Clock, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Upload, X, Save, Sparkles, Type } from "lucide-react";
 
 const CreateSchedule = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  
+  // Notification State
+  const [notification, setNotification] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -24,7 +30,7 @@ const CreateSchedule = () => {
     date: "",
     time: "",
     location: "",
-    pemateri: "",
+    penanggungjawab: "",
     thumbnailUrl: "",
   });
 
@@ -36,7 +42,7 @@ const CreateSchedule = () => {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
         <p className="text-slate-500">Memuat...</p>
       </div>
     );
@@ -50,12 +56,106 @@ const CreateSchedule = () => {
     }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!res.ok) {
+          const error = await res.json();
+          setNotification({
+            type: "error",
+            title: "Gagal Mengunggah",
+            message: error.message || "Gagal mengunggah gambar",
+          });
+          return;
+        }
+        
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, thumbnailUrl: data.url }));
+        setNotification({
+          type: "success",
+          title: "Berhasil!",
+          message: "Gambar berhasil diunggah",
+        });
+      } catch (error) {
+        setNotification({
+          type: "error",
+          title: "Gagal Mengunggah",
+          message: "Gagal mengunggah gambar",
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.title || !formData.description || !formData.date || !formData.time || !formData.location || !formData.pemateri) {
-      alert("Mohon lengkapi semua field yang wajib diisi");
+    // Detailed validation
+    if (!formData.title.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Judul jadwal tidak boleh kosong",
+      });
+      return;
+    }
+    if (formData.title.trim().length < 3) {
+      setNotification({
+        type: "warning",
+        title: "Data Tidak Valid",
+        message: "Judul jadwal minimal 3 karakter",
+      });
+      return;
+    }
+    if (!formData.description.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Deskripsi jadwal tidak boleh kosong",
+      });
+      return;
+    }
+    if (!formData.date) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Tanggal jadwal harus dipilih",
+      });
+      return;
+    }
+    if (!formData.time) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Jam jadwal harus dipilih",
+      });
+      return;
+    }
+    if (!formData.location.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Lokasi jadwal tidak boleh kosong",
+      });
+      return;
+    }
+    if (!formData.penanggungjawab.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Penanggung jawab tidak boleh kosong",
+      });
       return;
     }
 
@@ -71,204 +171,238 @@ const CreateSchedule = () => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to create schedule");
+        throw new Error(error.error || "Gagal membuat jadwal");
       }
 
       const data = await response.json();
-      alert("Jadwal berhasil dibuat!");
-      router.push(`/schedule/${data.id}`);
+      setNotification({
+        type: "success",
+        title: "Berhasil!",
+        message: "Jadwal berhasil dibuat. Redirecting...",
+      });
+      setTimeout(() => router.push(`/schedule/${data.id}`), 2000);
     } catch (error: any) {
       console.error("Error creating schedule:", error);
-      alert(error.message || "Terjadi kesalahan saat membuat jadwal");
+      setNotification({
+        type: "error",
+        title: "Gagal Membuat Jadwal",
+        message: error.message || "Terjadi kesalahan saat membuat jadwal",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <Sidebar />
-        <div className="flex-1 px-6 lg:px-8 py-12 lg:ml-0">
-          <div className="max-w-4xl mx-auto">
-            {/* Back Button */}
-            <button
-              onClick={() => router.push("/schedule")}
-              className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 font-medium transition-colors group"
-            >
-              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              Kembali ke Jadwal
-            </button>
-
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-black text-slate-800 mb-2">
-                Buat Jadwal Baru
-              </h1>
-              <p className="text-slate-600 text-lg">
-                Tambahkan event atau kegiatan baru untuk peserta
-              </p>
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 w-full max-w-[100vw] overflow-hidden">
+          <div className="max-w-5xl mx-auto">
+            {/* Header & Back Button */}
+            <div className="flex flex-col gap-4 lg:gap-6 mb-6 lg:mb-8">
+              <button
+                onClick={() => router.back()}
+                className="self-start inline-flex items-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-500 font-bold hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#cbd5e1] active:translate-y-0.5 active:shadow-none transition-all text-sm lg:text-base"
+              >
+                <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3} />
+                Kembali
+              </button>
+              <div>
+                <h1 className="text-2xl lg:text-4xl font-black text-slate-800 tracking-tight mb-2 flex items-center gap-2 lg:gap-3">
+                  Buat Jadwal Event
+                </h1>
+                <p className="text-slate-500 font-medium text-sm lg:text-lg">
+                  Isi detail event dan upload gambar thumbnail.
+                </p>
+              </div>
             </div>
 
-            {/* Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold">Informasi Event</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Title */}
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="text-sm font-semibold text-slate-700">
-                      Judul Event <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      type="text"
-                      value={formData.title}
-                      onChange={handleChange}
-                      placeholder="Contoh: Seminar Akhlak Pemuda"
-                      className="w-full"
-                      required
-                    />
-                  </div>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              {/* --- KOLOM KIRI: FORM UTAMA --- */}
+              <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+                {/* Card Informasi Dasar */}
+                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                  <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
+                    <Type className="h-5 w-5 lg:h-6 lg:w-6 text-teal-500" /> Informasi Dasar
+                  </h2>
 
-                  {/* Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-semibold text-slate-700">
-                      Deskripsi Singkat <span className="text-red-500">*</span>
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      placeholder="Deskripsi singkat tentang event (maks 200 karakter)"
-                      className="w-full min-h-[80px]"
-                      maxLength={200}
-                      required
-                    />
-                    <p className="text-xs text-slate-500">
-                      {formData.description.length}/200 karakter
-                    </p>
-                  </div>
+                  <div className="space-y-4 lg:space-y-6">
+                    <div className="space-y-2">
+                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Judul Event</label>
+                      <input
+                        type="text"
+                        name="title"
+                        required
+                        value={formData.title}
+                        onChange={handleChange}
+                        placeholder="Contoh: Seminar Akhlak Pemuda"
+                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                      />
+                    </div>
 
-                  {/* Full Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fullDescription" className="text-sm font-semibold text-slate-700">
-                      Deskripsi Lengkap
-                    </Label>
-                    <Textarea
-                      id="fullDescription"
-                      name="fullDescription"
-                      value={formData.fullDescription}
-                      onChange={handleChange}
-                      placeholder="Deskripsi lengkap tentang event, materi yang akan dibahas, dll."
-                      className="w-full min-h-[150px]"
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi Singkat</label>
+                      <textarea
+                        name="description"
+                        required
+                        rows={5}
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Jelaskan tentang event ini..."
+                        maxLength={200}
+                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
+                      />
+                      <p className="text-xs text-slate-500 ml-1">{formData.description.length}/200 karakter</p>
+                    </div>
 
-                  {/* Date and Time */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <DatePicker
-                      label="Tanggal Acara"
-                      value={formData.date}
-                      onChange={(date) =>
-                        setFormData({ ...formData, date })
-                      }
-                      placeholder="Pilih tanggal"
-                    />
-
-                    <TimePicker
-                      label="Waktu Acara"
-                      value={formData.time}
-                      onChange={(time) =>
-                        setFormData({ ...formData, time })
-                      }
-                    />
+                    <div className="space-y-2">
+                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi Lengkap</label>
+                      <textarea
+                        name="fullDescription"
+                        rows={5}
+                        value={formData.fullDescription}
+                        onChange={handleChange}
+                        placeholder="Deskripsi lengkap tentang event, materi yang akan dibahas, dll."
+                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
+                      />
+                    </div>
                   </div>
+                </div>
 
-                  {/* Location */}
-                  <div className="space-y-2">
-                    <Label htmlFor="location" className="text-sm font-semibold text-slate-700">
-                      <MapPin className="inline h-4 w-4 mr-1" />
-                      Lokasi <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="location"
-                      name="location"
-                      type="text"
-                      value={formData.location}
-                      onChange={handleChange}
-                      placeholder="Contoh: Aula Utama"
-                      className="w-full"
-                      required
+                {/* Card Waktu & Tempat */}
+                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                  <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
+                    <Calendar className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-500" /> Waktu & Lokasi
+                  </h2>
+                  <div className="space-y-4 lg:space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                      <DatePicker
+                        label="Tanggal Event"
+                        value={formData.date}
+                        onChange={(date) =>
+                          setFormData({ ...formData, date })
+                        }
+                        placeholder="Pilih tanggal"
+                      />
+                      <TimePicker
+                        label="Jam Mulai"
+                        value={formData.time}
+                        onChange={(time) =>
+                          setFormData({ ...formData, time })
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1 flex items-center gap-1">
+                        <MapPin className="h-4 w-4" /> Lokasi
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        required
+                        value={formData.location}
+                        onChange={handleChange}
+                        placeholder="Contoh: Aula Utama"
+                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Penanggung jawab</label>
+                      <input
+                        type="text"
+                        name="penanggungjawab"
+                        required
+                        value={formData.penanggungjawab}
+                        onChange={handleChange}
+                        placeholder="Contoh: Ustadz Ahmad Zaki"
+                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* --- KOLOM KANAN: UPLOAD GAMBAR --- */}
+              <div className="space-y-6 lg:space-y-8">
+                {/* Upload Thumbnail */}
+                <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1] text-center">
+                  <label className="block text-xs lg:text-sm font-bold text-slate-600 mb-3 lg:mb-4">Thumbnail Event</label>
+                  <div className="relative group cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="upload-thumb"
                     />
+                    {formData.thumbnailUrl ? (
+                      <div className="relative w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-slate-200 group-hover:border-teal-400 transition-all">
+                        <img src={formData.thumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setFormData((prev) => ({ ...prev, thumbnailUrl: "" }));
+                          }}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full border-2 border-white shadow-md hover:scale-110 transition-transform"
+                        >
+                          <X className="w-3 h-3 lg:w-4 lg:h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="upload-thumb"
+                        className="flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 transition-all cursor-pointer"
+                      >
+                        {uploading ? (
+                          <Sparkles className="w-6 h-6 lg:w-8 lg:h-8 text-teal-400 animate-spin" />
+                        ) : (
+                          <>
+                            <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-slate-400 mb-2 group-hover:text-teal-500" />
+                            <span className="text-xs lg:text-sm font-bold text-slate-400">Klik untuk Upload</span>
+                          </>
+                        )}
+                      </label>
+                    )}
                   </div>
+                </div>
 
-                  {/* Pemateri */}
-                  <div className="space-y-2">
-                    <Label htmlFor="pemateri" className="text-sm font-semibold text-slate-700">
-                      Pemateri <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="pemateri"
-                      name="pemateri"
-                      type="text"
-                      value={formData.pemateri}
-                      onChange={handleChange}
-                      placeholder="Contoh: Ustadz Ahmad Zaki"
-                      className="w-full"
-                      required
-                    />
-                  </div>
-
-                  {/* Thumbnail URL */}
-                  <div className="space-y-2">
-                    <Label htmlFor="thumbnailUrl" className="text-sm font-semibold text-slate-700">
-                      <ImageIcon className="inline h-4 w-4 mr-1" />
-                      URL Gambar Thumbnail
-                    </Label>
-                    <Input
-                      id="thumbnailUrl"
-                      name="thumbnailUrl"
-                      type="url"
-                      value={formData.thumbnailUrl}
-                      onChange={handleChange}
-                      placeholder="https://example.com/image.jpg"
-                      className="w-full"
-                    />
-                    <p className="text-xs text-slate-500">
-                      Opsional. Jika tidak diisi, akan menggunakan gambar default.
-                    </p>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="flex gap-4 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => router.push("/schedule")}
-                      className="flex-1 py-3 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex-1 py-3 px-4 rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
-                    >
-                      {loading ? "Menyimpan..." : "Buat Jadwal"}
-                    </button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 lg:py-4 rounded-2xl bg-teal-400 text-white font-black text-base lg:text-lg border-2 border-teal-600 border-b-4 lg:border-b-6 hover:bg-teal-500 active:border-b-2 active:translate-y-1 transition-all shadow-lg lg:shadow-xl hover:shadow-teal-200 flex items-center justify-center gap-2 lg:gap-3 disabled:opacity-70 disabled:cursor-not-allowed mb-8"
+                >
+                  {loading ? (
+                    <>
+                      <Sparkles className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" /> Menyimpan...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5 lg:w-6 lg:h-6" /> Buat Jadwal
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
       <ChatbotButton />
+
+      {/* Notification */}
+      {notification && (
+        <CartoonNotification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          duration={notification.type === "success" ? 3000 : 5000}
+          onClose={() => setNotification(null)}
+        />
+      )}
     </div>
   );
 };

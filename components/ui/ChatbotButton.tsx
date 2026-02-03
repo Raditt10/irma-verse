@@ -5,14 +5,10 @@ import { X, Send, Paperclip, Smile, MoreVertical } from "lucide-react";
 const ChatbotButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Font family yang sama dengan Dashboard
-  const fontStyle = { fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" };
-
   return (
     // PARENT CONTAINER: Mengatur posisi tombol di pojok kanan bawah
     <div 
-      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3" 
-      style={fontStyle}
+      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3"
     >
       
       {/* --- SECTION CHAT WINDOW --- */}

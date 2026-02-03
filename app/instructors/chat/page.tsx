@@ -6,6 +6,7 @@ import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import Loading from "@/components/ui/Loading";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useSocket } from "@/lib/socket";
@@ -26,7 +27,6 @@ import {
   MessageCircle,
   UserPlus,
   ArrowLeft,
-  Loader2,
   X,
   Edit2,
   Trash2,
@@ -582,7 +582,7 @@ const ChatPage = () => {
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
+        <Loading text="Memuat chat..." />
       </div>
     );
   }
@@ -590,7 +590,6 @@ const ChatPage = () => {
   return (
     <div
       className="min-h-screen bg-[#FDFBF7]"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader />
       <div className="flex flex-col lg:flex-row">
@@ -789,7 +788,7 @@ const ChatPage = () => {
                     >
                       {messagesLoading ? (
                         <div className="flex items-center justify-center h-full">
-                          <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+                          <Loading />
                         </div>
                       ) : messages.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-center p-6 opacity-60">
@@ -983,7 +982,9 @@ const ChatPage = () => {
                           disabled={uploadingFile}
                         >
                           {uploadingFile ? (
-                            <Loader2 className="h-6 w-6 animate-spin" />
+                            <div className="flex items-center justify-center">
+                              <Loading size="sm" />
+                            </div>
                           ) : (
                             <Paperclip className="h-6 w-6" strokeWidth={2.5} />
                           )}
@@ -1092,8 +1093,8 @@ const ChatPage = () => {
                 >
                   {uploadingFile ? (
                     <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Mengirim...
+                      <Loading size="sm" />
+                      <span className="ml-2">Mengirim...</span>
                     </>
                   ) : (
                     <>
@@ -1187,7 +1188,7 @@ export default function ChatPageWrapper() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
+        <Loading />
       </div>
     }>
       <ChatPage />

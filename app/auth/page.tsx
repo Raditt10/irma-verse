@@ -136,41 +136,38 @@ const Auth = () => {
 
   return (
     <div
-      className="min-h-screen w-full relative flex flex-col justify-center items-center overflow-hidden"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+      className="min-h-screen w-full relative flex flex-col justify-center items-center overflow-hidden bg-white"
     >
      
       <div className="fixed inset-0 z-0 w-screen h-screen pointer-events-none select-none">
-      
-        <svg
-          className="absolute inset-0 w-full h-full"
-          width="100%"
-          height="100%"
-          viewBox="0 0 400 800"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{ minWidth: '100vw', minHeight: '100vh', objectFit: 'cover' }}
-        >
-          <defs>
-            <pattern id="ketupat-auth" patternUnits="userSpaceOnUse" width="60" height="60" patternTransform="rotate(45)">
-              <rect x="0" y="0" width="60" height="60" fill="none" />
-              <rect x="10" y="10" width="40" height="40" rx="8" fill="#d1fae5" fillOpacity="0.18" stroke="#10b981" strokeWidth="2" />
-              <rect x="20" y="20" width="20" height="20" rx="4" fill="#34d399" fillOpacity="0.22" stroke="#059669" strokeWidth="1.5" />
-              <line x1="30" y1="0" x2="30" y2="60" stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" />
-              <line x1="0" y1="30" x2="60" y2="30" stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#ketupat-auth)" />
+        {/* Islamic geometric patterns */}
+        <div className="absolute top-0 right-0 w-96 h-96 opacity-5">
+          <svg viewBox="0 0 400 400" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="200" cy="200" r="150" fill="none" stroke="#059669" strokeWidth="1"/>
+            <circle cx="200" cy="200" r="100" fill="none" stroke="#059669" strokeWidth="1"/>
+            <circle cx="200" cy="200" r="50" fill="none" stroke="#059669" strokeWidth="1"/>
+            <g transform="translate(200,200)">
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+                <line key={i} x1="0" y1="0" x2={`${150 * Math.cos(angle * Math.PI / 180)}`} y2={`${150 * Math.sin(angle * Math.PI / 180)}`} stroke="#059669" strokeWidth="1"/>
+              ))}
+            </g>
+          </svg>
+        </div>
+
+        {/* Stars - Islamic symbol */}
+        <div className="absolute top-10 left-10 text-emerald-200 text-3xl">✦</div>
+        <div className="absolute top-20 right-20 text-emerald-100 text-2xl">✦</div>
+        <div className="absolute bottom-32 left-1/4 text-emerald-150 text-2xl">✦</div>
+        <div className="absolute bottom-20 right-1/3 text-emerald-100 text-3xl">✦</div>
+
+        {/* Crescent moon - Islamic symbol */}
+        <svg className="absolute top-1/4 right-1/4 w-16 h-16 opacity-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 50 20 Q 30 30 30 50 Q 30 70 50 80 Q 45 75 45 50 Q 45 25 50 20" fill="#059669"/>
         </svg>
 
-        <div className="absolute inset-0 w-full h-full bg-linear-to-br from-emerald-100 via-white/90 to-emerald-200/80" />
-        <svg className="absolute inset-0 w-full h-full" width="100%" height="100%" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <circle cx="80" cy="120" r="60" fill="#a7f3d0" fillOpacity="0.18" />
-          <circle cx="320" cy="200" r="40" fill="#6ee7b7" fillOpacity="0.13" />
-          <circle cx="200" cy="600" r="90" fill="#d1fae5" fillOpacity="0.13" />
-          <circle cx="350" cy="700" r="50" fill="#99f6e4" fillOpacity="0.10" />
-        </svg>
+        {/* Decorative circles */}
+        <div className="absolute top-1/3 left-5 w-3 h-3 bg-emerald-300 rounded-full opacity-20"></div>
+        <div className="absolute bottom-1/4 right-10 w-4 h-4 bg-emerald-300 rounded-full opacity-15"></div>
       </div>
       <div className="flex flex-1 items-center justify-center px-2 py-8 relative z-10 w-full min-h-screen">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from 'next-auth/react';
 import { SocketProvider } from '@/lib/socket';
+import InvitationNotifications from '@/components/ui/InvitationNotifications';
 
 import "./globals.css";
 
@@ -29,9 +30,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
       >
         <SessionProvider>
           <SocketProvider>
+            <InvitationNotifications />
             {children}
           </SocketProvider>
         </SessionProvider>

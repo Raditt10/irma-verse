@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
-import { UserCircle2, UserPlus, Check, X, Search, Sparkles } from "lucide-react"; // Tambah icon Sparkles
+import Loading from "@/components/ui/Loading";
+import { UserCircle2, UserPlus, Check, X, Search } from "lucide-react";
 
 interface Member {
   id: string;
@@ -26,7 +27,6 @@ const Members = () => {
   const router = useRouter();
 
   useEffect(() => {
-    loadUser();
     fetchMembers();
   }, []);
 
@@ -38,15 +38,6 @@ const Members = () => {
       return () => clearTimeout(timer);
     }
   }, [toast]);
-
-  const loadUser = async () => {
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS",
-    });
-  };
 
   const fetchMembers = async () => {
     try {
@@ -81,17 +72,9 @@ const Members = () => {
     });
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <p className="text-slate-500">Memuat...</p>
-      </div>
-    );
-  }
-
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
     >
       <DashboardHeader />
       <div className="flex">
@@ -131,7 +114,7 @@ const Members = () => {
 
             {loading ? (
               <div className="text-center py-12">
-                <p className="text-slate-500">Memuat anggota...</p>
+                <Loading text="Memuat data anggota..." />
               </div>
             ) : (
               <>

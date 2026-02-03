@@ -229,7 +229,7 @@ const CompetitionDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
         <DashboardHeader />
         <div className="flex">
           <Sidebar />
@@ -247,7 +247,7 @@ const CompetitionDetail = () => {
 
   if (!competition) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
         <DashboardHeader />
         <div className="flex">
           <Sidebar />
@@ -280,7 +280,7 @@ const CompetitionDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />

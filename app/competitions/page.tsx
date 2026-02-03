@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/ui/DashboardHeader";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/ChatbotButton";
-import { ArrowRight, Trophy, Calendar, Sparkles } from "lucide-react";
+import Loading from "@/components/ui/Loading";
+import { ArrowRight, Trophy, Calendar } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface CompetitionItem {
@@ -68,10 +69,7 @@ const Competitions = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Sparkles className="h-10 w-10 text-teal-400 animate-spin" />
-          <p className="text-slate-500 font-bold animate-pulse">Memuat data lomba...</p>
-        </div>
+        <Loading text="Memuat data lomba..." />
       </div>
     );
   }
@@ -79,7 +77,6 @@ const Competitions = () => {
   return (
     <div
       className="min-h-screen bg-[#FDFBF7]"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader/>
       <div className="flex">
