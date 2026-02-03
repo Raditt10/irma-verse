@@ -321,7 +321,7 @@ export default function DashboardHeader() {
                 className="cursor-pointer font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50 rounded-lg px-3 py-2.5 transition-colors"
               >
                 <LogOut className="h-4 w-4 mr-2" strokeWidth={2.5} />
-                <span>Keluar Aplikasi</span>
+                <span>Keluar</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
