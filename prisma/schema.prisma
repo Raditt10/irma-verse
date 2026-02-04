@@ -56,6 +56,7 @@ model User {
   invitesAsInstructor     MaterialInvite[]   @relation("MaterialInviteInstructor")
   invitesAsUser           MaterialInvite[]   @relation("MaterialInviteUser")
   courseEnrollments       CourseEnrollment[]
+  competitions            Competition[]      @relation("competitionInstructor")
 
   @@map("users")
 }
@@ -170,6 +171,13 @@ enum CourseCategory {
   Susulan
 }
 
+enum CompetitionCategory {
+  Tahfidz
+  Seni
+  Bahasa
+  Lainnya
+}
+
 enum CourseRole {
   user
   instructor
@@ -262,4 +270,23 @@ model Attendance {
   @@unique([userId, materialId])
   @@index([userId])
   @@index([materialId])
+}
+
+model Competition {
+  id           String                  @id @default(cuid())
+  title        String
+  description  String?                 @db.Text
+  date         DateTime
+  prize        String
+  category     CompetitionCategory
+  thumbnailUrl String?
+  instructorId String
+  instructor   User                    @relation("competitionInstructor", fields: [instructorId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@index([instructorId])
+  @@index([date])
+  @@map("competitions")
 }

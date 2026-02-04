@@ -123,7 +123,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`hidden lg:block flex-shrink-0 sticky top-20 h-[calc(100vh-5rem)] px-6 py-8 overflow-y-auto transition-all duration-300 ${isExpanded ? 'w-64' : 'w-20'}`}>
+      <div className={`hidden lg:block shrink-0 sticky top-20 h-[calc(100vh-5rem)] px-6 py-8 overflow-y-auto transition-all duration-300 ${isExpanded ? 'w-64' : 'w-20'}`}>
         <div className="space-y-2">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -146,12 +146,12 @@ const Sidebar = () => {
                 onClick={() => router.push(item.path)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 text-left ${
                   isActive
-                    ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
-                    : "text-slate-700 hover:bg-gradient-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 hover:shadow-md"
+                    ? "bg-linear-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
+                    : "text-slate-700 hover:bg-linear-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 hover:shadow-md"
                 } ${!isExpanded && 'justify-center'}`}
                 title={!isExpanded ? item.label : ''}
               >
-                <IconComponent className="h-5 w-5 flex-shrink-0" />
+                <IconComponent className="h-5 w-5 shrink-0" />
                 {isExpanded && <span className="text-sm font-medium">{item.label}</span>}
               </button>
             );
@@ -174,7 +174,7 @@ const Sidebar = () => {
               <div className="flex items-center gap-2">
                 <img src="/logo.png" alt="IRMA Verse" className="h-8 w-8 object-contain" />
                 <div>
-                  <h2 className="text-xs font-black leading-tight text-white uppercase tracking-wide bg-gradient-to-r from-teal-600 to-emerald-600 px-2 py-0.5 rounded-lg">
+                  <h2 className="text-xs font-black leading-tight text-white uppercase tracking-wide bg-linear-to-r from-teal-600 to-emerald-600 px-2 py-0.5 rounded-lg">
                     IRMA VERSE
                   </h2>
                   <p className="text-[10px] text-slate-600 mt-0.5">Platform Rohis Digital Irma 13</p>
@@ -203,11 +203,11 @@ const Sidebar = () => {
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-left ${
                       isActive 
-                        ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
-                        : "text-slate-700 dark:text-slate-700 hover:bg-gradient-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 dark:hover:text-emerald-700 hover:shadow-md"
+                        ? "bg-linear-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
+                        : "text-slate-700 dark:text-slate-700 hover:bg-linear-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 dark:hover:text-emerald-700 hover:shadow-md"
                     }`}
                   >
-                    <IconComponent className="h-5 w-5 flex-shrink-0" />
+                    <IconComponent className="h-5 w-5 shrink-0" />
                     <span className="text-sm font-semibold">{item.label}</span>
                   </button>
                 );

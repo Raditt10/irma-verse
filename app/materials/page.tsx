@@ -13,7 +13,7 @@ import MaterialInstructorActions from "@/components/ui/MaterialInstructorActions
 import MaterialUserActions from "@/components/ui/MaterialUserAbsen";
 import Loading from "@/components/ui/Loading";
 import SuccessDataFound from "@/components/ui/SuccessDataFound";
-import { Calendar, Clock, BookOpen, Plus } from "lucide-react";
+import { Calendar, Clock, BookOpen, Plus, Sparkles } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
 import DeleteButton from "@/components/ui/DeleteButton";
 
@@ -204,9 +204,9 @@ const Materials = () => {
 
             {/* Latest Material Card untuk Instruktur */}
             {isPrivileged && getTodayMaterial() && (
-              <div className="mb-10 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-[2.5rem] border-2 border-teal-200 p-6 shadow-[0_4px_0_0_#cbd5e1]">
+              <div className="mb-10 bg-linear-to-br from-teal-50 to-cyan-50 rounded-[2.5rem] border-2 border-teal-200 p-6 shadow-[0_4px_0_0_#cbd5e1]">
                 <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="h-5 w-5 text-teal-500" />
+                  <Sparkles className="h-5 w-5 text-teal-500" strokeWidth={2} />
                   <h2 className="text-lg font-black text-slate-800">Jadwal Kajianmu Hari Ini</h2>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -231,7 +231,7 @@ const Materials = () => {
                   <div className="flex gap-3">
                     <button
                       onClick={() => router.push(`/materials/${getTodayMaterial()?.id}/edit`)}
-                      className="px-6 py-2 rounded-xl bg-teal-400 text-white font-bold border-2 border-teal-600 border-b-3 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all"
+                      className="px-6 py-2 rounded-xl bg-teal-400 text-white font-bold border-2 border-teal-600 border-b-3 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all"
                     >
                       Edit
                     </button>
@@ -284,8 +284,7 @@ const Materials = () => {
               <>
                 {searchQuery && (
                   <SuccessDataFound 
-                    message={`Hore! Ditemukan ${filteredMaterials.length} kajian`}
-                    subMessage={`Ditemukan ${filteredMaterials.length} kajian sesuai pencarian`}
+                    message={`Ditemukan ${filteredMaterials.length} kajian sesuai pencarian`}
                     icon="sparkles"
                   />
                 )}
@@ -302,7 +301,7 @@ const Materials = () => {
                         alt={material.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
 
                       {/* Badge: Baru */}
                       {!material.isJoined && (

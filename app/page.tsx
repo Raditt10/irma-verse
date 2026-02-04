@@ -283,7 +283,7 @@ export default function Home() {
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="relative overflow-hidden px-5 sm:px-7 py-2 text-sm font-bold rounded-2xl border-b-[4px] border-emerald-600 bg-white text-emerald-700 shadow-xl group transition-all duration-200 active:border-b-0 active:translate-y-1 hover:brightness-110"
+                  className="relative overflow-hidden px-5 sm:px-7 py-2 text-sm font-bold rounded-2xl border-b-4 border-emerald-600 bg-white text-emerald-700 shadow-xl group transition-all duration-300 active:translate-y-1 hover:scale-105 disabled:opacity-50"
                 >
                   <span className="flex items-center gap-2 z-10 relative">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-500 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -349,13 +349,13 @@ export default function Home() {
       <section className="py-20 relative bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-2 sm:mb-4 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.1)]">Fitur Tersedia</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-2 sm:mb-4 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.3)] relative z-10">Fitur Tersedia</h2>
             <p className="text-lg text-slate-600 font-medium">Berbagai fitur yang memudahkan aktivitas IRMA Anda</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-10 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <div key={index} className="flex flex-col items-center gap-3 group cursor-pointer">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-300">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[8px_8px_0px_0px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-all duration-300">
                   <feature.icon className="h-7 w-7 sm:h-9 sm:w-9 text-slate-700 group-hover:text-emerald-600 transition-colors duration-300 stroke-[2.5px]" />
                 </div>
                 <p className="text-xs sm:text-sm font-bold text-gray-700 text-center leading-tight group-hover:text-emerald-600">

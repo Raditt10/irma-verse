@@ -8,9 +8,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        "h-10 lg:h-11 w-full rounded-3xl border-2 lg:border-[3px] border-slate-300 bg-gradient-to-br from-slate-50 to-white px-4 py-3 lg:px-6 lg:py-3.5 text-sm lg:text-base font-medium text-slate-700 placeholder:text-slate-400 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_6px_0_0_#cbd5e1] transition-all outline-none hover:border-slate-400 hover:shadow-[0_6px_0_0_#cbd5e1] lg:hover:shadow-[0_8px_0_0_#cbd5e1] focus-visible:border-teal-400 focus-visible:from-white focus-visible:to-cyan-50 focus-visible:shadow-[0_6px_0_0_#34d399] lg:focus-visible:shadow-[0_8px_0_0_#34d399] active:shadow-[0_2px_0_0_#cbd5e1] lg:active:shadow-[0_2px_0_0_#cbd5e1] disabled:cursor-not-allowed disabled:opacity-50 file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium",
         className
       )}
       {...props}

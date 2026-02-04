@@ -172,7 +172,7 @@ const Absensi = () => {
 
     return (
         <div
-            className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
+            className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100"
         >
             <DashboardHeader />
             <div className="flex">
@@ -463,7 +463,7 @@ const Absensi = () => {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold shadow-lg hover:from-emerald-600 hover:to-cyan-600 transition-all disabled:opacity-60"
+                                        className="px-5 py-3 rounded-xl bg-linear-to-r from-emerald-500 to-cyan-500 text-white font-semibold shadow-lg hover:from-emerald-600 hover:to-cyan-600 transition-all disabled:opacity-60"
                                     >
                                         {isSubmitting ? "Mengirim..." : "Kirim sekarang"}
                                     </button>

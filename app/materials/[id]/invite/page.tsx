@@ -248,14 +248,14 @@ export default function InvitePage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => router.back()}
-                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-300 transition-all active:translate-y-[2px]"
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-300 transition-all active:translate-y-0.5"
                 >
                   Batal
                 </button>
                 <button
                   onClick={sendInvite}
                   disabled={selected.length === 0 || loading}
-                  className="flex-1 px-6 py-3 bg-emerald-400 text-white font-black rounded-2xl border-2 border-emerald-600 border-b-4 shadow-[0_4px_0_0_#059669] hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-emerald-400 text-white font-black rounded-2xl border-2 border-emerald-600 border-b-4 shadow-[0_4px_0_0_#059669] hover:bg-emerald-500 active:border-b-2 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Mengirim..." : "Kirim Invite"}
                 </button>

@@ -7,7 +7,7 @@ export default function Loading({ size = "lg", text = "Memuat..." }) {
     lg: { icon: 40, },
   };
 
-  const sizes = sizeMap[size];
+  const sizes = sizeMap[size as keyof typeof sizeMap];
 
   return (
     <div className="flex flex-col items-center justify-center py-8 px-4">

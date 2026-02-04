@@ -188,7 +188,7 @@ const Schedule = () => {
                 {filteredSchedules.map((schedule) => (
                   <div
                     key={schedule.id}
-                    className="bg-white rounded-[2rem] border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_6px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2"
+                    className="bg-white rounded-4xl border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_6px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2"
                   >
                     <div className="p-6">
                       <div className="flex items-start gap-5 mb-5">
@@ -258,7 +258,7 @@ const Schedule = () => {
                       {/* Button */}
                       <button 
                         onClick={() => router.push(`/schedule/${schedule.id}`)}
-                        className="w-full py-3.5 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn"
+                        className="w-full py-3.5 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 group/btn"
                       >
                         <span>Lihat Detail Event</span>
                         <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />

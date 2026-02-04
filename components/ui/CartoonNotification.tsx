@@ -82,7 +82,7 @@ const CartoonNotification = ({
         <div className={`absolute top-0 left-0 right-0 h-1 ${style.accentColor}`}></div>
 
         <div className="flex gap-3">
-          <div className={`flex-shrink-0 ${style.iconColor}`}>
+          <div className={`shrink-0 ${style.iconColor}`}>
             <Icon size={24} strokeWidth={2.5} />
           </div>
           <div className="flex-1">
@@ -94,7 +94,7 @@ const CartoonNotification = ({
               setIsVisible(false);
               onClose?.();
             }}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+            className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
           >
             <XCircle size={18} />
           </button>

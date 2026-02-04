@@ -7,6 +7,8 @@ import BackButton from "@/components/ui/BackButton";
 import ChatbotButton from "@/components/ui/Chatbot";
 import DatePicker from "@/components/ui/DatePicker";
 import TimePicker from "@/components/ui/TimePicker";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import SearchInput from "@/components/ui/SearchInput";
 import CartoonNotification from "@/components/ui/CartoonNotification";
@@ -296,27 +298,25 @@ const CreateMaterial = () => {
                   <div className="space-y-4 lg:space-y-6">
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Judul Kajian</label>
-                      <input
+                      <Input
                         type="text"
                         name="title"
                         required
                         value={formData.title}
                         onChange={handleInputChange}
                         placeholder="Contoh: Tadabbur Alam & Quran"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi & Materi</label>
-                      <textarea
+                      <Textarea
                         name="description"
                         required
                         rows={5}
                         value={formData.description}
                         onChange={handleInputChange}
                         placeholder="Jelaskan apa yang akan dipelajari..."
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
 

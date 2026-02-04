@@ -146,7 +146,7 @@ const AttendanceViewer = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -174,7 +174,7 @@ const AttendanceViewer = () => {
 
               <button
                 onClick={exportToCSV}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-400 text-white font-bold border-2 border-emerald-600 border-b-4 hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-400 text-white font-bold border-2 border-emerald-600 border-b-4 hover:bg-emerald-500 active:border-b-2 active:translate-y-0.5 transition-all"
               >
                 <Download className="h-4 w-4" />
                 Export CSV

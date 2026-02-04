@@ -204,7 +204,7 @@ export default function InstructorAcademy() {
                   {upcomingClasses.map((kls) => (
                     <div
                       key={kls.id}
-                      className="p-5 rounded-xl bg-gradient-to-r from-slate-50 to-white border-2 border-gray-100 hover:border-emerald-300 hover:shadow-md transition-all"
+                      className="p-5 rounded-xl bg-linear-to-r from-slate-50 to-white border-2 border-gray-100 hover:border-emerald-300 hover:shadow-md transition-all"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-bold text-gray-900 text-lg">{kls.title}</h3>
@@ -247,7 +247,7 @@ export default function InstructorAcademy() {
                       key={activity.id}
                       className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
                     >
-                      <div className="p-2 rounded-lg bg-blue-100 flex-shrink-0 mt-1">
+                      <div className="p-2 rounded-lg bg-blue-100 shrink-0 mt-1">
                         <FileText className="h-4 w-4 text-blue-600" />
                       </div>
                       <div className="flex-1">

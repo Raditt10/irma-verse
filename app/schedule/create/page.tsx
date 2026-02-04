@@ -8,6 +8,8 @@ import ChatbotButton from "@/components/ui/Chatbot";
 import CartoonNotification from "@/components/ui/CartoonNotification";
 import DatePicker from "@/components/ui/DatePicker";
 import TimePicker from "@/components/ui/TimePicker";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar, MapPin, Clock, ArrowLeft, Upload, X, Save, Sparkles, Type } from "lucide-react";
 
 const CreateSchedule = () => {
@@ -231,20 +233,19 @@ const CreateSchedule = () => {
                   <div className="space-y-4 lg:space-y-6">
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Judul Event</label>
-                      <input
+                      <Input
                         type="text"
                         name="title"
                         required
                         value={formData.title}
                         onChange={handleChange}
                         placeholder="Contoh: Seminar Akhlak Pemuda"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi Singkat</label>
-                      <textarea
+                      <Textarea
                         name="description"
                         required
                         rows={5}
@@ -252,20 +253,18 @@ const CreateSchedule = () => {
                         onChange={handleChange}
                         placeholder="Jelaskan tentang event ini..."
                         maxLength={200}
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
                       />
                       <p className="text-xs text-slate-500 ml-1">{formData.description.length}/200 karakter</p>
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi Lengkap</label>
-                      <textarea
+                      <Textarea
                         name="fullDescription"
                         rows={5}
                         value={formData.fullDescription}
                         onChange={handleChange}
                         placeholder="Deskripsi lengkap tentang event, materi yang akan dibahas, dll."
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -296,30 +295,28 @@ const CreateSchedule = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1 flex items-center gap-1">
+                      <label className="flex text-xs lg:text-sm font-bold text-slate-600 ml-1 items-center gap-1">
                         <MapPin className="h-4 w-4" /> Lokasi
                       </label>
-                      <input
+                      <Input
                         type="text"
                         name="location"
                         required
                         value={formData.location}
                         onChange={handleChange}
                         placeholder="Contoh: Aula Utama"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Penanggung jawab</label>
-                      <input
+                      <Input
                         type="text"
                         name="penanggungjawab"
                         required
                         value={formData.penanggungjawab}
                         onChange={handleChange}
                         placeholder="Contoh: Ustadz Ahmad Zaki"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
                   </div>

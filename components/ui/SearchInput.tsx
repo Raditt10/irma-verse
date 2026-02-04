@@ -16,14 +16,20 @@ const SearchInput: React.FC<SearchInputProps> = ({
   className = "w-full lg:w-80",
 }) => {
   return (
-    <div className={`relative flex items-center ${className}`}>
-      <Search className="absolute left-4 h-5 w-5 text-slate-400 pointer-events-none" />
+    <div className={`relative flex items-center group ${className}`}>
+      {/* Icon: Geser ke left-5, tebal stroke 2.5, berubah hijau saat fokus */}
+      <Search 
+        className="absolute left-5 h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none" 
+        strokeWidth={2.5}
+      />
+      
+      {/* Input: Rounded-2xl, Background Slate-50, Font Bold, Shadow Pop */}
       <input
         type="text"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full pl-12 pr-5 py-3 rounded-xl border-2 border-slate-200 bg-white focus:outline-none focus:border-teal-400 focus:bg-white transition-all font-medium placeholder:text-slate-400"
+        className="w-full pl-14 pr-5 py-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-[3px_3px_0_0_#34d399] transition-all font-bold text-sm"
       />
     </div>
   );

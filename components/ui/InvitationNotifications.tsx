@@ -113,12 +113,12 @@ export default function InvitationNotifications() {
   if (loading || invitations.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 space-y-4 max-w-[380px] z-[100]">
+    <div className="fixed bottom-6 right-6 space-y-4 max-w-[380px] z-100">
       {invitations.map((invitation) => (
         <div
           key={invitation.token}
           // UBAH DISINI: Border & Shadow jadi Hijau Gelap (Emerald-900/950)
-          className="group bg-white rounded-[24px] border-[3px] border-emerald-900 shadow-[8px_8px_0px_0px_#064e3b] p-5 animate-bounce-in overflow-hidden relative"
+          className="group bg-white rounded-3xl border-[3px] border-emerald-900 shadow-[8px_8px_0px_0px_#064e3b] p-5 animate-bounce-in overflow-hidden relative"
         >
           {/* Decorative Sparkle (Hijau Muda) */}
           <Sparkles className="absolute -top-1 -right-1 h-12 w-12 text-emerald-100 opacity-50 rotate-12" />
@@ -127,7 +127,7 @@ export default function InvitationNotifications() {
             {/* Header Area */}
             <div className="flex items-center gap-3 mb-4">
               {/* Icon Lonceng (Hijau) */}
-              <div className="h-12 w-12 rounded-2xl bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center rotate-[-6deg] group-hover:rotate-0 transition-transform duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center -rotate-6 group-hover:rotate-0 transition-transform duration-300">
                 <Bell className="h-6 w-6 text-emerald-600 animate-ring" />
               </div>
               <div>
@@ -164,7 +164,7 @@ export default function InvitationNotifications() {
               <button
                 onClick={() => handleResponse(invitation.token, "accepted")}
                 disabled={responding === invitation.token}
-                className="relative flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-emerald-500 text-white font-black text-sm border-b-[6px] border-emerald-800 active:border-b-0 active:translate-y-[4px] hover:bg-emerald-400 transition-all disabled:opacity-50 group/btn"
+                className="relative flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-emerald-500 text-white font-black text-sm border-b-[6px] border-emerald-800 active:border-b-0 active:translate-y-1 hover:bg-emerald-400 transition-all disabled:opacity-50 group/btn"
               >
                 <Check className="h-5 w-5 group-hover/btn:scale-125 transition-transform" />
                 Terima
@@ -174,7 +174,7 @@ export default function InvitationNotifications() {
               <button
                 onClick={() => handleResponse(invitation.token, "rejected")}
                 disabled={responding === invitation.token}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white text-slate-400 font-black text-sm border-2 border-slate-200 border-b-[6px] active:border-b-2 active:translate-y-[2px] hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white text-slate-400 font-black text-sm border-2 border-slate-200 border-b-[6px] active:border-b-2 active:translate-y-0.5 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all disabled:opacity-50"
               >
                 <X className="h-5 w-5" />
                 Nanti

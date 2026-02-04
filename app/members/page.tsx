@@ -5,7 +5,8 @@ import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/Chatbot";
 import Loading from "@/components/ui/Loading";
-import { UserCircle2, UserPlus, Check, X, Search } from "lucide-react";
+import SearchInput from "@/components/ui/SearchInput";
+import { UserCircle2, UserPlus, Check, X } from "lucide-react";
 
 interface Member {
   id: string;
@@ -86,18 +87,12 @@ const Members = () => {
               <p className="text-slate-600 text-lg mb-6">Semua anggota IRMA aktif</p>
               
               {/* --- SEARCH BAR --- */}
-              <div className="relative w-full max-w-md group mb-6">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-slate-400 group-focus-within:text-teal-500 transition-colors" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Cari nama anggota..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white rounded-xl border border-slate-200 focus:ring-4 focus:ring-teal-100 focus:border-teal-500 transition-all shadow-sm hover:shadow-md outline-none text-slate-700 placeholder:text-slate-400"
-                />
-              </div>
+              <SearchInput
+                placeholder="Cari nama anggota..."
+                value={search}
+                onChange={setSearch}
+                className="w-full max-w-md mb-6"
+              />
 
               {/* --- FITUR: MUNGKIN INI YANG KAMU MAKSUD --- */}
               {search && filteredMembers.length > 0 && (
