@@ -22,6 +22,8 @@ import {
   Lightbulb,
   Users,
   Play,
+  BookMarked,
+  HelpCircle,
 } from "lucide-react";
 import Sidebar from "@/components/ui/Sidebar";
 import DashboardHeader from "@/components/ui/Header";
@@ -256,9 +258,9 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between mb-5 px-2">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white border-2 border-slate-200 rounded-xl shadow-[0_3px_0_0_#e2e8f0]">
-                      <BookOpen className="w-5 h-5 text-slate-800" />
+                      <BookMarked className="w-5 h-5 text-slate-800" />
                     </div>
-                    <h2 className="text-xl font-black text-slate-800">Materi Pembelajaran</h2>
+                    <h2 className="text-xl font-black text-slate-800">Rekapan Materi Kajian Terbaru</h2>
                   </div>
                   <Link href="/materials" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                     Lihat Semua <ArrowRight className="w-4 h-4" />
@@ -300,9 +302,9 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between mb-5 px-2">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white border-2 border-slate-200 rounded-xl shadow-[0_3px_0_0_#e2e8f0]">
-                      <Trophy className="w-5 h-5 text-slate-800" />
+                      <HelpCircle className="w-5 h-5 text-slate-800" />
                     </div>
-                    <h2 className="text-xl font-black text-slate-800">Kuis Mendatang</h2>
+                    <h2 className="text-xl font-black text-slate-800">Kuis Yang Belum Dikerjakan</h2>
                   </div>
                   <Link href="/quiz" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                     Lihat Semua <ArrowRight className="w-4 h-4" />

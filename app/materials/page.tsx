@@ -180,7 +180,7 @@ const Materials = () => {
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-2">
-                  {isPrivileged ? "Kelola Kajian" : "Kajian Mingguanku"}
+                  {isPrivileged ? "Kelola Kajian" : "Jadwal Kajianku"}
                 </h1>
                 <p className="text-slate-500 text-lg font-medium">
                   {isPrivileged 

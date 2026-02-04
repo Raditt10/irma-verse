@@ -153,6 +153,11 @@ const Sidebar = () => {
       id: "kajian",
       submenu: !isInstruktur ? [
         {
+          icon: Calendar,
+          label: "Jadwal Kajian",
+          path: "/materials"
+        },
+        {
           icon: BookMarked,
           label: "Rekapan Materi",
           path: "/materials/rekapan"
