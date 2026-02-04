@@ -17,6 +17,11 @@ import {
   Newspaper,
   ArrowRight,
   Zap,
+  Clock,
+  CheckCircle,
+  Lightbulb,
+  Users,
+  Play,
 } from "lucide-react";
 import Sidebar from "@/components/ui/Sidebar";
 import DashboardHeader from "@/components/ui/Header";
@@ -120,6 +125,24 @@ const Dashboard = () => {
     }
   ];
 
+  const recentMaterials = [
+    { id: 1, title: "Tauhid - Konsep Ketauhidan", instructor: "Ust. Ahmad", progress: 65, duration: "45 menit" },
+    { id: 2, title: "Fiqih Ibadah - Tata Cara Shalat", instructor: "Ust. Hani", progress: 40, duration: "60 menit" },
+    { id: 3, title: "Tajweed - Hukum Nun Sukun dan Tanwin", instructor: "Ust. Fatima", progress: 85, duration: "50 menit" },
+  ];
+
+  const upcomingQuizzes = [
+    { id: 1, title: "Kuis Tauhid Bab 1", dueDate: "5 Feb 2026", difficulty: "Mudah", questions: 10 },
+    { id: 2, title: "Kuis Fiqih Ibadah", dueDate: "7 Feb 2026", difficulty: "Sedang", questions: 15 },
+    { id: 3, title: "Kuis Tajweed Praktik", dueDate: "10 Feb 2026", difficulty: "Sulit", questions: 20 },
+  ];
+
+  const programs = [
+    { id: 1, title: "Program Basic Islam", progress: 60, members: 156, icon: BookOpen },
+    { id: 2, title: "Program Penghafal Quran", progress: 35, members: 89, icon: Trophy },
+    { id: 3, title: "Program Pemimpin Muda", progress: 50, members: 204, icon: Users },
+  ];
+
   if (status === "loading") return null;
   if (session?.user?.role !== "user") return null;
 
@@ -197,52 +220,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* FITUR PINTAR */}
-              <div className="bg-white p-6 rounded-[2.5rem] border-2 border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-emerald-400 to-teal-400" />
-                
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-slate-50 border-2 border-slate-200 rounded-2xl">
-                    <Sparkles className="w-6 h-6 text-slate-800" strokeWidth={2.5} />
-                  </div>
-                  <span className="text-xl font-black text-slate-800">Fitur Pintar</span>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                  {quickActions.map((action, idx) => {
-                    const Icon = action.icon;
-                    return (
-                      <Link 
-                        key={idx} 
-                        href={action.link} 
-                        className="
-                          group flex flex-col items-center justify-center p-4 
-                          bg-white rounded-[2rem] border-2 border-slate-100 
-                          transition-all duration-300 ease-out
-                          hover:bg-emerald-50 
-                          hover:border-emerald-400 
-                          hover:shadow-[0_6px_0_0_#34d399] 
-                          hover:-translate-y-1.5
-                          active:translate-y-0 active:shadow-none
-                        "
-                      >
-                        <div className="
-                          w-14 h-14 rounded-2xl bg-slate-50 border-2 border-slate-100 
-                          flex items-center justify-center mb-3 
-                          transition-all duration-300
-                          group-hover:bg-white group-hover:border-emerald-200 group-hover:scale-110 group-hover:rotate-6
-                        ">
-                          <Icon className="w-7 h-7 text-slate-700 group-hover:text-emerald-500 transition-colors" strokeWidth={2.5} />
-                        </div>
-                        <span className="text-sm font-bold text-slate-600 group-hover:text-emerald-700 text-center leading-tight">
-                          {action.title}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-
               {/* News Section */}
               <section>
                 <div className="flex items-center gap-3 mb-5 px-2">
@@ -269,6 +246,95 @@ const Dashboard = () => {
                           <Calendar className="w-3.5 h-3.5" /> {news.date}
                         </span>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Materi Terbaru Section */}
+              <section>
+                <div className="flex items-center justify-between mb-5 px-2">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white border-2 border-slate-200 rounded-xl shadow-[0_3px_0_0_#e2e8f0]">
+                      <BookOpen className="w-5 h-5 text-slate-800" />
+                    </div>
+                    <h2 className="text-xl font-black text-slate-800">Materi Pembelajaran</h2>
+                  </div>
+                  <Link href="/materials" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                    Lihat Semua <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+                
+                <div className="space-y-3">
+                  {recentMaterials.map((material) => (
+                    <div key={material.id} className="bg-white p-4 rounded-2xl border-2 border-slate-100 hover:border-emerald-400 hover:shadow-[0_4px_0_0_#10b981] transition-all group cursor-pointer">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-black text-slate-800 group-hover:text-emerald-600 transition-colors">{material.title}</h3>
+                          <p className="text-xs text-slate-500 font-bold mt-1">{material.instructor}</p>
+                        </div>
+                        <button className="p-2 bg-emerald-50 border border-emerald-200 rounded-xl group-hover:bg-emerald-100 transition-colors">
+                          <Play className="w-4 h-4 text-emerald-600 fill-emerald-600" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="w-full bg-slate-100 rounded-full h-2 mr-3">
+                          <div 
+                            className="bg-gradient-to-r from-emerald-400 to-teal-400 h-2 rounded-full transition-all" 
+                            style={{ width: `${material.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-black text-slate-600 whitespace-nowrap">{material.progress}%</span>
+                      </div>
+                      <p className="text-xs text-slate-400 font-bold flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {material.duration}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Upcoming Quizzes Section */}
+              <section>
+                <div className="flex items-center justify-between mb-5 px-2">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white border-2 border-slate-200 rounded-xl shadow-[0_3px_0_0_#e2e8f0]">
+                      <Trophy className="w-5 h-5 text-slate-800" />
+                    </div>
+                    <h2 className="text-xl font-black text-slate-800">Kuis Mendatang</h2>
+                  </div>
+                  <Link href="/quiz" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                    Lihat Semua <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {upcomingQuizzes.map((quiz) => (
+                    <div key={quiz.id} className="bg-white p-4 rounded-[2rem] border-2 border-slate-100 hover:border-amber-300 hover:shadow-[0_6px_0_0_#fcd34d] hover:-translate-y-1 transition-all group">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="font-bold text-slate-800 text-sm group-hover:text-amber-600 transition-colors">{quiz.title}</h3>
+                        <span className={`text-xs font-black px-2 py-1 rounded-lg border ${
+                          quiz.difficulty === "Mudah" ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
+                          quiz.difficulty === "Sedang" ? "bg-amber-50 text-amber-600 border-amber-200" :
+                          "bg-rose-50 text-rose-600 border-rose-200"
+                        }`}>
+                          {quiz.difficulty}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-xs text-slate-500 font-bold flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" /> Deadline: {quiz.dueDate}
+                        </p>
+                        <p className="text-xs text-slate-500 font-bold flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5" /> {quiz.questions} soal
+                        </p>
+                      </div>
+                      
+                      <button className="w-full mt-4 py-2 bg-slate-900 text-white text-xs font-black rounded-xl hover:bg-slate-800 hover:scale-105 transition-all">
+                        Mulai Kuis
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -339,6 +405,37 @@ const Dashboard = () => {
                   <button className="w-full py-3 bg-slate-900 text-white text-sm font-black rounded-2xl shadow-lg hover:bg-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all">
                     Jadwalkan Konsultasi
                   </button>
+                </div>
+
+                {/* Program Aktif */}
+                <div className="bg-white p-5 rounded-[2rem] border-2 border-slate-100 shadow-sm">
+                  <h4 className="font-black text-slate-800 mb-4 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-slate-800" />
+                    Program Aktif
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    {programs.map((program) => {
+                      const IconComponent = program.icon;
+                      return (
+                        <div key={program.id} className="border-l-4 border-emerald-400 pl-4 py-2 hover:border-emerald-600 transition-colors cursor-pointer group">
+                          <div className="flex items-center justify-between mb-2">
+                            <h5 className="font-bold text-sm text-slate-800 group-hover:text-emerald-600 transition-colors">{program.title}</h5>
+                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{program.progress}%</span>
+                          </div>
+                          
+                          <div className="w-full bg-slate-100 rounded-full h-1.5 mb-2">
+                            <div 
+                              className="bg-gradient-to-r from-emerald-400 to-teal-400 h-1.5 rounded-full" 
+                              style={{ width: `${program.progress}%` }}
+                            />
+                          </div>
+                          
+                          <p className="text-xs text-slate-400 font-bold">{program.members} peserta</p>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
               </div>
