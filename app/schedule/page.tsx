@@ -1,18 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
+import SearchInput from "@/components/ui/SearchInput";
+import EmptyState from "@/components/ui/EmptyState";
+import Loading from "@/components/ui/Loading";
 import { 
   Calendar, 
   MapPin, 
   Clock, 
   Users, 
   ArrowRight, 
-  Sparkles, 
-  SearchX, 
-  CalendarX // Import icon baru untuk empty state global
+  CalendarX
 } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
 import { useSession } from "next-auth/react";
@@ -36,8 +37,10 @@ const Schedule = () => {
   const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"upcoming" | "finished">("upcoming");
+  const [selectedStatus, setSelectedStatus] = useState("Semua");
   const router = useRouter();
+
+  const statusOptions = ["Semua", "Segera hadir", "Sedang berlangsung", "Acara telah dilaksanakan"];
 
   useEffect(() => {
     fetchSchedules();
@@ -45,7 +48,7 @@ const Schedule = () => {
 
   useEffect(() => {
     filterSchedules();
-  }, [schedules, searchQuery, activeTab]);
+  }, [schedules, searchQuery, selectedStatus]);
   
   const fetchSchedules = async () => {
     try {
@@ -85,11 +88,9 @@ const Schedule = () => {
       );
     }
 
-    // Filter by tab
-    if (activeTab === "upcoming") {
-      filtered = filtered.filter(schedule => schedule.status === "Segera hadir" || schedule.status === "Sedang berlangsung");
-    } else if (activeTab === "finished") {
-      filtered = filtered.filter(schedule => schedule.status === "Acara telah dilaksanakan");
+    // Filter by status
+    if (selectedStatus !== "Semua") {
+      filtered = filtered.filter(schedule => schedule.status === selectedStatus);
     }
 
     setFilteredSchedules(filtered);
@@ -104,7 +105,7 @@ const Schedule = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -129,90 +130,65 @@ const Schedule = () => {
               )}
             </div>
 
-            {/* Search Bar & Tabs (Hanya tampil jika ada data di database) */}
+            {/* Filter & Search Bar */}
             {!loading && schedules.length > 0 && (
-              <>
-                <div className="mb-8">
-                   <input
-                     type="text"
-                     placeholder="Cari event seru atau topik kajian..."
-                     value={searchQuery}
-                     onChange={(e) => setSearchQuery(e.target.value)}
-                     className="w-full rounded-2xl border-2 border-slate-200 bg-white px-5 py-4 shadow-[0_4px_0_0_#e2e8f0] focus:outline-none focus:border-teal-400 focus:shadow-[0_4px_0_0_#34d399] transition-all font-medium placeholder:text-slate-400"
-                   />
+              <div className="grid gap-6 mb-8 lg:grid-cols-[1fr_auto]">
+                <div className="space-y-4">
+                  {/* Status Filter Buttons */}
+                  <div className="flex flex-wrap gap-2 lg:gap-3">
+                    {statusOptions.map((status) => (
+                      <button
+                        key={status}
+                        onClick={() => setSelectedStatus(status)}
+                        className={`px-4 lg:px-6 py-2 lg:py-3 rounded-full font-bold transition-all border-2 ${
+                          selectedStatus === status
+                            ? "bg-teal-500 text-white border-teal-600 shadow-[0_4px_0_0_#0d9488]"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-teal-300 shadow-sm hover:shadow-md"
+                        }`}
+                      >
+                        {status}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="mb-8 flex gap-3 border-b-2 border-slate-100 pb-1">
-                  <button
-                    onClick={() => setActiveTab("upcoming")}
-                    className={`px-6 py-3 font-bold rounded-t-xl transition-all relative top-[2px] border-b-4 ${
-                      activeTab === "upcoming"
-                        ? "text-teal-600 border-teal-500 bg-teal-50"
-                        : "text-slate-400 hover:text-slate-600 border-transparent hover:bg-slate-50"
-                    }`}
-                  >
-                    Akan Datang
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("finished")}
-                    className={`px-6 py-3 font-bold rounded-t-xl transition-all relative top-[2px] border-b-4 ${
-                      activeTab === "finished"
-                        ? "text-teal-600 border-teal-500 bg-teal-50"
-                        : "text-slate-400 hover:text-slate-600 border-transparent hover:bg-slate-50"
-                    }`}
-                  >
-                    Selesai
-                  </button>
+                <div className="relative w-full lg:w-80 self-start">
+                  <SearchInput
+                    placeholder="Cari event seru atau topik..."
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                  />
                 </div>
-              </>
+              </div>
             )}
 
             {loading ? (
               <div className="text-center py-20">
-                <Sparkles className="h-10 w-10 text-teal-400 animate-spin mx-auto mb-4" />
-                <p className="text-slate-500 font-bold">Memuat jadwal...</p>
+                <Loading text="Memuat jadwal..." />
               </div>
             ) : schedules.length === 0 ? (
-               /* ---- EMPTY STATE GLOBAL (Database Kosong) ---- */
-               <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                  <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center border-4 border-dashed border-slate-300 mb-6">
-                     <CalendarX className="h-12 w-12 text-slate-400" />
-                  </div>
-                  <h3 className="text-2xl font-black text-slate-700 mb-2">
-                    Yah, tidak ada event tersedia sekarang
-                  </h3>
-                  <p className="text-slate-500 font-medium max-w-md">
-                    Belum ada kegiatan yang dijadwalkan. Cek lagi nanti ya!
-                  </p>
-               </div>
+               <EmptyState
+                 icon="calendar"
+                 title="Yah, tidak ada event tersedia sekarang"
+                 description="Belum ada kegiatan yang dijadwalkan. Cek lagi nanti ya!"
+               />
             ) : filteredSchedules.length === 0 ? (
-              /* ---- EMPTY STATE FILTER (Pencarian tidak ketemu) ---- */
-              <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                 <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center border-4 border-dashed border-slate-300 mb-6">
-                    <SearchX className="h-12 w-12 text-slate-400" />
-                 </div>
-                 <h3 className="text-2xl font-black text-slate-700 mb-2">
-                   Yah, event tidak ditemukan...
-                 </h3>
-                 <p className="text-slate-500 font-medium max-w-md mb-8">
-                   Coba cari dengan kata kunci lain atau ubah tab statusnya ya!
-                 </p>
-                 <button
-                   onClick={() => {
-                     setSearchQuery("");
-                     setActiveTab("upcoming");
-                   }}
-                   className="px-6 py-3 bg-white border-2 border-slate-200 text-slate-600 font-bold rounded-xl shadow-[0_4px_0_0_#e2e8f0] hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#34d399] active:translate-y-[2px] active:shadow-none transition-all"
-                 >
-                   Reset Filter
-                 </button>
-              </div>
+              <EmptyState
+                icon="search"
+                title="Yah, event tidak ditemukan..."
+                description="Coba cari dengan kata kunci lain atau ubah filternya ya!"
+                actionLabel="Reset Filter"
+                onAction={() => {
+                  setSearchQuery("");
+                  setSelectedStatus("Semua");
+                }}
+              />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredSchedules.map((schedule) => (
                   <div
                     key={schedule.id}
-                    className="bg-white rounded-[2rem] border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_6px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2"
+                    className="bg-white rounded-4xl border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_6px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2"
                   >
                     <div className="p-6">
                       <div className="flex items-start gap-5 mb-5">
@@ -282,7 +258,7 @@ const Schedule = () => {
                       {/* Button */}
                       <button 
                         onClick={() => router.push(`/schedule/${schedule.id}`)}
-                        className="w-full py-3.5 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn"
+                        className="w-full py-3.5 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 group/btn"
                       >
                         <span>Lihat Detail Event</span>
                         <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />

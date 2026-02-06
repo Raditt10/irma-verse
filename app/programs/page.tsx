@@ -1,16 +1,18 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
+import Loading from "@/components/ui/Loading";
+import SuccessDataFound from "@/components/ui/SuccessDataFound";
+import SearchInput from "@/components/ui/SearchInput";
 import { 
   ArrowRight, 
   CheckCircle2, 
   Clock3, 
   Hourglass, 
   BookOpen, 
-  Sparkles, 
   ChevronDown,
   SearchX, 
   RefreshCcw,
@@ -84,7 +86,7 @@ const OurPrograms = () => {
   };
 
   const filteredPrograms = programs.filter((program) =>
-    program.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (program?.title?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) &&
     (statusFilter === "all" || program.status === statusFilter)
   );
 
@@ -97,7 +99,7 @@ const OurPrograms = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -134,12 +136,12 @@ const OurPrograms = () => {
             {/* Filters (Hanya tampil jika ada program di database) */}
             {!loading && programs.length > 0 && (
                 <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2 relative group">
-                    <input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Cari program seru..."
-                    className="w-full rounded-2xl border-2 border-slate-200 bg-white px-5 py-4 shadow-[0_4px_0_0_#e2e8f0] focus:outline-none focus:border-teal-400 focus:shadow-[0_4px_0_0_#34d399] transition-all font-medium placeholder:text-slate-400"
+                <div className="md:col-span-2">
+                    <SearchInput
+                      placeholder="Cari program seru..."
+                      value={searchTerm}
+                      onChange={setSearchTerm}
+                      className="w-full"
                     />
                 </div>
 
@@ -150,7 +152,7 @@ const OurPrograms = () => {
                         w-full flex items-center justify-between rounded-2xl border-2 bg-white px-5 py-4 
                         font-bold text-slate-700 transition-all cursor-pointer
                         ${isDropdownOpen 
-                        ? 'border-teal-400 shadow-[0_4px_0_0_#34d399] translate-y-[-2px]' 
+                        ? 'border-teal-400 shadow-[0_4px_0_0_#34d399] -translate-y-0.5' 
                         : 'border-slate-200 shadow-[0_4px_0_0_#e2e8f0] hover:border-teal-300'
                         }
                     `}
@@ -194,8 +196,7 @@ const OurPrograms = () => {
 
             {loading ? (
               <div className="text-center py-20">
-                <Sparkles className="h-10 w-10 text-teal-400 animate-spin mx-auto mb-4" />
-                <p className="text-slate-500 font-bold">Menyiapkan program...</p>
+                <Loading text="Memuat program..." />
               </div>
             ) : programs.length === 0 ? (
                 /* ---- GLOBAL EMPTY STATE (Database Kosong) ---- */
@@ -224,7 +225,7 @@ const OurPrograms = () => {
                     </p>
                     <button 
                         onClick={() => { setSearchTerm(""); setStatusFilter("all"); }}
-                        className="px-6 py-3 bg-white border-2 border-slate-200 text-slate-600 font-bold rounded-xl shadow-[0_4px_0_0_#e2e8f0] hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#34d399] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2"
+                        className="px-6 py-3 bg-white border-2 border-slate-200 text-slate-600 font-bold rounded-xl shadow-[0_4px_0_0_#e2e8f0] hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-2"
                     >
                         <RefreshCcw className="h-4 w-4" />
                         <span>Reset Pencarian</span>
@@ -235,14 +236,10 @@ const OurPrograms = () => {
                 {/* ---- SUCCESS HEADER ---- */}
                 {searchTerm && (
                   <div className="mb-8">
-                    <div className="inline-flex items-center gap-3 bg-teal-50 border-2 border-teal-100 px-5 py-3 rounded-2xl shadow-sm">
-                       <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border-2 border-teal-200 shrink-0">
-                          <Sparkles className="h-4 w-4 text-teal-500" />
-                       </div>
-                       <p className="text-teal-800 font-bold text-sm">
-                         Hore! Ditemukan <span className="underline decoration-wavy decoration-teal-400">{filteredPrograms.length} program</span> yang cocok!
-                       </p>
-                    </div>
+                    <SuccessDataFound 
+                      message="Data berhasil ditemukan dan siap untuk digunakan"
+                      icon="sparkles"
+                    />
                   </div>
                 )}
 
@@ -250,11 +247,11 @@ const OurPrograms = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredPrograms.map((program) => {
                     const statusMeta: Record<Program["status"], { label: string; icon: any; color: string; bg: string; border: string }> = {
-                      "in-progress": { label: "Berlangsung", icon: Clock3, color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300" },
+                      "in-progress": { label: "Berlangsung", icon: Clock3, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" },
                       done: { label: "Selesai", icon: CheckCircle2, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" },
-                      upcoming: { label: "Mendatang", icon: Hourglass, color: "text-slate-700", bg: "bg-slate-100", border: "border-slate-300" }
+                      upcoming: { label: "Mendatang", icon: Hourglass, color: "text-emerald-700", bg: "bg-emerald-100", border: "border-emerald-300" }
                     };
-                    const meta = statusMeta[program.status];
+                    const meta = statusMeta[program.status] || statusMeta["upcoming"];
 
                     return (
                       <div
@@ -268,7 +265,7 @@ const OurPrograms = () => {
                             alt={program.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                           
                           <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full flex items-center gap-1.5 border-2 shadow-sm ${meta.bg} ${meta.border}`}>
                             <meta.icon className={`h-3.5 w-3.5 ${meta.color}`} strokeWidth={3} />
@@ -301,15 +298,15 @@ const OurPrograms = () => {
                               </div>
                               <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                               <div className="flex items-center gap-1.5">
-                                 <BookOpen className="h-4 w-4 text-teal-400" />
-                                 <span>{program.quota.filled}/{program.quota.total} Siswa</span>
+                                 <BookOpen className="h-4 w-4 text-emerald-500" />
+                                 <span>{program.quota?.filled ?? 0}/{program.quota?.total ?? 0} Siswa</span>
                               </div>
                             </div>
                           </div>
 
                           <button 
                             onClick={() => router.push(`/programs/${program.id}`)}
-                            className="w-full py-3 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 mt-auto"
+                            className="w-full py-3 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 mt-auto"
                           >
                             <span>Lihat Detail</span>
                             <ArrowRight className="h-4 w-4" strokeWidth={3} />

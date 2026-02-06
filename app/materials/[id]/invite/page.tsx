@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
-import { Search, X, Plus, AlertCircle, CheckCircle } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import ChatbotButton from "@/components/ui/Chatbot";
+import SearchInput from "@/components/ui/SearchInput";
+import { X, Plus, AlertCircle, CheckCircle } from "lucide-react";
 
 interface User {
   id: string;
@@ -19,9 +19,10 @@ interface Toast {
   message: string;
   duration?: number;
 }
-export default function InvitePage({ params }: { params: { matId: string } }) {
-  const param = useParams();
-  const matId = param?.matId as string;
+
+export default function InvitePage() {
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -47,7 +48,7 @@ export default function InvitePage({ params }: { params: { matId: string } }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/materials/${matId}/invite?q=${searchQuery}`);
+      const res = await fetch(`/api/materials/${id}/invite?q=${searchQuery}`);
       const data = await res.json();
       setResults(data);
     } catch (error) {
@@ -84,20 +85,61 @@ export default function InvitePage({ params }: { params: { matId: string } }) {
   };
 
   const sendInvite = async () => {
-    await fetch(`/api/materials/${matId}/invite`, {
-      method: "POST",
-      body: JSON.stringify({
-        userIds: selected.map(u => u.id),
-        instructorId: session?.user?.id
-      })
-    })
-    alert("Invite sent")
-  }
+    if (selected.length === 0) {
+      showToast("error", "Pilih minimal 1 user untuk di-invite");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/materials/${id}/invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userIds: selected.map((u) => u.id),
+          invitedById: session?.user?.id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const newInvites = data.newInvites || 0;
+        const alreadyInvited = data.alreadyInvited?.length || 0;
+
+        if (newInvites > 0) {
+          showToast(
+            "success",
+            `${newInvites} user berhasil di-invite${
+              alreadyInvited > 0 ? `, ${alreadyInvited} user sudah di-invite sebelumnya` : ""
+            }`
+          );
+        } else if (alreadyInvited > 0) {
+          showToast(
+            "warning",
+            `Semua ${alreadyInvited} user sudah di-invite sebelumnya`
+          );
+        }
+
+        setSelected([]);
+        setTimeout(() => {
+          router.back();
+        }, 2000);
+      } else {
+        showToast("error", data.error || "Gagal mengirim invite");
+      }
+    } catch (error) {
+      console.error("Error sending invite:", error);
+      showToast("error", "Terjadi kesalahan saat mengirim invite");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
       className="min-h-screen bg-[#FDFBF7]"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+
     >
       <DashboardHeader />
       <div className="flex">
@@ -139,16 +181,12 @@ export default function InvitePage({ params }: { params: { matId: string } }) {
                 <label className="block text-sm font-bold text-slate-700 mb-3">
                   Cari User yang Akan Di-Invite
                 </label>
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-500" />
-                  <Input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Ketik nama atau email..."
-                    className="pl-12 py-3 rounded-2xl border-2 border-slate-300 focus:border-teal-400"
-                  />
-                </div>
+                <SearchInput
+                  value={query}
+                  onChange={setQuery}
+                  placeholder="Ketik nama atau email..."
+                  className="w-full"
+                />
 
                 {/* Search Results */}
                 {results.length > 0 && (
@@ -210,14 +248,14 @@ export default function InvitePage({ params }: { params: { matId: string } }) {
               <div className="flex gap-3">
                 <button
                   onClick={() => router.back()}
-                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-300 transition-all active:translate-y-[2px]"
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-300 transition-all active:translate-y-0.5"
                 >
                   Batal
                 </button>
                 <button
                   onClick={sendInvite}
                   disabled={selected.length === 0 || loading}
-                  className="flex-1 px-6 py-3 bg-emerald-400 text-white font-black rounded-2xl border-2 border-emerald-600 border-b-4 shadow-[0_4px_0_0_#059669] hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-emerald-400 text-white font-black rounded-2xl border-2 border-emerald-600 border-b-4 shadow-[0_4px_0_0_#059669] hover:bg-emerald-500 active:border-b-2 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Mengirim..." : "Kirim Invite"}
                 </button>

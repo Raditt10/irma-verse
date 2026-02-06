@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
-import { UserCircle2, UserPlus, Check, X, Search, Sparkles } from "lucide-react"; // Tambah icon Sparkles
+import ChatbotButton from "@/components/ui/Chatbot";
+import Loading from "@/components/ui/Loading";
+import SearchInput from "@/components/ui/SearchInput";
+import { UserCircle2, UserPlus, Check, X } from "lucide-react";
 
 interface Member {
   id: string;
@@ -26,7 +28,6 @@ const Members = () => {
   const router = useRouter();
 
   useEffect(() => {
-    loadUser();
     fetchMembers();
   }, []);
 
@@ -38,20 +39,6 @@ const Members = () => {
       return () => clearTimeout(timer);
     }
   }, [toast]);
-
-  const loadUser = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/me");
-      if (!res.ok) throw new Error("Gagal mengambil data pengguna");
-      const userData = await res.json();
-      setUser(userData);
-    } catch (error) {
-      console.error("Error loading user:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchMembers = async () => {
     try {
@@ -105,17 +92,9 @@ const Members = () => {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <p className="text-slate-500">Memuat...</p>
-      </div>
-    );
-  }
-
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
     >
       <DashboardHeader />
       <div className="flex">
@@ -127,18 +106,12 @@ const Members = () => {
               <p className="text-slate-600 text-lg mb-6">Semua anggota IRMA aktif</p>
               
               {/* --- SEARCH BAR --- */}
-              <div className="relative w-full max-w-md group mb-6">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-slate-400 group-focus-within:text-teal-500 transition-colors" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Cari nama anggota..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white rounded-xl border border-slate-200 focus:ring-4 focus:ring-teal-100 focus:border-teal-500 transition-all shadow-sm hover:shadow-md outline-none text-slate-700 placeholder:text-slate-400"
-                />
-              </div>
+              <SearchInput
+                placeholder="Cari nama anggota..."
+                value={search}
+                onChange={setSearch}
+                className="w-full max-w-md mb-6"
+              />
 
               {/* --- FITUR: MUNGKIN INI YANG KAMU MAKSUD --- */}
               {search && filteredMembers.length > 0 && (
@@ -155,7 +128,7 @@ const Members = () => {
 
             {loading ? (
               <div className="text-center py-12">
-                <p className="text-slate-500">Memuat anggota...</p>
+                <Loading text="Memuat data anggota..." />
               </div>
             ) : (
               <>

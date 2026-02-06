@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Sidebar from "@/components/ui/Sidebar";
-import DashboardHeader from "@/components/ui/DashboardHeader";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import DashboardHeader from "@/components/ui/Header";
+import ChatbotButton from "@/components/ui/Chatbot";
 
 export default function AdminDashboard() {
   // Static data for frontend preview only
@@ -50,7 +50,6 @@ export default function AdminDashboard() {
   return (
     <div
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader />
 

@@ -86,6 +86,10 @@
     border-color: hsl(var(--border));
   }
 
+  html, body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive !important;
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

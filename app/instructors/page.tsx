@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
 import Loading from "@/components/ui/Loading";
+import SuccessDataFound from "@/components/ui/SuccessDataFound";
 import { 
   Star, 
   BookOpen, 
@@ -98,7 +99,7 @@ const Instructors = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -177,7 +178,7 @@ const Instructors = () => {
             </div>
 
             {loading ? (
-                <Loading />
+                <Loading text="Memuat data instruktur..." />
             ) : (
               <>
                 {filteredInstructors.length === 0 ? (
@@ -205,14 +206,9 @@ const Instructors = () => {
                     {/* ---- SUCCESS HEADER ---- */}
                     {(searchTerm || specializationFilter !== "all") && (
                       <div className="mb-8">
-                        <div className="inline-flex items-center gap-3 bg-teal-50 border-2 border-teal-100 px-5 py-3 rounded-2xl shadow-sm">
-                           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border-2 border-teal-200 shrink-0">
-                              <Sparkles className="h-4 w-4 text-teal-500" />
-                           </div>
-                           <p className="text-teal-800 font-bold text-sm">
-                             Hore! Ditemukan <span className="underline decoration-wavy decoration-teal-400">{filteredInstructors.length} instruktur</span> yang cocok!
-                           </p>
-                        </div>
+                        <SuccessDataFound 
+                          message={`Hore! Ditemukan ${filteredInstructors.length} instruktur yang cocok!`}
+                        />
                       </div>
                     )}
 
@@ -224,7 +220,7 @@ const Instructors = () => {
                           className={`bg-white rounded-[2.5rem] border-2 transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col relative ${
                             instructor.featured 
                               ? 'border-amber-400 shadow-[0_8px_0_0_#fbbf24]' 
-                              : 'border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_8px_0_0_#34d399]'
+                              : 'border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399]'
                           }`}
                         >
                           {/* Featured Badge */}

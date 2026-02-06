@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/ui/Sidebar";
-import DashboardHeader from "@/components/ui/DashboardHeader";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import DashboardHeader from "@/components/ui/Header";
+import ChatbotButton from "@/components/ui/Chatbot";
 import {
   Trophy,
   Medal,
@@ -57,8 +57,7 @@ const LeaderboardPage = async () => {
 
   return (
     <div 
-      className="min-h-screen bg-slate-50/50" 
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+      className="min-h-screen bg-slate-50/50"
     >
       <DashboardHeader />
 
@@ -77,15 +76,15 @@ const LeaderboardPage = async () => {
           </div>
 
           {/* --- TOP 3 PODIUM SECTION --- */}
-          <div className="flex justify-center items-end gap-4 md:gap-8 mb-12 min-h-[320px]">
+          <div className="flex justify-center items-end gap-4 md:gap-8 mb-12 min-h-80">
             
             {/* JUARA 2 (Kiri) */}
             <div className="relative group order-1 md:order-1">
                <div className="flex flex-col items-center">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-slate-300 shadow-xl overflow-hidden mb-[-20px] z-20 relative group-hover:scale-110 transition-transform">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-slate-300 shadow-xl overflow-hidden -mb-5 z-20 relative group-hover:scale-110 transition-transform">
                      <img src={`https://picsum.photos/200/200?random=${topThree[1].avatarId}`} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-gradient-to-b from-slate-200 to-slate-300 w-24 md:w-32 h-40 rounded-t-2xl flex flex-col items-center justify-start pt-8 pb-4 shadow-lg relative z-10 border-t border-white/50">
+                  <div className="bg-linear-to-b from-slate-200 to-slate-300 w-24 md:w-32 h-40 rounded-t-2xl flex flex-col items-center justify-start pt-8 pb-4 shadow-lg relative z-10 border-t border-white/50">
                      <div className="bg-slate-100 text-slate-600 font-black text-xl w-8 h-8 rounded-full flex items-center justify-center shadow-inner mb-2">2</div>
                      <p className="font-bold text-slate-700 text-sm text-center px-2 line-clamp-1">{topThree[1].name}</p>
                      <p className="text-xs font-bold text-slate-500 mt-1">{topThree[1].points} Pts</p>
@@ -102,7 +101,7 @@ const LeaderboardPage = async () => {
                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-amber-400 shadow-2xl shadow-amber-400/30 overflow-hidden mb-[-25px] z-20 relative group-hover:scale-110 transition-transform">
                      <img src={`https://picsum.photos/200/200?random=${topThree[0].avatarId}`} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-gradient-to-b from-amber-300 to-amber-500 w-28 md:w-40 h-52 rounded-t-3xl flex flex-col items-center justify-start pt-10 pb-4 shadow-xl shadow-amber-500/20 relative z-10 border-t border-white/50">
+                  <div className="bg-linear-to-b from-amber-300 to-amber-500 w-28 md:w-40 h-52 rounded-t-3xl flex flex-col items-center justify-start pt-10 pb-4 shadow-xl shadow-amber-500/20 relative z-10 border-t border-white/50">
                      <div className="bg-white/90 text-amber-600 font-black text-2xl w-10 h-10 rounded-full flex items-center justify-center shadow-inner mb-3">1</div>
                      <p className="font-bold text-white text-base md:text-lg text-center px-2 line-clamp-1">{topThree[0].name}</p>
                      <div className="bg-black/10 px-3 py-1 rounded-full mt-1">
@@ -115,10 +114,10 @@ const LeaderboardPage = async () => {
 
             <div className="relative group order-3 md:order-3">
                <div className="flex flex-col items-center">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-orange-300 shadow-xl overflow-hidden mb-[-20px] z-20 relative group-hover:scale-110 transition-transform">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-orange-300 shadow-xl overflow-hidden -mb-5 z-20 relative group-hover:scale-110 transition-transform">
                      <img src={`https://picsum.photos/200/200?random=${topThree[2].avatarId}`} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-gradient-to-b from-orange-200 to-orange-300 w-24 md:w-32 h-32 rounded-t-2xl flex flex-col items-center justify-start pt-8 pb-4 shadow-lg relative z-10 border-t border-white/50">
+                  <div className="bg-linear-to-b from-orange-200 to-orange-300 w-24 md:w-32 h-32 rounded-t-2xl flex flex-col items-center justify-start pt-8 pb-4 shadow-lg relative z-10 border-t border-white/50">
                      <div className="bg-orange-100 text-orange-700 font-black text-xl w-8 h-8 rounded-full flex items-center justify-center shadow-inner mb-2">3</div>
                      <p className="font-bold text-orange-900 text-sm text-center px-2 line-clamp-1">{topThree[2].name}</p>
                      <p className="text-xs font-bold text-orange-800 mt-1">{topThree[2].points} Pts</p>
@@ -128,7 +127,7 @@ const LeaderboardPage = async () => {
           </div>
 
           {/* --- MAIN LIST SECTION --- */}
-          <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white rounded-4xl shadow-sm border border-slate-100 overflow-hidden">
             
             {/* Filter / Search Bar */}
             <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">

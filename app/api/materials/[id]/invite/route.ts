@@ -1,16 +1,20 @@
 import prisma from "@/lib/prisma"
 import { NextResponse, NextRequest } from "next/server"
-import crypto from "crypto"
 import { auth } from "@/lib/auth"
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth()
-    const { userIds, instructorId } = await req.json()
-    const materialId = params.id
+    const { userIds } = await req.json()
+    const { id: materialId } = await params
+
+    console.log("=== INVITE REQUEST ===");
+    console.log("Received userIds:", userIds);
+    console.log("Material ID:", materialId);
+    console.log("Instructor (session.user.id):", session?.user?.id);
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Tidak terautentikasi" }, { status: 401 });
     }
 
     // Check if user exists
@@ -20,52 +24,60 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         
     if (!User) {
       console.log('User not found in database:', session.user.id);
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
     console.log('User found:', User.email, User.role);
 
-    if (User.role !== 'instruktur') {
-      return NextResponse.json({ error: "Only instructors are allowed to invite users!" }, { status: 403 });
+    if (User.role !== 'instruktur' && User.role !== 'admin') {
+      return NextResponse.json({ error: "Hanya instruktur yang bisa mengundang peserta!" }, { status: 403 });
     }
 
-    // Check which users are already invited
+    // Check which users already have pending or accepted invitations
     const existingInvites = await prisma.materialInvite.findMany({
       where: {
         materialId,
-        invitedUserId: userId,
-        instructorId,
-        token: crypto.randomUUID(),
-        expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      })),
-      skipDuplicates: true
-    })
+        userId: { in: userIds },
+        status: { in: ["pending", "accepted"] }
+      },
+      select: { userId: true }
+    });
 
-    const alreadyInvitedIds = existingInvites.map(invite => invite.invitedUserId);
+    const alreadyInvitedIds = existingInvites.map(invite => invite.userId);
     const newUserIds = userIds.filter((id: string) => !alreadyInvitedIds.includes(id));
 
-    // Invite only new users
+    // Create invitations for new users
     if (newUserIds.length > 0) {
+      // Generate a simple token for each invitation
+      const generateToken = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      
+      console.log("Creating invitations for users:", newUserIds);
+      
       await prisma.materialInvite.createMany({
         data: newUserIds.map((userId: string) => ({
           materialId,
-          invitedUserId: userId,
-          instructorId,
-          token: crypto.randomUUID(),
-          expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          instructorId: session.user.id,
+          userId,
+          token: generateToken(),
+          status: "pending"
         }))
       })
+      
+      console.log("Invitations created successfully");
     }
 
     return NextResponse.json({ 
       success: true,
       newInvites: newUserIds.length,
+      newUserIds: newUserIds,
       alreadyInvited: alreadyInvitedIds,
-      totalAttempted: userIds.length
+      totalAttempted: userIds.length,
+      materialId: materialId,
+      instructorId: session.user.id
     })
   } catch (error) {
     console.error("Error inviting users to material:", error)
     return NextResponse.json(
-      { error: "Failed to invite users to material" },
+      { error: "Gagal mengundang peserta" },
       { status: 500 }
     )
   }
@@ -75,7 +87,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const session = await auth();
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Tidak terautentikasi" }, { status: 401 });
     }
 
     // Check if user exists
@@ -85,12 +97,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         
     if (!User) {
       console.log('User not found in database:', session.user.id);
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
     console.log('User found:', User.email, User.role);
 
     if (User.role !== 'instruktur' && User.role !== 'admin') {
-      return NextResponse.json({ error: "Only instructors and admins are allowed to access this page!" }, { status: 403 });
+      return NextResponse.json({ error: "Hanya instruktur dan admin yang bisa mengakses halaman ini!" }, { status: 403 });
     }
     const query = req.nextUrl.searchParams.get("q") || ""
     const { id: materialId } = await params
@@ -113,7 +125,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   catch (error) {
     console.error("Error searching users for invitation:", error)
     return NextResponse.json(
-      { error: "Failed to search users for invitation" },
+      { error: "Gagal mencari pengguna untuk undangan" },
       { status: 500 }
     )
   }

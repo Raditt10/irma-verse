@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
-import { ArrowRight, Trophy, Calendar, Sparkles } from "lucide-react";
+import ChatbotButton from "@/components/ui/Chatbot";
+import Loading from "@/components/ui/Loading";
+import SuccessDataFound from "@/components/ui/SuccessDataFound";
+import SearchInput from "@/components/ui/SearchInput";
+import { ArrowRight, Trophy, Calendar } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface CompetitionItem {
@@ -14,72 +17,59 @@ interface CompetitionItem {
   prize: string;
   category: "Tahfidz" | "Seni" | "Bahasa" | "Lainnya";
   image: string;
+  instructor: {
+    id: string;
+    name: string;
+    avatar: string | null;
+  };
 }
-
-const competitions: CompetitionItem[] = [
-  {
-    id: "1",
-    title: "Lomba Tahfidz Tingkat Nasional",
-    date: "15 Des 2024",
-    prize: "Rp 10.000.000",
-    category: "Tahfidz",
-    image: "https://images.unsplash.com/photo-1585779034823-7e9ac8faec70?auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: "2",
-    title: "Kompetisi Kaligrafi Islam",
-    date: "20 Des 2024",
-    prize: "Rp 5.000.000",
-    category: "Seni",
-    image: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: "3",
-    title: "Lomba Pidato Bahasa Arab",
-    date: "25 Des 2024",
-    prize: "Rp 7.500.000",
-    category: "Bahasa",
-    image: "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?auto=format&fit=crop&w=1000&q=80"
-  }
-];
 
 const badgeStyles: Record<CompetitionItem["category"], string> = {
   Tahfidz: "bg-emerald-100 text-emerald-700 border-emerald-200",
   Seni: "bg-purple-100 text-purple-700 border-purple-200",
-  Bahasa: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  Bahasa: "bg-blue-100 text-blue-700 border-blue-200",
   Lainnya: "bg-slate-100 text-slate-700 border-slate-200"
 };
 
 const Competitions = () => {
-  const [user, setUser] = useState<any>(null);
+  const [competitions, setCompetitions] = useState<CompetitionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const { data: session } = useSession();
 
   useEffect(() => {
-    // Simulasi fetch user
-    setUser({
-      id: "user-123",
-      full_name: "Rafaditya Syahputra",
-      email: "rafaditya@irmaverse.local",
-      avatar: "RS"
-    });
+    fetchCompetitions();
   }, []);
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Sparkles className="h-10 w-10 text-teal-400 animate-spin" />
-          <p className="text-slate-500 font-bold animate-pulse">Memuat data lomba...</p>
-        </div>
-      </div>
-    );
-  }
+  const fetchCompetitions = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/competitions");
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("API error:", data);
+        throw new Error(data.error || "Failed to fetch");
+      }
+      
+      setCompetitions(data);
+    } catch (error) {
+      console.error("Error fetching competitions:", error);
+      setCompetitions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredCompetitions = competitions.filter((comp) =>
+    comp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    comp.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div
       className="min-h-screen bg-[#FDFBF7]"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader/>
       <div className="flex">
@@ -100,20 +90,51 @@ const Competitions = () => {
               {session?.user?.role === "instruktur" && (
                 <button
                   onClick={() => router.push("/competitions/create")}
-                  className="px-6 py-3 rounded-2xl bg-teal-400 text-white font-black border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all shadow-lg hover:shadow-teal-200"
+                  className="px-6 py-3 rounded-2xl bg-emerald-400 text-white font-black border-2 border-emerald-600 border-b-4 hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] transition-all shadow-lg hover:shadow-emerald-200"
                 >
                   + Tambah Lomba
                 </button>
               )}
             </div>
 
-            {/* Grid */}
-            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-              {competitions.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col"
-                >
+            {/* Search Bar */}
+            <div className="mb-8">
+              <SearchInput
+                placeholder="Cari lomba..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                className="w-full md:w-96"
+              />
+            </div>
+
+            {/* Loading State */}
+            {loading ? (
+              <div className="text-center py-20">
+                <Loading text="Memuat data lomba..." />
+              </div>
+            ) : filteredCompetitions.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-slate-500 font-bold text-lg">
+                  {competitions.length === 0 ? "Belum ada lomba tersedia" : "Lomba tidak ditemukan"}
+                </p>
+              </div>
+            ) : (
+              <>
+                {searchTerm && (
+                  <div className="mb-8">
+                    <SuccessDataFound 
+                      message={`Hore! Ditemukan ${filteredCompetitions.length} lomba`}
+                    />
+                  </div>
+                )}
+
+                {/* Grid */}
+                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+                  {filteredCompetitions.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col"
+                    >
                   {/* Image Section */}
                   <div className="relative h-60 border-b-2 border-slate-100 overflow-hidden">
                     <img
@@ -133,14 +154,14 @@ const Competitions = () => {
 
                   {/* Content Section */}
                   <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-xl font-black text-slate-800 leading-tight mb-4 group-hover:text-teal-600 transition-colors line-clamp-2">
+                    <h3 className="text-xl font-black text-slate-800 leading-tight mb-4 group-hover:text-emerald-600 transition-colors line-clamp-2">
                       {item.title}
                     </h3>
 
                     <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border-2 border-slate-100">
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 text-slate-500 font-bold">
-                          <Calendar className="w-4 h-4 text-teal-400" />
+                          <Calendar className="w-4 h-4 text-emerald-400" />
                           <span>Tanggal</span>
                         </div>
                         <span className="text-slate-800 font-black">{item.date}</span>
@@ -161,15 +182,17 @@ const Competitions = () => {
 
                     <button 
                       onClick={() => router.push(`/competitions/${item.id}`)}
-                      className="w-full mt-auto py-3 rounded-2xl bg-teal-400 text-white font-black border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn shadow-md hover:shadow-teal-100"
+                      className="w-full mt-auto py-3 rounded-2xl bg-emerald-400 text-white font-black border-2 border-emerald-600 border-b-4 hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn shadow-md hover:shadow-emerald-100"
                     >
                       <span>Lihat Detail Lomba</span>
                       <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

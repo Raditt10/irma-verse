@@ -53,8 +53,10 @@ model User {
   sentMessages            ChatMessage[]      @relation("sentMessages")
   schedules               Schedule[]         @relation("instructorSchedules")
   materials               Material[]
-  materialInvites         MaterialInvite[]
-  courseEnrollments       CourseEnrollments[]
+  invitesAsInstructor     MaterialInvite[]   @relation("MaterialInviteInstructor")
+  invitesAsUser           MaterialInvite[]   @relation("MaterialInviteUser")
+  courseEnrollments       CourseEnrollment[]
+  competitions            Competition[]      @relation("competitionInstructor")
 
   @@map("users")
 }
@@ -169,6 +171,13 @@ enum CourseCategory {
   Susulan
 }
 
+enum CompetitionCategory {
+  Tahfidz
+  Seni
+  Bahasa
+  Lainnya
+}
+
 enum CourseRole {
   user
   instructor
@@ -206,16 +215,19 @@ model MaterialInvite {
   materialId   String
   userId       String
   instructorId String
+  userId       String
   token        String       @unique
   status       InviteStatus @default(pending)
 
   material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  instructor User     @relation(fields: [instructorId], references: [id])
+  instructor User     @relation("MaterialInviteInstructor", fields: [instructorId], references: [id])
+  user       User     @relation("MaterialInviteUser", fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([materialId])
+  @@index([userId])
 }
 
 model CourseEnrollments {
@@ -259,4 +271,52 @@ model Friendships {
 
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+model Attendance {
+  id         String   @id @default(cuid())
+  userId     String
+  materialId String
+  status     String   @default("hadir") // hadir, tidak, sakit, izin
+  
+  // Form data
+  session    String?
+  date       String?
+  time       String?
+  location   String?
+  notes      String?
+  reason     String?
+  instructorArrival String?
+  startTime  String?
+  endTime    String?
+  
+  // Survey data (untuk angket)
+  rating     Int?
+  clarity    String?
+  relevance  String?
+  feedback   String? @db.Text
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, materialId])
+  @@index([userId])
+  @@index([materialId])
+}
+
+model Competition {
+  id           String                  @id @default(cuid())
+  title        String
+  description  String?                 @db.Text
+  date         DateTime
+  prize        String
+  category     CompetitionCategory
+  thumbnailUrl String?
+  instructorId String
+  instructor   User                    @relation("competitionInstructor", fields: [instructorId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@index([instructorId])
+  @@index([date])
+  @@map("competitions")
 }

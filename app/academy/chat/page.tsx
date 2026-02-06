@@ -2,9 +2,9 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import { Input } from "@/components/ui/input";
+import SearchInput from "@/components/ui/SearchInput";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -22,7 +22,6 @@ import {
   MoreHorizontal,
   Paperclip,
   Send,
-  Search,
   MessageCircle,
   ArrowLeft,
   Loader2,
@@ -575,7 +574,6 @@ const InstructorChatDashboard = () => {
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
     >
       <DashboardHeader />
       <div className="flex flex-col lg:flex-row">
@@ -640,15 +638,12 @@ const InstructorChatDashboard = () => {
               >
                 {/* Search */}
                 <div className="p-4 border-b border-slate-100">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      placeholder="Cari peserta..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 bg-slate-50 border-slate-200 rounded-xl"
-                    />
-                  </div>
+                  <SearchInput
+                    placeholder="Cari peserta..."
+                    value={searchTerm}
+                    onChange={setSearchTerm}
+                    className="w-full"
+                  />
                 </div>
 
                 {/* Conversations List */}

@@ -2,13 +2,20 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
-import { Calendar, Clock, Search, BookOpen, Sparkles, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import ChatbotButton from "@/components/ui/Chatbot";
+import CartoonNotification from "@/components/ui/CartoonNotification";
+import EmptyState from "@/components/ui/EmptyState";
+import CategoryFilter from "@/components/ui/CategoryFilter";
+import SearchInput from "@/components/ui/SearchInput";
+import MaterialInstructorActions from "@/components/ui/MaterialInstructorActions";
+import MaterialUserActions from "@/components/ui/MaterialUserAbsen";
+import Loading from "@/components/ui/Loading";
+import SuccessDataFound from "@/components/ui/SuccessDataFound";
+import { Calendar, Clock, BookOpen, Plus, Sparkles } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
+import DeleteButton from "@/components/ui/DeleteButton";
 
 interface Material {
   id: string;
@@ -22,6 +29,7 @@ interface Material {
   participants?: number;
   thumbnailUrl?: string;
   isJoined: boolean;
+  attendedAt?: string;
 }
 
 
@@ -32,6 +40,11 @@ const Materials = () => {
   const [selectedProgram, setSelectedProgram] = useState("Semua");
   const [selectedGrade, setSelectedGrade] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
+  const [notification, setNotification] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
   const router = useRouter();
 
   const { data: session } = useSession({
@@ -80,8 +93,31 @@ const Materials = () => {
 
       const data = await res.json()
 
-      setMaterials(data);
-      setFilteredMaterials(data);
+      // Fetch attendance status for each material
+      const materialsWithAttendance = await Promise.all(
+        data.map(async (material: Material) => {
+          try {
+            const attendanceRes = await fetch(
+              `/api/materials/attendance?materialId=${material.id}`
+            );
+            if (attendanceRes.ok) {
+              const attendanceData = await attendanceRes.json();
+              return {
+                ...material,
+                isJoined: attendanceData.isAttended,
+                attendedAt: attendanceData.attendedAt,
+              };
+            }
+            return material;
+          } catch (error) {
+            console.error("Error fetching attendance:", error);
+            return material;
+          }
+        })
+      );
+
+      setMaterials(materialsWithAttendance);
+      setFilteredMaterials(materialsWithAttendance);
     } catch (error: any) {
       console.error("Error fetching materials:", error);
     } finally {
@@ -89,8 +125,50 @@ const Materials = () => {
     }
   };
 
+  const handleDeleteMaterial = async (materialId: string) => {
+    try {
+      const res = await fetch(`/api/materials/${materialId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Gagal menghapus kajian");
+      }
+
+      setMaterials(materials.filter(m => m.id !== materialId));
+      setNotification({
+        type: "success",
+        title: "Berhasil!",
+        message: "Kajian berhasil dihapus",
+      });
+    } catch (error: any) {
+      console.error("Error deleting material:", error);
+      setNotification({
+        type: "error",
+        title: "Gagal Menghapus",
+        message: error.message || "Gagal menghapus kajian",
+      });
+    }
+  };
+
+  // Get today's material for instructor
+  const getTodayMaterial = () => {
+    if (!isPrivileged || materials.length === 0) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const todayMaterial = materials.find(m => {
+      const materialDate = new Date(m.date);
+      materialDate.setHours(0, 0, 0, 0);
+      return materialDate.getTime() === today.getTime();
+    });
+    
+    return todayMaterial || null;
+  };
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -101,7 +179,7 @@ const Materials = () => {
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-2">
-                  {isPrivileged ? "Kelola Kajian" : "Kajian Mingguanku"}
+                  {isPrivileged ? "Kelola Kajian" : "Jadwal Kajianku"}
                 </h1>
                 <p className="text-slate-500 text-lg font-medium">
                   {isPrivileged 
@@ -123,76 +201,94 @@ const Materials = () => {
               )}
             </div>
 
+            {/* Latest Material Card untuk Instruktur */}
+            {isPrivileged && getTodayMaterial() && (
+              <div className="mb-10 bg-linear-to-br from-teal-50 to-cyan-50 rounded-[2.5rem] border-2 border-teal-200 p-6 shadow-[0_4px_0_0_#cbd5e1]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="h-5 w-5 text-teal-500" strokeWidth={2} />
+                  <h2 className="text-lg font-black text-slate-800">Jadwal Kajianmu Hari Ini</h2>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-black text-slate-800 mb-2">{getTodayMaterial()?.title}</h3>
+                    <div className="flex items-center gap-4 text-sm font-bold text-slate-600">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4 text-teal-500" />
+                        {new Date(getTodayMaterial()!.date).toLocaleDateString("id-ID")}
+                      </span>
+                      {getTodayMaterial()?.startedAt && (
+                        <>
+                          <span className="w-px h-4 bg-slate-300" />
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-teal-500" />
+                            {getTodayMaterial()?.startedAt}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => router.push(`/materials/${getTodayMaterial()?.id}/edit`)}
+                      className="px-6 py-2 rounded-xl bg-teal-400 text-white font-bold border-2 border-teal-600 border-b-3 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all"
+                    >
+                      Edit
+                    </button>
+                    <DeleteButton
+                      label="Hapus"
+                      onClick={() => handleDeleteMaterial(getTodayMaterial()!.id)}
+                      variant="with-label"
+                      showConfirm={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Filters */}
             <div className="grid gap-6 mb-8 lg:grid-cols-[1fr_auto]">
               <div className="space-y-4">
-                {/* Program Filter */}
-                <div className="flex flex-wrap gap-3">
-                  {programCategories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedProgram(category)}
-                      className={`px-5 py-2 rounded-xl font-bold border-2 transition-all duration-200 ${
-                        selectedProgram === category
-                          ? "bg-teal-400 text-white border-teal-600 shadow-[0_4px_0_0_#0d9488] -translate-y-1"
-                          : "bg-white text-slate-500 border-slate-200 hover:border-teal-300 hover:text-teal-500 hover:shadow-[0_4px_0_0_#cbd5e1] hover:-translate-y-1"
-                      } active:translate-y-0 active:shadow-none`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Class Filter */}
-                <div className="flex flex-wrap gap-3">
-                  {classCategories.map((grade) => (
-                    <button
-                      key={grade}
-                      onClick={() => setSelectedGrade(grade)}
-                      className={`px-4 py-1.5 rounded-xl font-bold border-2 text-sm transition-all duration-200 ${
-                        selectedGrade === grade
-                          ? "bg-emerald-400 text-white border-emerald-600 shadow-[0_3px_0_0_#059669] -translate-y-0.5"
-                          : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300 hover:text-emerald-500 hover:shadow-[0_3px_0_0_#cbd5e1] hover:-translate-y-0.5"
-                      } active:translate-y-0 active:shadow-none`}
-                    >
-                      {grade}
-                    </button>
-                  ))}
-                </div>
+                <CategoryFilter
+                  categories={programCategories}
+                  subCategories={classCategories}
+                  selectedCategory={selectedProgram}
+                  selectedSubCategory={selectedGrade}
+                  onCategoryChange={setSelectedProgram}
+                  onSubCategoryChange={setSelectedGrade}
+                />
               </div>
 
               {/* Search Bar */}
-              <div className="relative w-full lg:w-80 self-start">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                <Input
-                  type="text"
-                  placeholder="Cari materi / ustadz..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 py-6 rounded-2xl border-2 border-slate-200 focus:border-teal-400 focus:shadow-[0_0_0_3px_rgba(45,212,191,0.2)] bg-white transition-colors duration-200 hover:border-emerald-500"
-                />
-              </div>
+              <SearchInput
+                placeholder="Cari materi / ustadz..."
+                value={searchQuery}
+                onChange={setSearchQuery}
+              />
             </div>
 
             {/* Content Grid */}
             {loading ? (
               <div className="text-center py-20">
-                <Sparkles className="h-10 w-10 text-teal-400 animate-spin mx-auto mb-4" />
-                <p className="text-slate-500 font-bold">Memuat kajian...</p>
+                <Loading text="Memuat kajian..." />
               </div>
             ) : filteredMaterials.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-[3rem] border-4 border-slate-100 border-dashed">
-                <p className="text-slate-400 font-bold text-xl">Yah, tidak ada kajian yang cocok 😔</p>
-                <button 
-                  onClick={() => {setSelectedProgram("Semua"); setSelectedGrade("Semua"); setSearchQuery("")}}
-                  className="mt-4 text-teal-500 font-bold underline decoration-wavy hover:text-teal-600"
-                >
-                  Reset Filter
-                </button>
-              </div>
+              <EmptyState
+                icon={materials.length === 0 ? "calendar" : "search"}
+                title={materials.length === 0 ? "Yah, tidak ada kajian tersedia sekarang" : "Yah, kajian tidak ditemukan..."}
+                description={materials.length === 0 ? "Belum ada kajian yang dibuat. Cek lagi nanti ya!" : "Coba cari dengan kata kunci atau filter lain ya!"}
+                actionLabel={materials.length === 0 ? undefined : "Reset Filter"}
+                onAction={materials.length === 0 ? undefined : () => {setSelectedProgram("Semua"); setSelectedGrade("Semua"); setSearchQuery("")}}
+              />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredMaterials.map((material) => (
+              <>
+                {searchQuery && (
+                  <SuccessDataFound 
+                    message={`Ditemukan ${filteredMaterials.length} kajian sesuai pencarian`}
+                    icon="sparkles"
+                  />
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredMaterials.map((material) => (
                   <div
                     key={material.id}
                     className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col h-full"
@@ -204,7 +300,7 @@ const Materials = () => {
                         alt={material.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
 
                       {/* Badge: Baru */}
                       {!material.isJoined && (
@@ -215,7 +311,7 @@ const Materials = () => {
 
                       {/* Badge: Category */}
                       <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                        <span className="px-3 py-1 rounded-lg bg-teal-400 text-white text-xs font-bold border-2 border-teal-600 shadow-[0_2px_0_0_#0f766e]">
+                        <span className="px-3 py-1 rounded-lg bg-emerald-400 text-white text-xs font-bold border-2 border-emerald-600 shadow-[0_2px_0_0_#065f46]">
                           {material.category}
                         </span>
                       </div>
@@ -231,7 +327,7 @@ const Materials = () => {
                           </span>
                         )}
                         
-                        <h3 className="text-xl font-black text-slate-800 mb-2 leading-tight group-hover:text-teal-600 transition-colors line-clamp-2">
+                        <h3 className="text-xl font-black text-slate-800 mb-2 leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
                           {material.title}
                         </h3>
                         
@@ -245,7 +341,7 @@ const Materials = () => {
                         {/* Info Row */}
                         <div className="flex items-center gap-4 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
-                            <Calendar className="h-4 w-4 text-teal-400" />
+                            <Calendar className="h-4 w-4 text-emerald-400" />
                             <span>
                               {new Date(material.date).toLocaleDateString("id-ID", {
                                 day: "numeric",
@@ -256,7 +352,7 @@ const Materials = () => {
                           <div className="w-px h-4 bg-slate-300"></div>
                           {material.startedAt && (
                             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
-                              <Clock className="h-4 w-4 text-teal-400" />
+                              <Clock className="h-4 w-4 text-emerald-400" />
                               <span>{material.startedAt}</span>
                             </div>
                           )}
@@ -266,46 +362,40 @@ const Materials = () => {
                       {/* --- BUTTON ACTION DINAMIS --- */}
                       <div className="mt-auto">
                         {isPrivileged ? (
-                          // Tombol untuk Instruktur/Admin (Pop Style Green)
-                           <button
-                             onClick={() => router.push(`/materials/${material.id}/edit`)}
-                             className="w-full py-3 rounded-xl bg-emerald-400 text-white font-black border-2 border-emerald-600 border-b-4 hover:bg-emerald-500 active:border-b-2 active:translate-y-[2px] transition-all flex items-center justify-center gap-2 group/btn"
-                           >
-                             <Sparkles className="w-4 h-4 group-hover/btn:animate-spin" /> Edit Kajian
-                           </button>
+                          <MaterialInstructorActions
+                            materialId={material.id}
+                            onDelete={handleDeleteMaterial}
+                          />
                         ) : (
-                          // Tombol untuk User Biasa
-                          ["3","4"].includes(material.id) ? (
-                             <div className="space-y-3">
-                               <div className="flex items-center justify-center gap-2 text-emerald-500 font-bold text-xs bg-emerald-50 py-1 rounded-lg justify-center text-center">
-                                 <span className="w-full text-center">Kamu sudah mengikuti kajian ini, pada tanggal {material.date}.</span>
-                               </div>
-                               <button
-                                 onClick={() => router.push(`/materials/${material.id}/recap`)}
-                                 className="w-full py-3 rounded-xl bg-cyan-400 text-white font-black border-2 border-cyan-600 border-b-4 hover:bg-cyan-500 active:border-b-2 active:translate-y-[2px] transition-all"
-                               >
-                                 Lihat Rekapan
-                               </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => router.push(`/materials/${material.id}/absensi`)}
-                              className="w-full py-3 rounded-xl bg-teal-400 text-white font-black border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-[2px] transition-all shadow-lg hover:shadow-teal-200"
-                            >
-                              Aku Ikut! ✋
-                            </button>
-                          )
+                          <MaterialUserActions
+                            materialId={material.id}
+                            isJoined={material.isJoined}
+                            attendedAt={material.attendedAt}
+                            materialDate={material.date}
+                          />
                         )}
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
+                </div>
+              </>
             )}
           </div>
         </div>
       </div>
       <ChatbotButton />
+
+      {/* Notification */}
+      {notification && (
+        <CartoonNotification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          duration={notification.type === "success" ? 3000 : 5000}
+          onClose={() => setNotification(null)}
+        />
+      )}
     </div>
   );
 };

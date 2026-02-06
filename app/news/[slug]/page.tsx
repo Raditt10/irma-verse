@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
 import { ArrowLeft, Calendar, Eye, Share2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -117,7 +117,7 @@ export default function NewsDetailPage() {
     <div
       className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
       style={{
-        fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive",
+
       }}
     >
       <DashboardHeader />

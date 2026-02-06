@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
 import { 
   Calendar, 
   MapPin, 
@@ -162,7 +162,7 @@ const ProgramDetail = () => {
 
   if (!program) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+      <div className="min-h-screen bg-[#FDFBF7]">
         <DashboardHeader />
         <div className="flex">
           <Sidebar />
@@ -184,7 +184,7 @@ const ProgramDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -209,7 +209,7 @@ const ProgramDetail = () => {
                    alt={program.title}
                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                 
                 {/* Content Overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
@@ -262,7 +262,7 @@ const ProgramDetail = () => {
 
                 {/* Syllabus */}
                 {program.syllabus && (
-                  <div className="bg-white p-6 rounded-[2rem] border-2 border-slate-200 shadow-[0_4px_0_0_#e2e8f0]">
+                  <div className="bg-white p-6 rounded-4xl border-2 border-slate-200 shadow-[0_4px_0_0_#e2e8f0]">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2 bg-purple-100 rounded-xl border-2 border-purple-200">
                             <BookOpen className="h-6 w-6 text-purple-600" strokeWidth={2.5} />
@@ -323,7 +323,7 @@ const ProgramDetail = () => {
               <div className="space-y-6">
                 
                 {/* Instructor Card */}
-                <div className="bg-white rounded-[2rem] border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] overflow-hidden p-6 text-center">
+                <div className="bg-white rounded-4xl border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] overflow-hidden p-6 text-center">
                     <div className="w-24 h-24 mx-auto bg-slate-100 rounded-full mb-4 border-4 border-teal-100 overflow-hidden relative">
                          <div className="absolute inset-0 flex items-center justify-center bg-teal-500 text-white">
                              <User className="h-10 w-10" />
@@ -360,7 +360,7 @@ const ProgramDetail = () => {
 
                 {/* CTA Box */}
                 {program.status !== "done" && (
-                    <div className="bg-gradient-to-br from-teal-400 to-cyan-400 rounded-[2rem] p-6 text-white border-2 border-teal-600 shadow-[0_6px_0_0_#0f766e] text-center">
+                    <div className="bg-gradient-to-br from-teal-400 to-cyan-400 rounded-4xl p-6 text-white border-2 border-teal-600 shadow-[0_6px_0_0_#0f766e] text-center">
                         <h3 className="text-xl font-black mb-2">Tertarik Bergabung?</h3>
                         <p className="text-teal-50 text-sm font-medium mb-6 leading-relaxed">
                             Jangan lewatkan kesempatan untuk belajar langsung dari ahlinya. Kuota terbatas!

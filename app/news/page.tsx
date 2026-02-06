@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
+import SearchInput from "@/components/ui/SearchInput";
+import CategoryFilter from "@/components/ui/CategoryFilter";
 import { ArrowRight, Calendar, Eye, Share2, Bookmark, Filter, Plus, Pencil, Trash2, Search, HelpCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -189,10 +191,10 @@ const News = () => {
     }
   };
 
-  const categories = ["all", "Prestasi", "Kerjasama", "Update", "Event", "Pengumuman"];
+  const categories = ["Semua", "Prestasi", "Kerjasama", "Update", "Event", "Pengumuman"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       <DashboardHeader/>
       <div className="flex">
         <Sidebar />
@@ -226,13 +228,12 @@ const News = () => {
             <div className="mb-8 space-y-4">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col sm:flex-row gap-4 relative">
-                  <div className="relative flex-1">
-                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                     <input
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                  <div className="flex-1">
+                     <SearchInput
                         placeholder="Cari judul berita..."
-                        className="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                        className="w-full"
                       />
                   </div>
                 </div>
@@ -256,21 +257,14 @@ const News = () => {
               </div>
               
               {/* Category Pills */}
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-2 rounded-full font-semibold text-sm transition-all duration-300 ${
-                      selectedCategory === cat
-                        ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg scale-105"
-                        : "bg-white text-slate-600 hover:bg-slate-100 shadow-sm"
-                    }`}
-                  >
-                    {cat === "all" ? "Semua" : cat}
-                  </button>
-                ))}
-              </div>
+              <CategoryFilter
+                categories={categories}
+                subCategories={[]}
+                selectedCategory={selectedCategory}
+                selectedSubCategory=""
+                onCategoryChange={setSelectedCategory}
+                onSubCategoryChange={() => {}}
+              />
             </div>
 
             {loading ? (
@@ -302,13 +296,13 @@ const News = () => {
                   >
                     <div className="flex flex-col sm:flex-row">
                       {/* Image */}
-                      <div className="sm:w-72 h-56 sm:h-auto flex-shrink-0 relative overflow-hidden">
+                      <div className="sm:w-72 h-56 sm:h-auto shrink-0 relative overflow-hidden">
                         <img
                           src={item.image || "https://images.unsplash.com/photo-1633613286991-611bcfb63dba?auto=format&fit=crop&w=800&q=80"}
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:hidden" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent sm:hidden" />
                         <span
                           className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold shadow-lg tracking-wide ${categoryStyles[item.category]}`}
                         >
@@ -337,7 +331,7 @@ const News = () => {
 
                         <div className="flex items-center justify-between pt-5 border-t border-slate-100">
                           <div className="flex items-center gap-2">
-                             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-teal-400 to-cyan-400 flex items-center justify-center text-[10px] text-white font-bold">
+                             <div className="w-6 h-6 rounded-full bg-linear-to-br from-teal-400 to-cyan-400 flex items-center justify-center text-[10px] text-white font-bold">
                                 {(item.author.name || "A").charAt(0)}
                              </div>
                              <span className="text-sm font-medium text-slate-500 truncate max-w-[100px] sm:max-w-none">

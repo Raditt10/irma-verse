@@ -1,13 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import BackButton from "@/components/ui/BackButton";
-import ChatbotButton from "@/components/ui/ChatbotButton";
+import ChatbotButton from "@/components/ui/Chatbot";
 import DatePicker from "@/components/ui/DatePicker";
 import TimePicker from "@/components/ui/TimePicker";
-import CustomDropdown from "@/components/ui/CustomDropdown";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import CategoryFilter from "@/components/ui/CategoryFilter";
+import SearchInput from "@/components/ui/SearchInput";
+import CartoonNotification from "@/components/ui/CartoonNotification";
+import CartoonConfirmDialog from "@/components/ui/CartoonConfirmDialog";
 import {
   Upload,
   X,
@@ -25,6 +30,22 @@ const CreateMaterial = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // Notification States
+  const [notification, setNotification] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    type: "warning" | "info" | "success";
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void | Promise<void>;
+    onCancel?: () => void;
+  } | null>(null);
+
   // Form State
   const [formData, setFormData] = useState({
     title: "",
@@ -40,15 +61,17 @@ const CreateMaterial = () => {
   const [inviteInput, setInviteInput] = useState("");
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const [userOptions, setUserOptions] = useState<{ value: string; label: string; avatar?: string; email: string }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ value: string; label: string; avatar?: string; email: string }[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
-  // Fetch user list & transform for dropdown
+  // Fetch user list
   useEffect(() => {
     async function fetchUsers() {
       try {
         const res = await fetch("/api/users");
         if (!res.ok) throw new Error("Gagal mengambil data user");
         const data = await res.json();
-        // Format data agar sesuai dengan CustomDropdown (value & label)
+        // Format data
         const formattedUsers = data.map((u: any) => ({
           value: u.email,
           label: u.name || u.email,
@@ -63,32 +86,74 @@ const CreateMaterial = () => {
     fetchUsers();
   }, []);
 
+  // Search handler
+  const handleSearchInvite = (query: string) => {
+    setInviteInput(query);
+    if (query.trim()) {
+      const filtered = userOptions.filter(
+        (u) =>
+          (u.label.toLowerCase().includes(query.toLowerCase()) ||
+            u.email.toLowerCase().includes(query.toLowerCase())) &&
+          !invitedUsers.includes(u.value)
+      );
+      setSearchResults(filtered);
+      setShowSearchResults(true);
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDropdownChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploading(true);
-      setTimeout(() => {
-        setFormData((prev) => ({ ...prev, thumbnailUrl: URL.createObjectURL(file) }));
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          setNotification({
+            type: "error",
+            title: "Gagal Upload",
+            message: error.error || "Gagal mengunggah gambar",
+          });
+          return;
+        }
+
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, thumbnailUrl: data.url }));
+      } catch (error: any) {
+        console.error("Error uploading image:", error);
+        setNotification({
+          type: "error",
+          title: "Gagal Upload",
+          message: "Terjadi kesalahan saat mengunggah gambar",
+        });
+      } finally {
         setUploading(false);
-      }, 1500);
+      }
     }
   };
 
-  const handleAddInvite = () => {
-    if (!inviteInput.trim()) return;
-    if (!invitedUsers.includes(inviteInput)) {
-      setInvitedUsers([...invitedUsers, inviteInput]);
+  const handleAddInvite = (userEmail: string) => {
+    if (!invitedUsers.includes(userEmail)) {
+      setInvitedUsers([...invitedUsers, userEmail]);
     }
     setInviteInput("");
+    setSearchResults([]);
+    setShowSearchResults(false);
   };
 
   const handleRemoveInvite = (index: number) => {
@@ -97,39 +162,107 @@ const CreateMaterial = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Frontend validation
+    if (!formData.title.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Judul kajian tidak boleh kosong",
+      });
+      return;
+    }
+    if (formData.title.trim().length < 3) {
+      setNotification({
+        type: "warning",
+        title: "Data Tidak Valid",
+        message: "Judul kajian minimal 3 karakter",
+      });
+      return;
+    }
+    if (!formData.description.trim()) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Deskripsi kajian tidak boleh kosong",
+      });
+      return;
+    }
+    if (formData.description.trim().length < 10) {
+      setNotification({
+        type: "warning",
+        title: "Data Tidak Valid",
+        message: "Deskripsi kajian minimal 10 karakter",
+      });
+      return;
+    }
+    if (!formData.date) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Tanggal kajian harus dipilih",
+      });
+      return;
+    }
+    if (!formData.time) {
+      setNotification({
+        type: "warning",
+        title: "Data Belum Lengkap",
+        message: "Jam kajian harus dipilih",
+      });
+      return;
+    }
+    
     setLoading(true);
     try {
       const payload = { ...formData, invites: invitedUsers };
+      console.log("Payload yang dikirim:", payload);
+      
       const res = await fetch("/api/materials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Gagal");
-      router.push("/materials");
-    } catch (error) {
-      console.error(error);
+      
+      if (!res.ok) {
+        let errorMessage = `HTTP Error: ${res.status}`;
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // Response is not JSON, use default error message
+        }
+        throw new Error(errorMessage);
+      }
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        // Response is not JSON but status was OK, treat as success
+        data = null;
+      }
+      
+      setNotification({
+        type: "success",
+        title: "Berhasil!",
+        message: "Kajian berhasil dibuat. Redirecting...",
+      });
+      setTimeout(() => router.push("/materials"), 2000);
+    } catch (error: any) {
+      console.error("Error creating material:", error);
+      setNotification({
+        type: "error",
+        title: "Gagal Membuat Kajian",
+        message: error.message || "Terjadi kesalahan saat membuat kajian",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Opsi Statis
-  const categoryOptions = [
-    { value: "Program Wajib", label: "Program Wajib" },
-    { value: "Program Ekstra", label: "Program Ekstra" },
-    { value: "Program Next Level", label: "Program Next Level" },
-  ];
-
-  const gradeOptions = [
-    { value: "Semua", label: "Semua Kelas" },
-    { value: "Kelas 10", label: "Kelas 10" },
-    { value: "Kelas 11", label: "Kelas 11" },
-    { value: "Kelas 12", label: "Kelas 12" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#FDFBF7]" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex flex-col lg:flex-row">
         <Sidebar />
@@ -165,43 +298,37 @@ const CreateMaterial = () => {
                   <div className="space-y-4 lg:space-y-6">
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Judul Kajian</label>
-                      <input
+                      <Input
                         type="text"
                         name="title"
                         required
                         value={formData.title}
                         onChange={handleInputChange}
                         placeholder="Contoh: Tadabbur Alam & Quran"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">Deskripsi & Materi</label>
-                      <textarea
+                      <Textarea
                         name="description"
                         required
                         rows={5}
                         value={formData.description}
                         onChange={handleInputChange}
                         placeholder="Jelaskan apa yang akan dipelajari..."
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
 
-                    {/* --- MENGGUNAKAN CUSTOM DROPDOWN --- */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                      <CustomDropdown
-                        label="Kategori Program"
-                        options={categoryOptions}
-                        value={formData.category}
-                        onChange={(val) => handleDropdownChange("category", val)}
-                      />
-                      <CustomDropdown
-                        label="Target Kelas"
-                        options={gradeOptions}
-                        value={formData.grade}
-                        onChange={(val) => handleDropdownChange("grade", val)}
+                    {/* --- CATEGORY FILTER --- */}
+                    <div className="pt-6 border-t-2 border-slate-100">
+                      <CategoryFilter
+                        categories={["Program Wajib", "Program Ekstra", "Program Next Level"]}
+                        subCategories={["Kelas 10", "Kelas 11", "Kelas 12"]}
+                        selectedCategory={formData.category}
+                        selectedSubCategory={formData.grade}
+                        onCategoryChange={(val) => setFormData({ ...formData, category: val })}
+                        onSubCategoryChange={(val) => setFormData({ ...formData, grade: val })}
                       />
                     </div>
                   </div>
@@ -277,31 +404,54 @@ const CreateMaterial = () => {
                   </div>
                 </div>
 
-                {/* --- INVITING SECTION (CUSTOM DROPDOWN) --- */}
+                {/* --- INVITING SECTION (SEARCH INPUT) --- */}
                 <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg font-black text-slate-700 mb-4 flex items-center gap-2">
                     <Users className="h-5 w-5 text-amber-500" /> Undang Peserta
                   </h2>
 
                   <div className="space-y-3 lg:space-y-4">
-                    <div className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        {/* DROPDOWN UNDANG PESERTA */}
-                        <CustomDropdown
-                          options={userOptions}
-                          value={inviteInput}
-                          onChange={(val) => setInviteInput(val)}
-                          placeholder="Pilih user untuk diundang..."
-                          className="w-full"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleAddInvite()}
-                        className="h-12.5 lg:h-14.5 px-4 rounded-xl lg:rounded-2xl bg-amber-400 text-white border-2 border-amber-500 shadow-[0_4px_0_0_#d97706] hover:bg-amber-500 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center mt-px"
-                      >
-                        <Plus className="w-5 h-5" strokeWidth={3} />
-                      </button>
+                    <div className="relative">
+                      <SearchInput
+                        placeholder="Cari nama atau email peserta..."
+                        value={inviteInput}
+                        onChange={(value) => {
+                          handleSearchInvite(value);
+                        }}
+                        className="w-full"
+                      />
+
+                      {/* Search Results Dropdown */}
+                      {showSearchResults && searchResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-amber-200 rounded-2xl shadow-lg z-10 max-h-64 overflow-y-auto">
+                          {searchResults.map((user) => (
+                            <button
+                              key={user.value}
+                              type="button"
+                              onClick={() => handleAddInvite(user.value)}
+                              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-amber-50 border-b border-amber-100 last:border-b-0 transition-colors text-left"
+                            >
+                              {user.avatar ? (
+                                <img src={user.avatar} alt={user.label} className="h-8 w-8 rounded-full object-cover" />
+                              ) : (
+                                <div className="h-8 w-8 rounded-full bg-amber-200 flex items-center justify-center text-xs font-bold text-amber-700">
+                                  {user.label.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                              <div className="flex-1 text-left">
+                                <p className="font-bold text-slate-700 text-sm">{user.label}</p>
+                                <p className="text-xs text-slate-500">{user.email}</p>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {showSearchResults && inviteInput && searchResults.length === 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-amber-200 rounded-2xl shadow-lg z-10 p-4 text-center">
+                          <p className="text-sm text-slate-500 font-semibold">Tidak ada peserta yang cocok</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Invited Chips List */}
@@ -363,6 +513,33 @@ const CreateMaterial = () => {
         </div>
       </div>
       <ChatbotButton />
+
+      {/* Notification */}
+      {notification && (
+        <CartoonNotification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          duration={notification.type === "success" ? 3000 : 5000}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
+      {/* Confirm Dialog */}
+      {confirmDialog && (
+        <CartoonConfirmDialog
+          type={confirmDialog.type}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          confirmText={confirmDialog.confirmText}
+          cancelText={confirmDialog.cancelText}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={() => {
+            setConfirmDialog(null);
+            confirmDialog.onCancel?.();
+          }}
+        />
+      )}
     </div>
   );
 };

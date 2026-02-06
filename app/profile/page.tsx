@@ -15,7 +15,7 @@ import {
   ArrowRight,
   Clock3,
 } from "lucide-react";
-import DashboardHeader from "@/components/ui/DashboardHeader";
+import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ProfileInformationForm from "./_components/ProfileInformationForm";
 
@@ -74,7 +74,7 @@ const Profile = () => {
   return (
     <div
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100"
-      style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}
+
     >
       <DashboardHeader />
 
