@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState, useCallback, Suspense } from "react";
-import { Button } from "@/components/ui/Button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
@@ -641,13 +640,13 @@ const ChatPage = () => {
                       className="pl-12 bg-white border-2 border-slate-200 rounded-2xl h-12 focus:border-emerald-400 focus:shadow-[0_0_0_2px_#34d399] transition-all"
                     />
                   </div>
-                  <Button
+                  <button
                     onClick={() => setShowNewChatModal(true)}
                     className="w-full bg-emerald-400 hover:bg-emerald-500 text-white font-black rounded-2xl h-12 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all"
                   >
                     <UserPlus className="h-5 w-5 mr-2" strokeWidth={3} />
                     Chat Baru
-                  </Button>
+                  </button>
                 </div>
 
                 {/* Conversations List */}
@@ -776,9 +775,9 @@ const ChatPage = () => {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="hover:bg-slate-100 rounded-xl">
+                      <button className="hover:bg-slate-100 rounded-xl p-2">
                         <MoreHorizontal className="h-6 w-6 text-slate-400" />
-                      </Button>
+                      </button>
                     </div>
 
                     {/* Messages Area */}
@@ -859,10 +858,10 @@ const ChatPage = () => {
                                         isCurrentUser
                                           ? message.isDeleted
                                             ? "bg-slate-100 border-slate-300 text-slate-500 italic rounded-2xl"
-                                            : "bg-gradient-to-br from-emerald-400 to-teal-400 border-emerald-600 text-white rounded-[2rem] rounded-tr-none shadow-[2px_4px_0_0_#059669]"
+                                            : "bg-linear-to-br from-emerald-400 to-teal-400 border-emerald-600 text-white rounded-4xl rounded-tr-none shadow-[2px_4px_0_0_#059669]"
                                           : message.isDeleted
                                           ? "bg-slate-50 border-slate-200 text-slate-400 italic rounded-2xl"
-                                          : "bg-white border-slate-200 text-slate-800 rounded-[2rem] rounded-tl-none shadow-[2px_4px_0_0_#e2e8f0]"
+                                          : "bg-white border-slate-200 text-slate-800 rounded-4xl rounded-tl-none shadow-[2px_4px_0_0_#e2e8f0]"
                                       }`}
                                     >
                                       {editingMessageId === message.id ? (
@@ -948,7 +947,7 @@ const ChatPage = () => {
                           {/* Typing Indicator Bubble */}
                           {currentTypingUsers.length > 0 && (
                             <div className="flex justify-start">
-                              <div className="bg-white border-2 border-slate-200 rounded-[2rem] rounded-tl-none px-5 py-4 shadow-sm flex items-center gap-1.5">
+                              <div className="bg-white border-2 border-slate-200 rounded-4xl rounded-tl-none px-5 py-4 shadow-sm flex items-center gap-1.5">
                                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
                                 <div
                                   className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
@@ -967,7 +966,7 @@ const ChatPage = () => {
 
                     {/* Message Input - Floating Style */}
                     <div className="p-5 bg-white/80 backdrop-blur-sm relative z-20">
-                      <div className="bg-white rounded-[2rem] border-2 border-slate-200 shadow-lg p-2 flex items-end gap-2 focus-within:border-emerald-400 focus-within:shadow-[0_0_0_3px_rgba(52,211,153,0.2)] transition-all">
+                      <div className="bg-white rounded-4xl border-2 border-slate-200 shadow-lg p-2 flex items-end gap-2 focus-within:border-emerald-400 focus-within:shadow-[0_0_0_3px_rgba(52,211,153,0.2)] transition-all">
                         <input
                           ref={fileInputRef}
                           type="file"
@@ -998,14 +997,14 @@ const ChatPage = () => {
                             handleTyping();
                           }}
                           onKeyDown={handleKeyDown}
-                          className="flex-1 min-h-[48px] max-h-32 border-0 focus:ring-0 shadow-none resize-none py-3 text-slate-700 font-medium placeholder:text-slate-400 bg-transparent"
+                          className="flex-1 min-h-12 max-h-32 border-0 focus:ring-0 shadow-none resize-none py-3 text-slate-700 font-medium placeholder:text-slate-400 bg-transparent"
                           rows={1}
                         />
                         
                         <button
                           onClick={handleSendMessage}
                           disabled={!messageDraft.trim()}
-                          className="p-3 bg-gradient-to-r from-emerald-400 to-teal-400 text-white rounded-full shadow-[0_4px_0_0_#059669] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#059669] active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                          className="p-3 bg-linear-to-r from-emerald-400 to-teal-400 text-white rounded-full shadow-[0_4px_0_0_#059669] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#059669] active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                         >
                           <Send className="h-5 w-5" strokeWidth={3} />
                         </button>
@@ -1014,7 +1013,7 @@ const ChatPage = () => {
                   </>
                 ) : (
                   <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-                    <div className="w-24 h-24 bg-emerald-50 rounded-[2rem] flex items-center justify-center mb-6 border-4 border-emerald-100 transform rotate-3 shadow-lg">
+                    <div className="w-24 h-24 bg-emerald-50 rounded-4xl flex items-center justify-center mb-6 border-4 border-emerald-100 transform rotate-3 shadow-lg">
                       <MessageCircle className="h-12 w-12 text-emerald-400" />
                     </div>
                     <h2 className="text-2xl font-black text-slate-800 mb-2">
@@ -1024,13 +1023,13 @@ const ChatPage = () => {
                       Pilih percakapan di sebelah kiri atau mulai chat baru dengan
                       instruktur favoritmu!
                     </p>
-                    <Button
+                    <button
                       onClick={() => setShowNewChatModal(true)}
                       className="mt-6 bg-emerald-400 hover:bg-emerald-500 text-white font-black rounded-2xl h-12 px-8 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all"
                     >
                       <UserPlus className="h-5 w-5 mr-2" strokeWidth={3} />
                       Mulai Chat Baru
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
@@ -1042,7 +1041,7 @@ const ChatPage = () => {
       {/* File Preview Modal */}
       {showFilePreview && selectedFile && filePreviewUrl && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border-4 border-white shadow-2xl transform scale-100 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-4xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border-4 border-white shadow-2xl transform scale-100 animate-in fade-in zoom-in duration-200">
             <div className="p-5 border-b-2 border-slate-100 flex items-center justify-between bg-slate-50">
               <h3 className="text-lg font-black text-slate-800">
                 Preview File
@@ -1086,10 +1085,10 @@ const ChatPage = () => {
                 disabled={uploadingFile}
               />
               <div className="flex gap-3">
-                <Button
+                <button
                   onClick={handleSendFile}
                   disabled={uploadingFile}
-                  className="flex-1 bg-emerald-400 hover:bg-emerald-500 text-white font-black rounded-xl h-12 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all"
+                  className="flex-1 bg-emerald-400 hover:bg-emerald-500 text-white font-black rounded-xl h-12 border-b-4 border-emerald-600 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadingFile ? (
                     <>
@@ -1102,15 +1101,14 @@ const ChatPage = () => {
                       Kirim
                     </>
                   )}
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={handleCancelFilePreview}
                   disabled={uploadingFile}
-                  variant="outline"
-                  className="rounded-xl h-12 font-bold border-2 border-slate-200 hover:bg-slate-50"
+                  className="rounded-xl h-12 font-bold border-2 border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Batal
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -1120,7 +1118,7 @@ const ChatPage = () => {
       {/* New Chat Modal */}
       {showNewChatModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-md max-h-[80vh] overflow-hidden border-4 border-white shadow-2xl animate-in fade-in slide-in-from-bottom-4">
+          <div className="bg-white rounded-4xl w-full max-w-md max-h-[80vh] overflow-hidden border-4 border-white shadow-2xl animate-in fade-in slide-in-from-bottom-4">
             <div className="p-5 border-b-2 border-slate-100 bg-emerald-50">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-black text-slate-800">

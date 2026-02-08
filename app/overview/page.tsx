@@ -360,8 +360,8 @@ const Dashboard = () => {
                     <Zap className="w-7 h-7 text-amber-500 fill-amber-500" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-black text-slate-800 text-lg">Tantangan Harian</h4>
-                    <p className="text-xs text-slate-500 font-bold">Hafalan surat pendek</p>
+                    <h4 className="font-black text-slate-800 text-lg">Misi Harian</h4>
+                    <p className="text-xs text-slate-500 font-bold">Selesaikan 2 Kuis</p>
                   </div>
                   <button className="px-4 py-2 bg-slate-900 text-white text-xs font-black rounded-xl hover:bg-slate-700 hover:scale-105 transition-all">
                     Mulai

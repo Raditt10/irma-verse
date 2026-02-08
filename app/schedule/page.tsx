@@ -1,18 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/Chatbot";
 import SearchInput from "@/components/ui/SearchInput";
 import EmptyState from "@/components/ui/EmptyState";
 import Loading from "@/components/ui/Loading";
+import ScheduleDetailButton from "@/components/ui/ScheduleDetailButton";
+import ScheduleEditButton from "@/components/ui/ScheduleEditButton";
 import { 
   Calendar, 
   MapPin, 
   Clock, 
   Users, 
-  ArrowRight, 
   CalendarX
 } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
@@ -38,7 +38,6 @@ const Schedule = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("Semua");
-  const router = useRouter();
 
   const statusOptions = ["Semua", "Segera hadir", "Sedang berlangsung", "Acara telah dilaksanakan"];
 
@@ -124,7 +123,7 @@ const Schedule = () => {
               {session?.user?.role === "instruktur" && (
                 <AddButton
                   label="Tambahkan Event"
-                  onClick={() => router.push("/schedule/create")}
+                  onClick={() => window.location.href = "/schedule/create"}
                   color="teal"
                 />
               )}
@@ -256,13 +255,11 @@ const Schedule = () => {
                       </div>
 
                       {/* Button */}
-                      <button 
-                        onClick={() => router.push(`/schedule/${schedule.id}`)}
-                        className="w-full py-3.5 rounded-2xl bg-teal-400 text-white font-black text-sm border-2 border-teal-600 border-b-4 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 group/btn"
-                      >
-                        <span>Lihat Detail Event</span>
-                        <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />
-                      </button>
+                      {session?.user?.role === "instruktur" ? (
+                        <ScheduleEditButton scheduleId={schedule.id} />
+                      ) : (
+                        <ScheduleDetailButton scheduleId={schedule.id} />
+                      )}
                     </div>
                   </div>
                 ))}

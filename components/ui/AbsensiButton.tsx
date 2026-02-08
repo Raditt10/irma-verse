@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { Book } from "lucide-react";
 import DeleteButton from "./DeleteButton";
-import MaterialEditButton from "./ButtonEditMaterial";
+import MaterialEditButton from "./ButtonEdit";
 
 interface MaterialInstructorActionsProps {
   materialId: string;

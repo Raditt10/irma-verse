@@ -5,9 +5,8 @@ import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/Chatbot";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/InputText";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/InputText";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -116,7 +115,7 @@ const EditCompetition = () => {
 
   if (status === "loading" || fetchingData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
         <p className="text-slate-500">Memuat...</p>
       </div>
     );
@@ -208,7 +207,7 @@ const EditCompetition = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
@@ -223,11 +222,11 @@ const EditCompetition = () => {
               Kembali ke Detail
             </button>
 
-            <Card className="shadow-lg border-none">
-              <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-t-lg">
-                <CardTitle className="text-2xl font-bold">Edit Perlombaan</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
+            <div className="shadow-lg border-none bg-white rounded-lg overflow-hidden">
+              <div className="bg-linear-to-r from-teal-500 to-cyan-500 text-white p-6">
+                <h1 className="text-2xl font-bold">Edit Perlombaan</h1>
+              </div>
+              <div className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
@@ -372,7 +371,7 @@ const EditCompetition = () => {
                       <div key={index} className="flex gap-2">
                         <Input
                           value={req}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const newReqs = [...requirements];
                             newReqs[index] = e.target.value;
                             setRequirements(newReqs);
@@ -407,7 +406,7 @@ const EditCompetition = () => {
                       <div key={index} className="flex gap-2">
                         <Input
                           value={criteria}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const newCriteria = [...judgingCriteria];
                             newCriteria[index] = e.target.value;
                             setJudgingCriteria(newCriteria);
@@ -442,7 +441,7 @@ const EditCompetition = () => {
                       <div key={index} className="flex gap-2">
                         <Input
                           value={prize.rank}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const newPrizes = [...prizes];
                             newPrizes[index].rank = e.target.value;
                             setPrizes(newPrizes);
@@ -452,7 +451,7 @@ const EditCompetition = () => {
                         />
                         <Input
                           value={prize.amount}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const newPrizes = [...prizes];
                             newPrizes[index].amount = e.target.value;
                             setPrizes(newPrizes);
@@ -489,7 +488,7 @@ const EditCompetition = () => {
                         <div className="flex gap-2">
                           <Input
                             value={schedule.phase}
-                            onChange={(e) => {
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               const newSchedules = [...schedules];
                               newSchedules[index].phase = e.target.value;
                               setSchedules(newSchedules);
@@ -499,7 +498,7 @@ const EditCompetition = () => {
                           />
                           <Input
                             value={schedule.date}
-                            onChange={(e) => {
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               const newSchedules = [...schedules];
                               newSchedules[index].date = e.target.value;
                               setSchedules(newSchedules);
@@ -519,7 +518,7 @@ const EditCompetition = () => {
                         </div>
                         <Textarea
                           value={schedule.description}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                             const newSchedules = [...schedules];
                             newSchedules[index].description = e.target.value;
                             setSchedules(newSchedules);
@@ -592,14 +591,14 @@ const EditCompetition = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+                      className="flex-1 px-6 py-3 bg-linear-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
                     >
                       {loading ? "Menyimpan..." : "Simpan Perubahan"}
                     </button>
                   </div>
                 </form>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
