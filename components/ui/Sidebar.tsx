@@ -24,57 +24,27 @@ import {
 // Custom scrollbar styles
 const scrollbarStyles = `
   .sidebar-scrollbar::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
-  
   .sidebar-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  
   .sidebar-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #14b8a6 0%, #06b6d4 100%);
+    background: #cbd5e1;
     border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
   }
-  
   .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #0d9488 0%, #0891b2 100%);
-    background-clip: padding-box;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+    background: #94a3b8;
   }
-  
-  .sidebar-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #14b8a6 transparent;
-  }
-
   .mobile-sidebar-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
-  
   .mobile-sidebar-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  
   .mobile-sidebar-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #14b8a6 0%, #06b6d4 100%);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .mobile-sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #0d9488 0%, #0891b2 100%);
-    background-clip: padding-box;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .mobile-sidebar-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #14b8a6 transparent;
+    background: #cbd5e1; 
+    border-radius: 4px;
   }
 `;
 
@@ -85,34 +55,28 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [expandedSubmenus, setExpandedSubmenus] = useState<{ [key: string]: boolean }>({});
 
-  // Ambil role user untuk pengecekan logic
   const role = session?.user?.role;
   const isInstruktur = role === "instruktur";
 
-  // Load sidebar state from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-expanded');
     if (saved !== null) {
       setIsExpanded(JSON.parse(saved));
     } else {
-      // Default: collapse on mobile, expand on desktop
       const isMobile = window.innerWidth < 1024;
       setIsExpanded(!isMobile);
     }
     setMounted(true);
   }, []);
 
-  // Persist sidebar state to localStorage
   useEffect(() => {
     if (mounted) {
       localStorage.setItem('sidebar-expanded', JSON.stringify(isExpanded));
     }
   }, [isExpanded, mounted]);
 
-  // Listen for global events to open/close mobile sidebar
   useEffect(() => {
     const openHandler = () => setIsMobileOpen(true);
     const closeHandler = () => setIsMobileOpen(false);
@@ -124,14 +88,12 @@ const Sidebar = () => {
     };
   }, []);
 
-  // --- LOGIC MENENTUKAN PATH DASHBOARD ---
   const getDashboardPath = () => {
     if (role === "instruktur") return "/academy";
     if (role === "admin") return "/admin";
-    return "/overview"; // 
+    return "/overview"; 
   };
 
-  // Handle submenu toggle
   const toggleSubmenu = (id: string) => {
     setExpandedSubmenus(prev => ({
       ...prev,
@@ -139,7 +101,6 @@ const Sidebar = () => {
     }));
   };
 
-  // --- MENU ITEMS ---
   const baseMenuItems = [
     { 
       icon: LayoutGrid, 
@@ -225,20 +186,30 @@ const Sidebar = () => {
   return (
     <>
       <style>{scrollbarStyles}</style>
-      {/* Desktop Sidebar */}
-      <div className={`hidden lg:block shrink-0 sticky top-20 h-[calc(100vh-5rem)] px-6 py-8 overflow-y-auto sidebar-scrollbar transition-all duration-300 ${isExpanded ? 'w-64' : 'w-20'}`}>
-        <div className="space-y-2">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center justify-center p-2 text-slate-700 hover:text-slate-900 transition-colors duration-300 mb-4"
-            title={isExpanded ? "Persempit Sidebar" : "Perlebar Sidebar"}
-          >
-            {isExpanded ? (
-              <PanelLeftClose className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+      
+      {/* --- DESKTOP SIDEBAR --- */}
+      <div className={`hidden lg:flex flex-col shrink-0 sticky top-20 h-[calc(100vh-5rem)] bg-white border-r-2 border-slate-100 transition-all duration-300 ${isExpanded ? 'w-72' : 'w-24'}`}>
+        
+        {/* Toggle Button */}
+        <div className="px-6 pt-6 pb-2">
+            <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="flex items-center justify-center p-3 rounded-xl text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-all duration-300 w-full border-2 border-transparent hover:border-teal-100"
+                title={isExpanded ? "Persempit Sidebar" : "Perlebar Sidebar"}
+            >
+                {isExpanded ? (
+                <div className="flex items-center gap-2 w-full">
+                    <PanelLeftClose className="h-5 w-5 stroke-[2.5]" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Perkecil</span>
+                </div>
+                ) : (
+                <Menu className="h-6 w-6 stroke-[2.5]" />
+                )}
+            </button>
+        </div>
+
+        {/* Menu Items Container */}
+        <div className="flex-1 overflow-y-auto sidebar-scrollbar px-4 pb-8 space-y-1">
           {menuItems.map((item, idx) => {
             const IconComponent = item.icon;
             const isActive = pathname === item.path;
@@ -246,7 +217,7 @@ const Sidebar = () => {
             const isSubmenuOpen = item.id && expandedSubmenus[item.id];
 
             return (
-              <div key={idx}>
+              <div key={idx} className="mb-1">
                 <button
                   onClick={() => {
                     if (hasSubmenu) {
@@ -255,29 +226,35 @@ const Sidebar = () => {
                       router.push(item.path);
                     }
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 text-left ${
-                    isActive && !hasSubmenu
-                      ? "bg-linear-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
-                      : "text-slate-700 hover:bg-linear-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 hover:shadow-md"
-                  } ${!isExpanded && 'justify-center'}`}
+                  className={`
+                    w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden
+                    ${isActive && !hasSubmenu
+                      ? "bg-linear-to-r from-teal-400 to-emerald-500 text-white shadow-lg shadow-teal-200/50 translate-x-1"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-teal-600"
+                    } 
+                    ${!isExpanded && 'justify-center px-0'}
+                  `}
                   title={!isExpanded ? item.label : ''}
                 >
-                  <IconComponent className="h-5 w-5 shrink-0" />
+                  <IconComponent className={`h-[1.35rem] w-[1.35rem] shrink-0 stroke-[2.5] transition-colors ${isActive && !hasSubmenu ? 'text-white' : 'group-hover:text-teal-500'}`} />
+                  
                   {isExpanded && (
                     <>
-                      <span className="text-sm font-medium flex-1">{item.label}</span>
+                      <span className={`text-sm font-bold flex-1 text-left ${isActive && !hasSubmenu ? 'font-black' : ''}`}>
+                        {item.label}
+                      </span>
                       {hasSubmenu && (
                         <ChevronDown 
-                          className={`h-4 w-4 transition-transform duration-300 ${isSubmenuOpen ? 'rotate-180' : ''}`}
+                          className={`h-4 w-4 stroke-3 transition-transform duration-300 ${isSubmenuOpen ? 'rotate-180 text-teal-500' : 'text-slate-300'}`}
                         />
                       )}
                     </>
                   )}
                 </button>
                 
-                {/* Submenu */}
+                {/* Submenu Desktop */}
                 {hasSubmenu && isSubmenuOpen && isExpanded && (
-                  <div className="mt-1 ml-4 space-y-1 border-l-2 border-teal-200 pl-3">
+                  <div className="mt-1 ml-5 pl-4 border-l-2 border-slate-100 space-y-1 animate-in slide-in-from-left-2 duration-200">
                     {item.submenu!.map((subitem: any, subidx: number) => {
                       const SubIconComponent = subitem.icon;
                       const isSubActive = pathname === subitem.path;
@@ -286,14 +263,16 @@ const Sidebar = () => {
                         <button
                           key={subidx}
                           onClick={() => router.push(subitem.path)}
-                          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-left text-sm ${
-                            isSubActive
-                              ? "bg-linear-to-r from-teal-400 to-cyan-400 text-white shadow-md"
-                              : "text-slate-600 hover:bg-linear-to-r hover:from-emerald-100 hover:to-teal-50 hover:text-teal-700"
-                          }`}
+                          className={`
+                            w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-left text-sm font-bold
+                            ${isSubActive
+                              ? "bg-teal-50 text-teal-600"
+                              : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
+                            }
+                          `}
                         >
-                          <SubIconComponent className="h-4 w-4 shrink-0" />
-                          <span className="font-medium">{subitem.label}</span>
+                          <SubIconComponent className={`h-4 w-4 shrink-0 stroke-[2.5] ${isSubActive ? "text-teal-500" : ""}`} />
+                          <span>{subitem.label}</span>
                         </button>
                       );
                     })}
@@ -305,99 +284,132 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Mobile Sidebar Drawer */}
+      {/* --- MOBILE SIDEBAR DRAWER (DIBUAT RAMAI/PADAT) --- */}
       {isMobileOpen && (
         <div className="lg:hidden">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] animate-in fade-in duration-500 ease-in-out"
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
             onClick={() => setIsMobileOpen(false)}
           />
-          {/* Panel */}
-          <div className="fixed z-50 top-0 left-0 h-screen w-3/4 bg-white dark:bg-white border-r border-slate-200 dark:border-slate-200 shadow-2xl animate-in slide-in-from-left duration-500 ease-out rounded-r-3xl">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-200">
-              <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="IRMA Verse" className="h-8 w-8 object-contain" />
-                <div>
-                  <h2 className="text-xs font-black leading-tight text-white uppercase tracking-wide bg-linear-to-r from-teal-600 to-emerald-600 px-2 py-0.5 rounded-lg">
-                    IRMA VERSE
-                  </h2>
-                  <p className="text-[10px] text-slate-600 mt-0.5">Platform Rohis Digital Irma 13</p>
+          
+          {/* Drawer Panel */}
+          <div className="fixed z-50 top-0 left-0 h-dvh w-[85%] max-w-[320px] shadow-2xl animate-in slide-in-from-left duration-300 rounded-r-[3rem] overflow-hidden flex flex-col">
+            
+            {/* Background Decorations (Supaya Ramai) */}
+            <div className="absolute inset-0 bg-[#FDFBF7] z-0" /> {/* Base Color */}
+            <div className="absolute top-0 right-0 w-full h-full opacity-5 bg-[radial-gradient(#14b8a6_1.5px,transparent_1.5px)] bg-size-[16px_16px] z-0 pointer-events-none" /> {/* Polka Dots */}
+            
+            {/* Colorful Blobs */}
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-teal-200/40 rounded-full blur-3xl pointer-events-none z-0" />
+            <div className="absolute top-1/3 -left-10 w-48 h-48 bg-amber-200/40 rounded-full blur-3xl pointer-events-none z-0" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none z-0" />
+
+            {/* --- Content Container (z-10 agar di atas background) --- */}
+            <div className="relative z-10 flex flex-col h-full">
+              
+              {/* Header Card */}
+              <div className="px-5 pt-6 pb-2">
+                <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border-2 border-white shadow-sm flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg">
+                          <img src="/logo.png" alt="IRMA Logo" className="h-10 w-10 object-contain" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-black text-slate-800 leading-none">IRMA VERSE</h2>
+                        <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest mt-0.5">Sidebar</p>
+                      </div>
+                   </div>
+                   <button
+                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                    onClick={() => setIsMobileOpen(false)}
+                  >
+                    <X className="h-5 w-5 stroke-3" />
+                  </button>
                 </div>
               </div>
-              <button
-                className="inline-flex items-center justify-center rounded-lg p-2 text-slate-700 hover:text-slate-900 transition-colors duration-300"
-                onClick={() => setIsMobileOpen(false)}
-                aria-label="Tutup menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            {/* Items */}
-            <div className="px-4 py-4 space-y-2 overflow-y-auto h-[calc(100%-64px)] mobile-sidebar-scrollbar">
-              {menuItems.map((item, idx) => {
-                const IconComponent = item.icon;
-                const isActive = pathname === item.path;
-                const hasSubmenu = item.submenu && item.submenu.length > 0;
-                const isSubmenuOpen = item.id && expandedSubmenus[item.id];
 
-                return (
-                  <div key={idx}>
-                    <button
-                      onClick={() => {
-                        if (hasSubmenu) {
-                          toggleSubmenu(item.id!);
-                        } else if (item.path) {
-                          setIsMobileOpen(false);
-                          router.push(item.path);
-                        }
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-left ${
-                        isActive && !hasSubmenu
-                          ? "bg-linear-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
-                          : "text-slate-700 dark:text-slate-700 hover:bg-linear-to-r hover:from-emerald-100 hover:via-teal-50 hover:to-cyan-100 hover:text-emerald-700 dark:hover:text-emerald-700 hover:shadow-md"
-                      }`}
-                    >
-                      <IconComponent className="h-5 w-5 shrink-0" />
-                      <span className="text-sm font-semibold flex-1">{item.label}</span>
-                      {hasSubmenu && (
-                        <ChevronDown 
-                          className={`h-4 w-4 transition-transform duration-300 ${isSubmenuOpen ? 'rotate-180' : ''}`}
-                        />
+              {/* Menu Items - Card Style per Item */}
+              <div className="flex-1 overflow-y-auto mobile-sidebar-scrollbar px-5 py-2 space-y-3">
+                {menuItems.map((item, idx) => {
+                  const IconComponent = item.icon;
+                  const isActive = pathname === item.path;
+                  const hasSubmenu = item.submenu && item.submenu.length > 0;
+                  const isSubmenuOpen = item.id && expandedSubmenus[item.id];
+
+                  return (
+                    <div key={idx} className="bg-white/60 backdrop-blur-sm rounded-3xl border-2 border-white shadow-sm overflow-hidden">
+                      <button
+                        onClick={() => {
+                          if (hasSubmenu) {
+                            toggleSubmenu(item.id!);
+                          } else if (item.path) {
+                            setIsMobileOpen(false);
+                            router.push(item.path);
+                          }
+                        }}
+                        className={`
+                          w-full flex items-center gap-4 px-5 py-4 transition-all duration-200 text-left relative
+                          ${isActive && !hasSubmenu
+                            ? "bg-linear-to-r from-teal-400 to-emerald-500 text-white"
+                            : "text-slate-600 hover:bg-white/50 active:bg-white/80"
+                          }
+                        `}
+                      >
+                        <div className={`p-2 rounded-xl ${isActive && !hasSubmenu ? 'bg-white/20' : 'bg-slate-100'}`}>
+                           <IconComponent className={`h-5 w-5 shrink-0 stroke-[2.5] ${isActive && !hasSubmenu ? 'text-white' : 'text-slate-500'}`} />
+                        </div>
+                        <span className="text-base font-bold flex-1">{item.label}</span>
+                        {hasSubmenu && (
+                          <ChevronDown 
+                            className={`h-5 w-5 stroke-3 transition-transform duration-300 ${isSubmenuOpen ? 'rotate-180 text-teal-500' : 'text-slate-300'}`}
+                          />
+                        )}
+                      </button>
+                      
+                      {/* Mobile Submenu */}
+                      {hasSubmenu && isSubmenuOpen && (
+                        <div className="bg-slate-50/50 border-t-2 border-slate-50 p-2 space-y-1">
+                          {item.submenu!.map((subitem: any, subidx: number) => {
+                            const SubIconComponent = subitem.icon;
+                            const isSubActive = pathname === subitem.path;
+                            
+                            return (
+                              <button
+                                key={subidx}
+                                onClick={() => {
+                                  setIsMobileOpen(false);
+                                  router.push(subitem.path);
+                                }}
+                                className={`
+                                  w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 text-left text-sm font-bold
+                                  ${isSubActive
+                                    ? "bg-teal-100 text-teal-700 border border-teal-200"
+                                    : "text-slate-500 hover:bg-white border border-transparent"
+                                  }
+                                `}
+                              >
+                                <SubIconComponent className={`h-4 w-4 shrink-0 stroke-[2.5] ${isSubActive ? "text-teal-600" : "text-slate-400"}`} />
+                                <span>{subitem.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       )}
-                    </button>
-                    
-                    {/* Mobile Submenu */}
-                    {hasSubmenu && isSubmenuOpen && (
-                      <div className="mt-1 ml-4 space-y-1 border-l-2 border-teal-200 pl-3">
-                        {item.submenu!.map((subitem: any, subidx: number) => {
-                          const SubIconComponent = subitem.icon;
-                          const isSubActive = pathname === subitem.path;
-                          
-                          return (
-                            <button
-                              key={subidx}
-                              onClick={() => {
-                                setIsMobileOpen(false);
-                                router.push(subitem.path);
-                              }}
-                              className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 text-left text-sm ${
-                                isSubActive
-                                  ? "bg-linear-to-r from-teal-400 to-cyan-400 text-white shadow-md"
-                                  : "text-slate-600 hover:bg-linear-to-r hover:from-emerald-100 hover:to-teal-50 hover:text-teal-700"
-                              }`}
-                            >
-                              <SubIconComponent className="h-4 w-4 shrink-0" />
-                              <span className="font-medium">{subitem.label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Mobile Footer */}
+              <div className="p-5">
+                  <div className="bg-white/80 backdrop-blur-md rounded-3xl border-2 border-white p-4 text-center shadow-sm">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                        © 2026 Syntax 13
+                    </p>
                   </div>
-                );
-              })}
+              </div>
+
             </div>
           </div>
         </div>

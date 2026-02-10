@@ -307,7 +307,6 @@ const Schedule = () => {
                         onEdit={() => router.push(`/schedule/${schedule.id}/edit`)}
                         onDelete={() => handleDeleteSchedule(schedule.id)}
                         label="Detail"
-                        editLabel="Edit"
                       />
                     </div>
                   </div>

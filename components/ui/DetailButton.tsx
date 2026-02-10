@@ -81,7 +81,7 @@ export default function DetailButton({
           <DeleteButton
             onClick={onDelete}
             variant="icon-only"
-            className={`${actionIconClass} !p-0`} // Override padding bawaan DeleteButton
+            className={`${actionIconClass} p-0!`} // Override padding bawaan DeleteButton
             iconClassName="w-5 h-5 stroke-[2.5]"
           />
         )}

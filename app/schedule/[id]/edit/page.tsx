@@ -235,8 +235,15 @@ const EditSchedule = () => {
 
   if (loading || status === "loading") {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-        <p className="text-slate-500">Memuat data jadwal...</p>
+      <div className="min-h-screen bg-[#FDFBF7]">
+         <DashboardHeader />
+         <div className="flex">
+            <Sidebar />
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[80vh]">
+               <Sparkles className="w-12 h-12 text-teal-400 animate-spin mb-4" />
+               <p className="text-slate-500 font-bold animate-pulse">Memuat data jadwal...</p>
+            </div>
+         </div>
       </div>
     );
   }
@@ -244,25 +251,26 @@ const EditSchedule = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex">
         <Sidebar />
-        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 w-full max-w-[100vw] overflow-hidden">
-          <div className="max-w-5xl mx-auto">
+        
+        {/* Main Content Area */}
+        <div className="flex-1 w-full max-w-[100vw] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
+          <div className="max-w-5xl mx-auto space-y-6 md:space-y-8">
+            
             {/* Header & Back Button */}
-            <div className="flex flex-col gap-4 lg:gap-6 mb-6 lg:mb-8">
+            <div className="flex flex-col gap-4 lg:gap-6">
               <button
                 onClick={() => router.back()}
                 className="self-start inline-flex items-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-500 font-bold hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#cbd5e1] active:translate-y-0.5 active:shadow-none transition-all text-sm lg:text-base"
               >
-                <ArrowLeft
-                  className="h-4 w-4 lg:h-5 lg:w-5"
-                  strokeWidth={3}
-                />
+                <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" strokeWidth={3} />
                 Kembali
               </button>
+              
               <div>
                 <h1 className="text-2xl lg:text-4xl font-black text-slate-800 tracking-tight mb-2 flex items-center gap-2 lg:gap-3">
-                  Edit Jadwal Kegiatan
+                   Edit Jadwal Kegiatan
                 </h1>
                 <p className="text-slate-500 font-medium text-sm lg:text-lg">
                   Update detail kegiatan yang sudah dibuat.
@@ -276,17 +284,18 @@ const EditSchedule = () => {
             >
               {/* --- KOLOM KIRI: FORM UTAMA --- */}
               <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+                
                 {/* Card 1: Informasi Dasar */}
-                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] lg:shadow-[8px_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
-                    <Type className="h-5 w-5 lg:h-6 lg:w-6 text-teal-500" />{" "}
+                    <Type className="h-5 w-5 lg:h-6 lg:w-6 text-teal-500" />
                     Informasi Dasar
                   </h2>
 
                   <div className="space-y-4 lg:space-y-6">
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">
-                        Judul Kegiatan
+                        Judul Kegiatan <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -295,13 +304,13 @@ const EditSchedule = () => {
                         value={formData.title}
                         onChange={handleInputChange}
                         placeholder="Contoh: Pengajian Malam Jumat"
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                        className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-3.5 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">
-                        Deskripsi
+                        Deskripsi <span className="text-red-500">*</span>
                       </label>
                       <textarea
                         name="description"
@@ -310,16 +319,16 @@ const EditSchedule = () => {
                         value={formData.description}
                         onChange={handleInputChange}
                         placeholder="Jelaskan detail kegiatan..."
-                        className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 lg:px-5 lg:py-3.5 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Card 2: Waktu Pelaksanaan */}
-                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] lg:shadow-[8px_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
-                    <Calendar className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-500" />{" "}
+                    <Calendar className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-500" />
                     Waktu Pelaksanaan
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
@@ -342,16 +351,16 @@ const EditSchedule = () => {
                 </div>
 
                 {/* Card 3: Lokasi & Detail */}
-                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] lg:shadow-[8px_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
-                    <MapPin className="h-5 w-5 lg:h-6 lg:w-6 text-orange-500" />{" "}
+                    <MapPin className="h-5 w-5 lg:h-6 lg:w-6 text-orange-500" />
                     Lokasi & Detail
                   </h2>
 
                   <div className="space-y-4 lg:space-y-6">
                     <div className="space-y-2">
                       <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">
-                        Lokasi Kegiatan
+                        Lokasi Kegiatan <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -361,17 +370,16 @@ const EditSchedule = () => {
                           value={formData.location}
                           onChange={handleInputChange}
                           placeholder="Contoh: Aula Utama"
-                          // FIX: Menghapus lg:px-5 dan mengganti dengan padding spesifik (pr/pl)
-                          className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 pr-4 pl-12 py-3 lg:pr-5 lg:pl-14 lg:py-4 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                          className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 pl-11 pr-4 py-3 lg:pl-12 lg:pr-5 lg:py-3.5 text-sm lg:text-base font-bold text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400 placeholder:font-medium"
                         />
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 pointer-events-none" />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                       <div className="space-y-2">
                         <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">
-                          Pembicara/Pemateri
+                          Pembicara
                         </label>
                         <div className="relative">
                           <input
@@ -380,16 +388,15 @@ const EditSchedule = () => {
                             value={formData.pemateri}
                             onChange={handleInputChange}
                             placeholder="Nama pembicara"
-                            // FIX: Menghapus lg:px-5 dan mengganti dengan padding spesifik (pr/pl)
-                            className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 pr-4 pl-12 py-3 lg:pr-5 lg:pl-14 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400"
+                            className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 pl-11 pr-4 py-3 lg:pl-12 lg:pr-5 lg:py-3.5 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400"
                           />
-                          <Mic className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                          <Mic className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 pointer-events-none" />
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <label className="block text-xs lg:text-sm font-bold text-slate-600 ml-1">
-                          Kapasitas
+                          Kapasitas (Opsional)
                         </label>
                         <div className="relative">
                           <input
@@ -398,10 +405,9 @@ const EditSchedule = () => {
                             value={formData.maxCapacity}
                             onChange={handleInputChange}
                             placeholder="Contoh: 200"
-                            // FIX: Menghapus lg:px-5 dan mengganti dengan padding spesifik (pr/pl)
-                            className="w-full rounded-xl lg:rounded-2xl border-2 border-slate-200 bg-slate-50 pr-4 pl-12 py-3 lg:pr-5 lg:pl-14 lg:py-4 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400"
+                            className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 pl-11 pr-4 py-3 lg:pl-12 lg:pr-5 lg:py-3.5 text-sm lg:text-base font-medium text-slate-700 focus:outline-none focus:border-teal-400 focus:bg-white focus:shadow-[0_4px_0_0_#34d399] transition-all placeholder:text-slate-400"
                           />
-                          <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                          <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5 pointer-events-none" />
                         </div>
                       </div>
                     </div>
@@ -412,7 +418,7 @@ const EditSchedule = () => {
               {/* --- KOLOM KANAN: MEDIA --- */}
               <div className="space-y-6 lg:space-y-8">
                 {/* Upload Thumbnail */}
-                <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1] text-center">
+                <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] lg:shadow-[8px_8px_0_0_#cbd5e1] text-center">
                   <label className="block text-xs lg:text-sm font-bold text-slate-600 mb-3 lg:mb-4">
                     Thumbnail Kegiatan
                   </label>
@@ -425,7 +431,7 @@ const EditSchedule = () => {
                       id="upload-thumb"
                     />
                     {formData.thumbnailUrl ? (
-                      <div className="relative w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-slate-200 group-hover:border-teal-400 transition-all">
+                      <div className="relative w-full h-40 lg:h-52 rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-slate-200 group-hover:border-teal-400 transition-all">
                         <img
                           src={formData.thumbnailUrl}
                           alt="Thumbnail Preview"
@@ -436,7 +442,7 @@ const EditSchedule = () => {
                           onClick={() =>
                             setFormData({ ...formData, thumbnailUrl: "" })
                           }
-                          className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                          className="absolute top-2 right-2 p-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-sm"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -444,10 +450,10 @@ const EditSchedule = () => {
                     ) : (
                       <label
                         htmlFor="upload-thumb"
-                        className="flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 group-hover:border-teal-400 group-hover:bg-teal-50 transition-all cursor-pointer"
+                        className="flex flex-col items-center justify-center w-full h-40 lg:h-52 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 group-hover:border-teal-400 group-hover:bg-teal-50 transition-all cursor-pointer"
                       >
-                        <Upload className="w-8 h-8 text-slate-400 group-hover:text-teal-500 mb-2" />
-                        <p className="text-xs lg:text-sm font-bold text-slate-500">
+                        <Upload className="w-8 h-8 lg:w-10 lg:h-10 text-slate-400 group-hover:text-teal-500 mb-2 transition-colors" />
+                        <p className="text-xs lg:text-sm font-bold text-slate-500 group-hover:text-teal-600 transition-colors">
                           {uploading ? "Uploading..." : "Unggah Gambar"}
                         </p>
                       </label>
@@ -459,17 +465,17 @@ const EditSchedule = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-2xl lg:rounded-3xl px-6 py-3 lg:py-4 border-2 lg:border-4 border-emerald-700 border-b-4 lg:border-b-8 shadow-[0_4px_0_0_#047857] active:translate-y-0.5 active:border-b-2 active:shadow-none transition-all flex items-center justify-center gap-2 lg:gap-3 text-sm lg:text-lg"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-2xl lg:rounded-3xl px-6 py-3.5 lg:py-4 border-2 lg:border-4 border-emerald-700 border-b-4 lg:border-b-8 shadow-[0_4px_0_0_#047857] active:translate-y-0.5 active:border-b-2 active:shadow-none transition-all flex items-center justify-center gap-2 lg:gap-3 text-base lg:text-lg"
                 >
                   {submitting ? (
                     <>
-                      <Sparkles className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" />{" "}
+                      <Sparkles className="w-5 h-5 lg:w-6 lg:h-6 animate-spin" />
                       Menyimpan...
                     </>
                   ) : (
                     <>
-                      <Save className="w-5 h-5 lg:w-6 lg:h-6" /> Simpan
-                      Perubahan
+                      <Save className="w-5 h-5 lg:w-6 lg:h-6" /> 
+                      Simpan Perubahan
                     </>
                   )}
                 </button>

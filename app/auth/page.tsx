@@ -2,33 +2,28 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Input } from "@/components/ui/InputText";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/TabsLogin";
-import RememberMeCheckbox from "@/components/ui/RememberMeCheckbox";
-import SigninSubmitButton from "@/components/ui/SigninSubmitButton";
-import SignupSubmitButton from "@/components/ui/SignupSubmitButton";
-import { Loader2, Eye, EyeOff } from "lucide-react"; 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/TabsLogin"; // Pastikan path ini sesuai, atau ganti dengan Radix UI standard
+import { Loader2, Eye, EyeOff, LogIn, UserPlus, Sparkles, ArrowRight } from "lucide-react"; 
 
-// --- SUB-COMPONENT: Password Input dengan Toggle ---
+// --- SUB-COMPONENT: Password Input ---
 const PasswordInput = ({ id, name, placeholder, required = false, minLength = 0 }: any) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div className="relative group">
-      <Input
+      <input
         id={id}
         name={name}
         type={isVisible ? "text" : "password"}
         placeholder={placeholder}
         required={required}
         minLength={minLength}
-        className="py-6 pr-12 rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-0 transition-all font-bold text-slate-700 placeholder:font-normal placeholder:text-slate-400"
+        className="w-full py-4 px-5 pr-12 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:outline-none focus:shadow-[0_4px_0_0_#10b981] transition-all font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
       />
       <button
         type="button"
         onClick={() => setIsVisible(!isVisible)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition-colors p-1 rounded-md focus:outline-none"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition-colors p-2 rounded-xl hover:bg-emerald-50 focus:outline-none"
         tabIndex={-1} 
       >
         {isVisible ? (
@@ -96,10 +91,8 @@ const Auth = () => {
       setSuccess("Registrasi berhasil! Silakan login.");
       (e.target as HTMLFormElement).reset();
       
-      setTimeout(() => {
-        const signinButton = document.querySelector('[value="signin"]') as HTMLElement;
-        if (signinButton) signinButton.click();
-      }, 500);
+      // Auto switch to signin tab logic would go here if managing tab state manually
+      // For now we just show success message
     } catch (error) {
       setError("Terjadi kesalahan. Silakan coba lagi.");
       console.error("Registration error:", error);
@@ -150,152 +143,236 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex flex-col justify-center items-center overflow-hidden bg-white" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
+    <div className="min-h-screen w-full relative flex flex-col justify-center items-center bg-[#FDFBF7] overflow-x-hidden" style={{ fontFamily: "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive" }}>
       
-      <div className="flex flex-1 items-center justify-center px-4 py-8 relative z-10 w-full min-h-screen">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl items-center">
+      {/* Background Decorations */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+         <div className="absolute top-0 right-0 w-full h-full opacity-[0.03] bg-[radial-gradient(#10b981_1.5px,transparent_1.5px)] bg-size-[24px_24px]"></div>
+         <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-teal-200/30 rounded-full blur-3xl animate-pulse"></div>
+         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/30 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="flex flex-1 items-center justify-center px-4 py-8 relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 w-full max-w-6xl items-center">
     
-          {/* Card Form dengan Shadow Cartoon Professional */}
-          <div className="relative mx-auto w-full max-w-md">
-            {/* Shadow Layer - Cartoon Style */}
-            <div className="absolute inset-0 bg-black/10 rounded-[2rem] blur-2xl transform translate-y-3 -z-10" />
-            <div className="absolute inset-0 bg-gradient-to-b from-emerald-400/10 to-teal-400/10 rounded-[2rem] blur-xl -z-10" />
+          {/* LEFT COLUMN: AUTH CARD */}
+          <div className="relative w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
             
-            <div className="bg-white/95 rounded-[2rem] p-6 sm:p-10 flex flex-col justify-center w-full border-2 border-slate-100 backdrop-blur-md relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+            {/* Main Card */}
+            <div className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] p-6 sm:p-8 md:p-10 relative overflow-hidden">
+                
+                {/* Header */}
+                <div className="flex flex-col items-center gap-3 mb-8">
+                    <div className="w-16 h-16 flex items-center justify-center rounded-2xl">
+                        <img src="/logo.png" alt="IRMA Logo" className="w-16 h-16 object-contain" />
+                    </div>
+                    <div className="text-center">
+                        <h1 className="font-black text-2xl text-slate-800 tracking-tight">IRMA Verse</h1>
+                        <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Platform Rohis Digital</p>
+                    </div>
+                </div>
             
-            {/* Bagian garis hijau di sini SUDAH DIHAPUS */}
+                <Tabs defaultValue="signin" className="w-full">
+                    {/* Custom Tabs List */}
+                    <TabsList className="grid w-full grid-cols-2 gap-2 mb-8 p-1 bg-slate-100 rounded-2xl border-2 border-slate-200 h-fit w-fit mx-auto">
+                        <TabsTrigger 
+                            value="signin" 
+                            className="flex-1 rounded-xl py-2 px-4 font-bold text-sm transition-all data-[state=active]:bg-white data-[state=active]:text-teal-600 data-[state=active]:shadow-sm data-[state=inactive]:text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                        >
+                            Masuk
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="signup" 
+                            className="flex-1 rounded-xl py-2 px-4 font-bold text-sm transition-all data-[state=active]:bg-white data-[state=active]:text-teal-600 data-[state=active]:shadow-sm data-[state=inactive]:text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                        >
+                            Daftar
+                        </TabsTrigger>
+                    </TabsList>
 
-            <div className="flex flex-col items-center gap-2 mb-8">
-              <img src="/logo.png" alt="IRMA Verse" className="h-12 w-12 object-contain hover:scale-110 transition-transform" />
-              <div className="text-center">
-                <div className="font-black text-3xl text-emerald-600 tracking-tight">IRMA Verse</div>
-                <div className="text-sm text-slate-400 font-bold tracking-wide uppercase">Platform Rohis Digital</div>
-              </div>
-            </div>
-            
-            <h2 className="text-2xl font-black mb-2 text-slate-800 text-center">Selamat Datang!</h2>
-            <p className="text-slate-500 mb-8 text-center text-sm font-medium">Ayo lanjutkan perjalanan spiritualmu.</p>
-            
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8 p-0.5 bg-slate-200 rounded-3xl gap-0.5">
-                <TabsTrigger value="signin" className="rounded-2xl py-3 px-4 font-black text-base transition-all hover:scale-105 data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:text-slate-600 text-slate-600">Masuk</TabsTrigger>
-                <TabsTrigger value="signup" className="rounded-2xl py-3 px-4 font-black text-base transition-all hover:scale-105 data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=inactive]:bg-white data-[state=inactive]:text-slate-600 text-slate-600">Daftar</TabsTrigger>
-              </TabsList>
+                    {/* === FORM SIGN IN === */}
+                    <TabsContent value="signin" className="animate-in fade-in-50 zoom-in-95 duration-300 focus-visible:outline-none">
+                        <form onSubmit={handleSignIn} className="space-y-5">
+                            {error && (
+                                <div className="rounded-2xl bg-red-50 p-4 border-2 border-red-100 flex items-start gap-3">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0" />
+                                    <p className="text-sm text-red-600 font-bold">{error}</p>
+                                </div>
+                            )}
+                            {success && (
+                                <div className="rounded-2xl bg-emerald-50 p-4 border-2 border-emerald-100 flex items-start gap-3">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                                    <p className="text-sm text-emerald-600 font-bold">{success}</p>
+                                </div>
+                            )}
+                            
+                            <div className="space-y-2">
+                                <label htmlFor="signin-email" className="text-slate-700 font-bold text-sm ml-1 block">Email</label>
+                                <input
+                                    id="signin-email"
+                                    name="signin-email"
+                                    type="email"
+                                    placeholder="contoh@sekolah.sch.id"
+                                    required
+                                    className="w-full py-4 px-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:outline-none focus:shadow-[0_4px_0_0_#10b981] transition-all font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
+                                />
+                            </div>
 
-              {/* === FORM SIGN IN === */}
-              <TabsContent value="signin" className="animate-in fade-in-50 zoom-in-95 duration-300">
-                <form onSubmit={handleSignIn} className="space-y-5">
-                  {error && <div className="rounded-xl bg-red-50 p-4 border-2 border-red-100 text-center"><p className="text-sm text-red-600 font-bold">{error}</p></div>}
-                  {success && <div className="rounded-xl bg-emerald-50 p-4 border-2 border-emerald-100 text-center"><p className="text-sm text-emerald-600 font-bold">{success}</p></div>}
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email" className="text-slate-600 font-bold text-sm ml-1">Email</Label>
-                    <Input
-                        id="signin-email"
-                        name="signin-email"
-                        type="email"
-                        placeholder="contoh@sekolah.sch.id"
-                        required
-                        className="py-6 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-0 transition-all font-bold text-slate-700 placeholder:font-normal placeholder:text-slate-400"
-                    />
-                  </div>
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <label htmlFor="signin-password" className="text-slate-700 font-bold text-sm">Kata Sandi</label>
+                                    <a href="#" className="text-xs font-bold text-teal-500 hover:text-teal-600 hover:underline">Lupa sandi?</a>
+                                </div>
+                                <PasswordInput 
+                                    id="signin-password"
+                                    name="signin-password"
+                                    placeholder="••••••••"
+                                    required={true}
+                                />
+                            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password" className="text-slate-600 font-bold text-sm ml-1">Kata Sandi</Label>
-                    <PasswordInput 
-                      id="signin-password"
-                      name="signin-password"
-                      placeholder="••••••••"
-                      required={true}
-                    />
-                  </div>
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-4 rounded-2xl bg-emerald-500 text-white font-black text-base border-2 border-emerald-600 border-b-4 hover:bg-emerald-600 hover:border-b-4 active:border-b-2 active:translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 mt-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" strokeWidth={3} />
+                                        <span>Memproses...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <LogIn className="w-5 h-5" strokeWidth={3} />
+                                        <span>Masuk Sekarang</span>
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    </TabsContent>
 
-                  <div className="flex items-center justify-between text-sm mt-2">
-                    <RememberMeCheckbox />
-                    <a href="#" className="text-emerald-600 font-bold hover:text-emerald-700 hover:underline">Lupa sandi?</a>
-                  </div>
+                    {/* === FORM SIGN UP === */}
+                    <TabsContent value="signup" className="animate-in fade-in-50 zoom-in-95 duration-300 focus-visible:outline-none">
+                        <form onSubmit={handleSignUp} className="space-y-5">
+                            {error && (
+                                <div className="rounded-2xl bg-red-50 p-4 border-2 border-red-100 flex items-start gap-3">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0" />
+                                    <p className="text-sm text-red-600 font-bold">{error}</p>
+                                </div>
+                            )}
+                            
+                            <div className="space-y-2">
+                                <label htmlFor="full-name" className="text-slate-700 font-bold text-sm ml-1 block">Nama Lengkap</label>
+                                <input
+                                    id="full-name"
+                                    name="full-name"
+                                    type="text"
+                                    placeholder="Nama Lengkap"
+                                    required
+                                    className="w-full py-4 px-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:outline-none focus:shadow-[0_4px_0_0_#10b981] transition-all font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
+                                />
+                            </div>
 
-                  <SigninSubmitButton isLoading={isLoading} />
-                </form>
-              </TabsContent>
+                            <div className="space-y-2">
+                                <label htmlFor="signup-email" className="text-slate-700 font-bold text-sm ml-1 block">Email</label>
+                                <input
+                                    id="signup-email"
+                                    name="signup-email"
+                                    type="email"
+                                    placeholder="nama@email.com"
+                                    required
+                                    className="w-full py-4 px-5 rounded-2xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:outline-none focus:shadow-[0_4px_0_0_#10b981] transition-all font-bold text-slate-700 placeholder:font-medium placeholder:text-slate-400"
+                                />
+                            </div>
 
-              {/* === FORM SIGN UP === */}
-              <TabsContent value="signup" className="animate-in fade-in-50 zoom-in-95 duration-300">
-                <form onSubmit={handleSignUp} className="space-y-5">
-                  {error && <div className="rounded-xl bg-red-50 p-4 border-2 border-red-100 text-center"><p className="text-sm text-red-600 font-bold">{error}</p></div>}
-                  {success && <div className="rounded-xl bg-emerald-50 p-4 border-2 border-emerald-100 text-center"><p className="text-sm text-emerald-600 font-bold">{success}</p></div>}
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="full-name" className="text-slate-600 font-bold text-sm ml-1">Nama Lengkap</Label>
-                    <Input
-                        id="full-name"
-                        name="full-name"
-                        type="text"
-                        placeholder="Nama Lengkap"
-                        required
-                        className="py-6 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-0 transition-all font-bold text-slate-700 placeholder:font-normal placeholder:text-slate-400"
-                    />
-                  </div>
+                            <div className="space-y-2">
+                                <label htmlFor="signup-password" className="text-slate-700 font-bold text-sm ml-1 block">Kata Sandi</label>
+                                <PasswordInput 
+                                    id="signup-password"
+                                    name="signup-password"
+                                    placeholder="Minimal 6 karakter"
+                                    required={true}
+                                    minLength={6}
+                                />
+                            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-slate-600 font-bold text-sm ml-1">Email</Label>
-                    <Input
-                        id="signup-email"
-                        name="signup-email"
-                        type="email"
-                        placeholder="nama@email.com"
-                        required
-                        className="py-6 px-4 rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-0 transition-all font-bold text-slate-700 placeholder:font-normal placeholder:text-slate-400"
-                    />
-                  </div>
+                            <div className="space-y-2">
+                                <label htmlFor="confirm-password" className="text-slate-700 font-bold text-sm ml-1 block">Konfirmasi Kata Sandi</label>
+                                <PasswordInput 
+                                    id="confirm-password"
+                                    name="confirm-password"
+                                    placeholder="Ulangi kata sandi"
+                                    required={true}
+                                    minLength={6}
+                                />
+                            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-slate-600 font-bold text-sm ml-1">Kata Sandi</Label>
-                    <PasswordInput 
-                      id="signup-password"
-                      name="signup-password"
-                      placeholder="Minimal 6 karakter"
-                      required={true}
-                      minLength={6}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-slate-600 font-bold text-sm ml-1">Konfirmasi Kata Sandi</Label>
-                    <PasswordInput 
-                      id="confirm-password"
-                      name="confirm-password"
-                      placeholder="Ulangi kata sandi"
-                      required={true}
-                      minLength={6}
-                    />
-                  </div>
-
-                  <SignupSubmitButton isLoading={isLoading} />
-                </form>
-              </TabsContent>
-            </Tabs>
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-4 rounded-2xl bg-teal-500 text-white font-black text-base border-2 border-teal-600 border-b-4 hover:bg-teal-600 hover:border-b-4 active:border-b-2 active:translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-teal-200 mt-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" strokeWidth={3} />
+                                        <span>Memproses...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <UserPlus className="w-5 h-5" strokeWidth={3} />
+                                        <span>Buat Akun</span>
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    </TabsContent>
+                </Tabs>
             </div>
           </div>
 
-          {/* Side Illustration Text (Desktop) */}
-          <div className="hidden md:flex flex-col justify-center items-center text-center px-6">
-            <div className="mb-10 relative transform hover:scale-105 transition-transform duration-500">
-              <svg width="280" height="160" viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="110" cy="90" rx="60" ry="30" fill="#14b8a6" fillOpacity="0.2" />
-                <rect x="90" y="60" width="40" height="40" rx="12" fill="white" stroke="#10b981" strokeWidth="3" />
-                <circle cx="110" cy="80" r="14" stroke="#10b981" strokeWidth="3" fill="white" />
-                <path d="M105 80 L110 85 L115 75" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="60" cy="60" r="4" fill="#34d399" />
-                <circle cx="160" cy="60" r="6" fill="#34d399" fillOpacity="0.6" />
-                <circle cx="110" cy="40" r="8" fill="#34d399" fillOpacity="0.4" />
-              </svg>
+          {/* RIGHT COLUMN: ILLUSTRATION (Desktop) */}
+          <div className="hidden lg:flex flex-col justify-center items-start px-6">
+            <div className="bg-white p-8 rounded-[3rem] border-2 border-slate-100 shadow-xl relative overflow-hidden mb-8 transform hover:scale-[1.02] transition-transform duration-500">
+               {/* Decorative Shapes */}
+               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-full -mr-16 -mt-16"></div>
+               <div className="absolute bottom-0 left-0 w-24 h-24 bg-teal-100 rounded-full -ml-12 -mb-12"></div>
+               
+               {/* Illustration Placeholder (SVG Code) */}
+               <div className="relative z-10 flex justify-center mb-6">
+                  <svg width="280" height="180" viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M40 140H240" stroke="#E2E8F0" strokeWidth="4" strokeLinecap="round"/>
+                    {/* Character/Icon placeholder style */}
+                    <rect x="100" y="40" width="80" height="100" rx="20" fill="white" stroke="#0F766E" strokeWidth="4"/>
+                    <path d="M120 70H160" stroke="#0F766E" strokeWidth="4" strokeLinecap="round"/>
+                    <path d="M120 90H150" stroke="#0F766E" strokeWidth="4" strokeLinecap="round"/>
+                    <circle cx="190" cy="130" r="25" fill="#FCD34D" stroke="#0F766E" strokeWidth="4"/>
+                    <path d="M180 130L185 135L195 125" stroke="#0F766E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="70" cy="60" r="15" fill="#34D399" opacity="0.5"/>
+                    <circle cx="230" cy="50" r="10" fill="#2DD4BF" opacity="0.5"/>
+                  </svg>
+               </div>
+
+               <div className="text-center relative z-10">
+                  <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-black uppercase tracking-wider rounded-lg mb-3">
+                    Komunitas Islami
+                  </span>
+                  <h3 className="text-3xl font-black text-slate-800 mb-3 leading-tight">
+                    Belajar Agama Jadi <br/>
+                    <span className="text-teal-500">Lebih Seru!</span>
+                  </h3>
+                  <p className="text-slate-500 font-medium leading-relaxed">
+                    Gabung bersama teman-teman IRMA lainnya. Kelola kajian, ikut kuis, dan pantau progresmu dalam satu aplikasi.
+                  </p>
+               </div>
             </div>
-            <div>
-              <h3 className="text-3xl font-black text-slate-800 mb-4 tracking-tight">Komunitas Islami Modern</h3>
-              <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-sm mx-auto">
-                Kelola aktivitas rohis, kajian, dan event islami sekolah dengan cara yang lebih <span className="text-emerald-600 font-bold underline decoration-wavy">menyenangkan</span> dan terorganisir.
-              </p>
+            
+            <div className="flex items-center gap-4 text-slate-400 font-bold text-sm mx-auto">
+                <span>© 2024 IRMA Verse</span>
+                <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                <a href="#" className="hover:text-teal-600 transition-colors">Bantuan</a>
+                <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                <a href="#" className="hover:text-teal-600 transition-colors">Privasi</a>
             </div>
           </div>
 
@@ -308,8 +385,8 @@ const Auth = () => {
 export default function AuthPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
       </div>
     }>
       <Auth />
