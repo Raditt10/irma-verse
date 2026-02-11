@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { FriendshipStatus } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
 
@@ -33,7 +34,8 @@ export async function GET(req: NextRequest) {
         name: true,
         role: true,
         avatar: true,
-        status: true,
+        visibility: true,
+        lastSeen: true,
         points: true,
         class: true,
         // Add other fields you want to expose

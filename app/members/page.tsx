@@ -7,6 +7,8 @@ import ChatbotButton from "@/components/ui/Chatbot";
 import Loading from "@/components/ui/Loading";
 import SearchInput from "@/components/ui/SearchInput";
 import { UserCircle2, UserPlus, Check, X } from "lucide-react";
+import { Sparkles, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 interface Member {
   id: string;
@@ -91,6 +93,13 @@ const Members = () => {
       });
     }
   };
+
+    const { data: session } = useSession({
+      required: false,
+      onUnauthenticated() {
+        window.location.href = "/auth";
+      }
+    });
 
   return (
     <div

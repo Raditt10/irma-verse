@@ -1,6 +1,8 @@
 import { createServer } from 'http';
 import { parse } from 'url';
+import prisma from '@prisma/client';
 import next from 'next';
+import { redis } from '@/lib/redis';
 import { Server as SocketIOServer } from 'socket.io';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -9,9 +11,18 @@ const port = parseInt(process.env.PORT || '3000', 10);
 
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
+const PRESENCE_TTL = 90;
 
 // Store online users: { userId: { socketId, role, name } }
-const onlineUsers = new Map<string, { socketId: string; role: string; name: string }>();
+const onlineUsers = new Map<
+  string,
+  {
+    socketId: Set<string>;
+    name: string;
+    role: string;
+    lastPing: number;
+  }
+>();
 // Store typing status: { conversationId: userId[] }
 const typingUsers = new Map<string, Set<string>>();
 
@@ -37,24 +48,37 @@ app.prepare().then(() => {
 
   io.on('connection', (socket: import('socket.io').Socket) => {
     console.log('User connected:', socket.id);
+    
 
     // User joins with their info
-    socket.on('user:join', (userData: { userId: string; role: string; name: string }) => {
-      onlineUsers.set(userData.userId, {
-        socketId: socket.id,
-        role: userData.role,
-        name: userData.name
-      });
+    socket.on('user:join', async ({ userId, role, name }) => {
+      await redis.sadd(`presence:sockets:${userId}`, socket.id);
+      await redis.set(`presence:${userId}`, "online", "EX", PRESENCE_TTL);
       
-      // Join personal room
-      socket.join(`user:${userData.userId}`);
+      let user = onlineUsers.get(userId);
+
+      if (!user) {
+        user = {
+          socketId: new Set(),
+          role,
+          name,
+          lastPing: Date.now(),
+        };
+        onlineUsers.set(userId, user);
       
-      // Broadcast online status
-      io.emit('presence:update', {
-        userId: userData.userId,
-        status: 'online',
-        name: userData.name
-      });
+        // Join personal room
+        socket.join(`user:${userId}`);
+      
+        // FIRST connection → broadcast online
+        const socketCount = await redis.scard(`presence:sockets:${userId}`);
+        if (socketCount === 1) {
+          io.emit("presence:update", { 
+            userId, 
+            status: "online", 
+            name 
+          });
+        }
+      }
 
       // Send current online users to the newly connected user
       const onlineUsersList = Array.from(onlineUsers.entries()).map(([id, data]) => ({
@@ -64,7 +88,20 @@ app.prepare().then(() => {
       }));
       socket.emit('presence:list', onlineUsersList);
       
-      console.log(`User ${userData.name} (${userData.userId}) joined`);
+      console.log(`User ${name} (${userId}) joined`);
+
+      user.socketId.add(socket.id);
+      user.lastPing = Date.now();
+
+      socket.data.userId = userId;
+      socket.join(`user:${userId}`);
+    });
+
+    // Handle ping status
+    socket.on('presence:ping', () => {
+      const userId = socket.data.userId;
+      const user = onlineUsers.get(userId);
+      if (user) user.lastPing = Date.now();
     });
 
     // Join a conversation room
@@ -164,28 +201,61 @@ app.prepare().then(() => {
     });
 
     // Handle disconnect
-    socket.on('disconnect', () => {
-      // Find and remove the disconnected user
-      for (const [userId, userData] of onlineUsers.entries()) {
-        if (userData.socketId === socket.id) {
-          onlineUsers.delete(userId);
-          
-          // Broadcast offline status
-          io.emit('presence:update', {
-            userId,
-            status: 'offline',
-            name: userData.name
-          });
-          
-          console.log(`User ${userData.name} (${userId}) disconnected`);
-          break;
-        }
-      }
+    socket.on('disconnect', async () => {
+      const userId = socket.data.userId;
+      if (!userId) return;
+
+      const user = onlineUsers.get(userId);
+      if (!user) return;
+
+      user.socketId.delete(socket.id);
+
+      await redis.srem(`presence:sockets:${userId}`, socket.id);
+
+      // Kalau masih ada socket lain → masih online
+      if (user.socketId.size > 0) return;
+
+      // BENAR-BENAR offline
+      onlineUsers.delete(userId);
+
+      await redis.del(`presence:${userId}`);
+      await prisma.user.update({
+        where: { id: userId },
+        data: { lastSeen: new Date() },
+      });
+
+      io.emit('presence:update', {
+        userId,
+        status: 'offline',
+        name: user.name,
+      });
     });
   });
+
+  setInterval(async () => {
+    const now = Date.now();
+
+    for (const [userId, user] of onlineUsers) {
+      if (now - user.lastPing > 90_000) {
+        onlineUsers.delete(userId);
+
+        await prisma.user.update({
+          where: { id: userId },
+          data: { lastSeen: new Date(user.lastPing) },
+        });
+
+        io.emit('presence:update', {
+          userId,
+          status: 'offline',
+          name: user.name,
+        });
+      }
+    }
+  }, 60_000);
 
   httpServer.listen(port, () => {
     console.log(`> Ready on http://${hostname}:${port}`);
     console.log('> Socket.IO server is running');
   });
 });
+

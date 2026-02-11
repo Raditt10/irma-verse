@@ -20,21 +20,37 @@ enum Role {
   instruktur
 }
 
+enum VisibilityStatus {
+  Visible
+  Invisible
+  Idle
+}
+
+enum Grade {
+  X
+  XI
+  XII
+  XIII
+  Alumni
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  notelp    String?  // Nomor telepon (opsional)
-  address   String?  // Alamat (opsional) 
-  bio       String?  // Bio (opsional)
-  avatar    String?  // URL foto profil (opsional)
-  role      Role     @default(user) // Role: user, admin, instruktur
-  lastSeen  DateTime @default(now()) // Last active timestamp
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  password   String
+  notelp     String?  // Nomor telepon (opsional)
+  address    String?  // Alamat (opsional) 
+  bio        String?  // Bio (opsional)
+  avatar     String?  // URL foto profil (opsional)
+  role       Role     @default(user) // Role: user, admin, instruktur
+  visibility VisibilityStatus @default(Visible)
+  lastSeen   DateTime @default(now()) // Last active timestamp
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // Dashboard progress fields
+  class         Grade    @default(X)
   points        Int      @default(0) // Total points
   badges        Int      @default(0) // Total badges
   quizzes       Int      @default(0) // Total quizzes completed
@@ -47,16 +63,19 @@ model User {
   pengalaman     String? // Pengalaman (hanya untuk instruktur)
 
   // Relations
-  newsArticles            News[]             @relation("authorNews")
-  userConversations       ChatConversation[] @relation("userConversations")
-  instructorConversations ChatConversation[] @relation("instructorConversations")
-  sentMessages            ChatMessage[]      @relation("sentMessages")
-  schedules               Schedule[]         @relation("instructorSchedules")
+  newsArticles            News[]              @relation("authorNews")
+  userConversations       ChatConversation[]  @relation("userConversations")
+  instructorConversations ChatConversation[]  @relation("instructorConversations")
+  sentMessages            ChatMessage[]       @relation("sentMessages")
+  schedules               Schedule[]          @relation("instructorSchedules")
   materials               Material[]
-  invitesAsInstructor     MaterialInvite[]   @relation("MaterialInviteInstructor")
-  invitesAsUser           MaterialInvite[]   @relation("MaterialInviteUser")
-  courseEnrollments       CourseEnrollment[]
-  competitions            Competition[]      @relation("competitionInstructor")
+  courseSurveys           CourseSurvey[]
+  invitesAsInstructor     MaterialInvite[]    @relation("MaterialInviteInstructor")
+  invitesAsUser           MaterialInvite[]    @relation("MaterialInviteUser")
+  courseEnrollments       CourseEnrollments[]
+  competitions            Competition[]       @relation("competitionInstructor")
+  friends1                Friendship[]       @relation("Friend1")
+  friends2                Friendship[]       @relation("Friend2")
 
   @@map("users")
 }
@@ -158,12 +177,6 @@ enum InviteStatus {
   expired
 }
 
-enum Grade {
-  X
-  XI
-  XII
-}
-
 enum CourseCategory {
   Wajib
   Extra
@@ -215,7 +228,6 @@ model MaterialInvite {
   materialId   String
   userId       String
   instructorId String
-  userId       String
   token        String       @unique
   status       InviteStatus @default(pending)
 
@@ -245,13 +257,15 @@ model CourseEnrollments {
   material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id])
 
+  surveys      CourseSurvey?
+
   @@unique([materialId, userId])
   @@index([userId])
 }
 
 model CourseSurvey {
   id             String     @id @default(cuid())
-  courseEnrollId String
+  courseEnrollId String     @unique
   userId         String
   rate           String
   relevance      String
@@ -262,15 +276,6 @@ model CourseSurvey {
   course     CourseEnrollments @relation(fields: [courseEnrollId], references: [id])
 }
 
-model Friendships {
-  id       String        @id @default(cuid())
-  user1    String
-  user2    String
-
-  user     User  @relation("Friendships", fields: [user1, user2], references: [id])
-
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 model Attendance {
   id         String   @id @default(cuid())
   userId     String
@@ -300,6 +305,30 @@ model Attendance {
   @@unique([userId, materialId])
   @@index([userId])
   @@index([materialId])
+}
+
+enum FriendshipStatus {
+  Pending
+  Accepted
+  Rejected
+  Blocked
+}
+
+model Friendship {
+  id             String        @id @default(cuid())
+  requesterId    String
+  addresseeId    String
+  status         FriendshipStatus
+
+  requester     User  @relation("Friend1", fields: [requesterId], references: [id])
+  addressee     User  @relation("Friend2", fields: [addresseeId], references: [id])
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  
+  @@index([requesterId])
+  @@index([addresseeId])
+  @@index([status])
 }
 
 model Competition {

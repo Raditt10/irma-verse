@@ -1,0 +1,54 @@
+import prisma from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(req: NextRequest) {
+  try{
+    const requestParams = req.nextUrl.searchParams;
+    const session = await auth();    
+    if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const User = await prisma.user.findUnique({
+    where: { id: session.user.id }
+    });
+        
+    if (!User) {
+    console.log('User not found in database:', session.user.id);
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { targetId } = await req.json();
+    const userId = session.user.id;
+
+    if (userId === targetId) {
+      return NextResponse.json("Cannot friend yourself", { status: 400 });
+    }
+
+    // Check existing relationship
+    const existing = await prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { requesterId: userId, addresseeId: targetId },
+          { requesterId: targetId, addresseeId: userId },
+        ],
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json("Relationship already exists", { status: 400 });
+    }
+
+    const friendship = await prisma.friendship.create({
+      data: {
+        requesterId: userId,
+        addresseeId: targetId,
+        status: "PENDING",
+      },
+    });
+
+    return NextResponse.json(friendship);
+  } catch(error){
+    return NextResponse.json({ error: "Failed to fetch and request friendship" }, { status: 500 })
+  }
+}

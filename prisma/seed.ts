@@ -11,7 +11,7 @@ async function main() {
   await prisma.chatConversation.deleteMany();
 
   await prisma.materialInvite.deleteMany();
-  await prisma.courseEnrollment.deleteMany();
+  await prisma.courseEnrollments.deleteMany();
 
   await prisma.material.deleteMany();
   await prisma.news.deleteMany();
@@ -251,13 +251,15 @@ Hadis dibagi menjadi beberapa tingkatan berdasarkan kualitasnya...`,
       title: "Kedudukan Akal dan Wahyu",              description: "Materi tentang adab dalam Islam",
       grade: "X", category: "Wajib",                 thumbnailUrl: "https://picsum.photos/seed/kajian1/400/300",
       instructorId: 101,                              date: "2024-11-25",
-      startedAt: "15:00 - 17:00",                     participants: 45
+      startedAt: "15:00 - 17:00",                     participants: 45,
+      capacity: 60
     },
     {
       title: "Fiqih Ibadah Sehari-hari",              description: "Materi tentang fiqih ibadah",
       grade: "XI", category: "Wajib",                 thumbnailUrl: "https://picsum.photos/seed/kajian2/400/300",
       instructorId: 102,                              date: "2024-11-28",
-      startedAt: "14:00 - 16:00",                     participants: 38
+      startedAt: "14:00 - 16:00",                     participants: 38,
+      capacity: 50
       
     },
     {
@@ -265,24 +267,28 @@ Hadis dibagi menjadi beberapa tingkatan berdasarkan kualitasnya...`,
       grade: "XII", category: "Next Level",            thumbnailUrl: "https://picsum.photos/seed/kajian3/400/300", 
       instructorId: 103,                              date: "2024-12-01",
       startedAt: "15:00 - 17:00",                     participants: 52,
+      capacity: 70
     },
     {
       title: "Sejarah Khulafaur Rasyidin",            description: "Materi tentang sejarah Khulafaur Rasyidin",
       grade: "X", category: "Ekstra",                thumbnailUrl: "https://picsum.photos/seed/kajian4/400/300",
       instructorId: 104,                              date: "2024-12-05",
-      startedAt: "13:00 - 15:00",                     participants: 41
+      startedAt: "13:00 - 15:00",                     participants: 41,
+      capacity: 55
     },
     {
       title: "Rukun Iman dan Implementasinya",        description: "Materi tentang rukun iman dan implementasinya",
       grade: "XI", category: "Ekstra",                thumbnailUrl: "https://picsum.photos/seed/kajian5/400/300",
       instructorId: 105,                              date: "2024-12-08",
       startedAt: "14:00 - 16:00",                     participants: 47,
+      capacity: 65
     },
     {
       title: "Akhlak kepada Orang Tua",               description: "Materi tentang akhlak kepada orang tua",
       grade: "XII", category: "Next Level",           thumbnailUrl: "https://picsum.photos/seed/kajian6/400/300",
       instructorId: 106,                              date: "2024-12-10",
       startedAt: "15:00 - 17:00",                     participants: 55,
+      capacity: 75
     }
   ];
 
@@ -295,6 +301,7 @@ Hadis dibagi menjadi beberapa tingkatan berdasarkan kualitasnya...`,
         category: mapCourseCategory(mt.category),
         thumbnailUrl: mt.thumbnailUrl,
         instructorId: mt.instructorId.toString(),
+        capacity: mt.capacity,
         date: new Date(mt.date),
         startedAt: mt.startedAt,
         participants: mt.participants.toString(),

@@ -14,11 +14,10 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
     "db:seed": "ts-node --compiler-options {\"module\":\"commonjs\"} prisma/seed.ts"
-    
   },
   "prisma": {
-      "seed": "ts-node --compiler-options {\"module\":\"commonjs\"} prisma/seed.ts"
-    },
+    "seed": "ts-node --compiler-options {\"module\":\"commonjs\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.3.1",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -43,6 +42,7 @@
     "react-dom": "19.2.0",
     "react-easy-crop": "^5.5.6",
     "react-markdown": "^10.1.0",
+    "redis": "^5.10.0",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "sonner": "^2.0.7",
