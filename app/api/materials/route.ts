@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { CourseCategory, Prisma } from "@prisma/client";
+import { CourseCategory, Grade, CourseRole, Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
     };
 
     // Map grade from label to enum (default to X if Semua/All)
-    const GRADE_MAP: Record<string, string> = {
+    const GRADE_MAP: Record<string, Grade> = {
       "Semua": "X",
       "Kelas 10": "X",
       "Kelas 11": "XI",
@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
         date: new Date(date),
         startedAt: time || null,
         category: mappedCategory as CourseCategory,
-        grade: mappedGrade as any, // Grade enum value
+        grade: mappedGrade as Grade,
         thumbnailUrl: thumbnailUrl || null,
         instructorId: session.user.id,
       },
@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
             data: {
               userId: invitedUser.id,
               materialId: material.id,
-              role: "user" as any, // Default role for invited users
+              role: "user" as CourseRole, // Default role for invited users
             },
           });
         }

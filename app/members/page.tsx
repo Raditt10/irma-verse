@@ -9,6 +9,7 @@ import SearchInput from "@/components/ui/SearchInput";
 import { UserCircle2, UserPlus, Check, X } from "lucide-react";
 import { Sparkles, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRef } from "react";
 
 interface Member {
   id: string;
@@ -29,9 +30,25 @@ const Members = () => {
 
   const router = useRouter();
 
+  const { data: session } = useSession({
+    required: false,
+    onUnauthenticated() {
+      window.location.href = "/auth";
+    }
+  });
+
   useEffect(() => {
-    fetchMembers();
-  }, []);
+    if(session?.user?.id){
+      setUser(session.user)
+      fetchMembers();
+    }
+    
+    const interval = setInterval(() => {
+      fetchMembers();
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, [session]);
 
   useEffect(() => {
     if (toast?.show) {
@@ -42,10 +59,21 @@ const Members = () => {
     }
   }, [toast]);
 
+  
+  const lastFetchRef = useRef<number>(0);
   const fetchMembers = async () => {
+    const now = Date.now();
+
+    if (now - lastFetchRef.current < 30000) {
+      return;                      // Hold fetch around 30s after the first fetch
+    }
+
+    lastFetchRef.current = now;
+  
     try {
       const res = await fetch("/api/members");
       if (!res.ok) throw new Error("Gagal mengambil data anggota");
+
       const data = await res.json();
       const mapped = data.map((u: any) => ({
         id: u.id,
@@ -68,12 +96,14 @@ const Members = () => {
     ? members.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()))
     : members;
 
-  const handleAddFriend = async (name: string) => {
+  const handleAddFriend = async (id: string, name: string) => {
     setLoading(true);
     try {
       await fetch (`/api/friends/request`, {
       method: "POST",
-      body: JSON.stringify({ friendName: name }),
+      body: JSON.stringify({ 
+        targetId: id
+      }),
       headers: {
         "Content-Type": "application/json"
       }
@@ -93,13 +123,6 @@ const Members = () => {
       });
     }
   };
-
-    const { data: session } = useSession({
-      required: false,
-      onUnauthenticated() {
-        window.location.href = "/auth";
-      }
-    });
 
   return (
     <div
@@ -200,7 +223,7 @@ const Members = () => {
                           
                           <button
                             className="w-full mt-3 py-3 rounded-xl bg-white border-2 border-slate-100 text-slate-600 font-semibold hover:border-teal-200 hover:text-teal-600 hover:bg-teal-50 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2 active:scale-95"
-                            onClick={() => handleAddFriend(member.name)}
+                            onClick={() => handleAddFriend(member.id, member.name)}
                           >
                             <UserPlus className="h-5 w-5" />
                             Tambahkan Teman

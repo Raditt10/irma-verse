@@ -1,4 +1,5 @@
-import prisma from "@/lib/prisma";
+import prisma from '@prisma/client';
+import { FriendshipStatus } from '@prisma/client';
 import { auth } from '@/lib/auth';
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,11 +23,12 @@ export async function POST(req: NextRequest) {
     const { requesterId } = await req.json();
     const userId = session.user.id;
 
+    // check if friendship request is exista
     const friendship = await prisma.friendship.findFirst({
       where: {
         requesterId,
         addresseeId: userId,
-        status: "PENDING",
+        status: "Pending",
       },
     });
 

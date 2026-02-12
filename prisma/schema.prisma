@@ -39,12 +39,12 @@ model User {
   email      String   @unique
   name       String?
   password   String
-  notelp     String?  // Nomor telepon (opsional)
-  address    String?  // Alamat (opsional) 
-  bio        String?  // Bio (opsional)
-  avatar     String?  // URL foto profil (opsional)
-  role       Role     @default(user) // Role: user, admin, instruktur
-  visibility VisibilityStatus @default(Visible)
+  notelp     String?                  // Nomor telepon (opsional)
+  address    String?                  // Alamat (opsional) 
+  bio        String?                  // Bio (opsional)
+  avatar     String?                  // URL foto profil (opsional)
+  role       Role                @default(user) // Role: user, admin, instruktur
+  visibility VisibilityStatus    @default(Visible)
   lastSeen   DateTime @default(now()) // Last active timestamp
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { FriendshipStatus } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
 
@@ -22,12 +21,8 @@ export async function GET(req: NextRequest) {
 
     const users = await prisma.user.findMany({
       where: {
-        NOT: {
-          OR: [
-            { role: "instruktur" },
-            { role: "admin" },
-          ],
-        },
+        role: "user",
+        id: { not: User.id },
       },
       select: {
         id: true,
@@ -38,7 +33,6 @@ export async function GET(req: NextRequest) {
         lastSeen: true,
         points: true,
         class: true,
-        // Add other fields you want to expose
         // You can add more fields as needed
         // e.g. class, points, status if available in your schema
       },

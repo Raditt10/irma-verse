@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest){
   try{
     const session = await auth();
-
     if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -23,6 +22,19 @@ export async function POST(req: NextRequest){
 
     if (userId === targetId) {
       return NextResponse.json("Cannot reject yourself", { status: 400 });
+    }
+
+    // check if friendship request is exists
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        requesterId,
+        addresseeId: userId,
+        status: "Pending",
+      },
+    });
+
+    if (!friendship) {
+      return NextResponse.json("Invalid request", { status: 400 });
     }
     
     await prisma.friendship.delete({

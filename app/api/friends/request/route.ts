@@ -1,10 +1,10 @@
-import prisma from "@/lib/prisma";
+import prisma from "@prisma/client";
+import { FriendshipStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try{
-    const requestParams = req.nextUrl.searchParams;
     const session = await auth();    
     if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,12 +43,46 @@ export async function POST(req: NextRequest) {
       data: {
         requesterId: userId,
         addresseeId: targetId,
-        status: "PENDING",
+        status: "Pending" as FriendshipStatus,
       },
     });
 
     return NextResponse.json(friendship);
   } catch(error){
     return NextResponse.json({ error: "Failed to fetch and request friendship" }, { status: 500 })
+  }
+}
+
+export async function GET(req: NextRequest){
+  try{
+    const session = await auth();    
+    if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const User = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    });
+        
+    if (!User) {
+    console.log('User not found in database:', session.user.id);
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    };
+
+    const friendreqs = await prisma.user.findMany({
+      where: { 
+        friendship: { requesterId: User.id } 
+      },
+      select: {
+        id: true,
+        name: true,
+        role: true,
+        class: true,
+        avatar: true
+      }
+    });
+
+    return NextResponse.json(friendreqs)
+  }catch(error){
+    return NextResponse.json({ error: "Failed to fetch friend requests" }, { status: 500 })
   }
 }
