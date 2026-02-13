@@ -1,19 +1,20 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/Chatbot";
-import CartoonNotification from "@/components/ui/CartoonNotification";
+import CartoonNotification from "@/components/ui/Notification";
 import EmptyState from "@/components/ui/EmptyState";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import SearchInput from "@/components/ui/SearchInput";
-import MaterialInstructorActions from "@/components/ui/MaterialInstructorActions";
-import MaterialUserActions from "@/components/ui/MaterialUserAbsen";
+import MaterialInstructorActions from "@/components/ui/AbsensiButton";
+import MaterialUserActions from "@/app/materials/_components/ButtonUserAbsenMaterial";
 import Loading from "@/components/ui/Loading";
 import SuccessDataFound from "@/components/ui/SuccessDataFound";
-import { Calendar, Clock, BookOpen, Plus, Sparkles } from "lucide-react";
+import { Calendar, Clock, Plus, Sparkles } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
 import DeleteButton from "@/components/ui/DeleteButton";
 
@@ -32,7 +33,6 @@ interface Material {
   attendedAt?: string;
 }
 
-
 const Materials = () => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,15 +48,14 @@ const Materials = () => {
   const router = useRouter();
 
   const { data: session } = useSession({
-      required: true,
-      onUnauthenticated() {
-          if (typeof window !== "undefined") {
-              window.location.href = "/auth";
-          }
+    required: true,
+    onUnauthenticated() {
+      if (typeof window !== "undefined") {
+        window.location.href = "/auth";
       }
+    },
   });
 
-  // Cek Role: Apakah Admin atau Instruktur?
   const isPrivileged = session?.user?.role === "instruktur" || session?.user?.role === "admin";
   const programCategories = ["Semua", "Program Wajib", "Program Ekstra", "Program Next Level"];
   const classCategories = ["Semua", "Kelas 10", "Kelas 11", "Kelas 12"];
@@ -91,9 +90,8 @@ const Materials = () => {
       const res = await fetch("/api/materials");
       if (!res.ok) throw new Error("Failed fetch materials");
 
-      const data = await res.json()
+      const data = await res.json();
 
-      // Fetch attendance status for each material
       const materialsWithAttendance = await Promise.all(
         data.map(async (material: Material) => {
           try {
@@ -136,7 +134,7 @@ const Materials = () => {
         throw new Error(errorData.error || "Gagal menghapus kajian");
       }
 
-      setMaterials(materials.filter(m => m.id !== materialId));
+      setMaterials(materials.filter((m) => m.id !== materialId));
       setNotification({
         type: "success",
         title: "Berhasil!",
@@ -152,18 +150,17 @@ const Materials = () => {
     }
   };
 
-  // Get today's material for instructor
   const getTodayMaterial = () => {
     if (!isPrivileged || materials.length === 0) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const todayMaterial = materials.find(m => {
+
+    const todayMaterial = materials.find((m) => {
       const materialDate = new Date(m.date);
       materialDate.setHours(0, 0, 0, 0);
       return materialDate.getTime() === today.getTime();
     });
-    
+
     return todayMaterial || null;
   };
 
@@ -172,24 +169,24 @@ const Materials = () => {
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
-        <div className="flex-1 px-6 lg:px-8 py-12">
+        
+        {/* Main Content Area - Responsif Penuh */}
+        <div className="flex-1 w-full max-w-[100vw] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
           <div className="max-w-7xl mx-auto">
             
             {/* --- HEADER --- */}
-            <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="mb-8 lg:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-2">
+                <h1 className="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight mb-2">
                   {isPrivileged ? "Kelola Kajian" : "Jadwal Kajianku"}
                 </h1>
-                <p className="text-slate-500 text-lg font-medium">
-                  {isPrivileged 
+                <p className="text-slate-500 font-medium text-sm lg:text-lg">
+                  {isPrivileged
                     ? "Atur jadwal dan materi kajian untuk anggota"
-                    : "Ikuti kajian seru bareng teman-teman!"
-                  }
+                    : "Ikuti kajian seru bareng teman-teman!"}
                 </p>
               </div>
-              
-              {/* Tombol Buat Kajian untuk Instruktur/Admin */}
+
               {isPrivileged && (
                 <AddButton
                   label="Buat Kajian"
@@ -201,45 +198,67 @@ const Materials = () => {
               )}
             </div>
 
-            {/* Latest Material Card untuk Instruktur */}
+            {/* --- LATEST MATERIAL CARD (OPTIMIZED LAYOUT) --- */}
             {isPrivileged && getTodayMaterial() && (
-              <div className="mb-10 bg-linear-to-br from-teal-50 to-cyan-50 rounded-[2.5rem] border-2 border-teal-200 p-6 shadow-[0_4px_0_0_#cbd5e1]">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="h-5 w-5 text-teal-500" strokeWidth={2} />
-                  <h2 className="text-lg font-black text-slate-800">Jadwal Kajianmu Hari Ini</h2>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-black text-slate-800 mb-2">{getTodayMaterial()?.title}</h3>
-                    <div className="flex items-center gap-4 text-sm font-bold text-slate-600">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4 text-teal-500" />
-                        {new Date(getTodayMaterial()!.date).toLocaleDateString("id-ID")}
-                      </span>
-                      {getTodayMaterial()?.startedAt && (
-                        <>
-                          <span className="w-px h-4 bg-slate-300" />
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-4 w-4 text-teal-500" />
-                            {getTodayMaterial()?.startedAt}
-                          </span>
-                        </>
-                      )}
+              <div className="mb-10 bg-linear-to-br from-teal-50 to-cyan-50 rounded-4xl lg:rounded-[2.5rem] border-2 border-teal-200 p-6 lg:p-8 shadow-[0_4px_0_0_#cbd5e1] relative overflow-hidden group hover:border-teal-300 transition-all">
+                 {/* Background decoration */}
+                 <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-teal-100 rounded-full blur-3xl opacity-60" />
+
+                <div className="relative z-10">
+                  {/* Label Header */}
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="p-2 bg-white rounded-xl border border-teal-100 shadow-sm">
+                        <Sparkles className="h-5 w-5 text-teal-500" strokeWidth={2.5} />
                     </div>
+                    <h2 className="text-lg font-black text-slate-800 tracking-tight">Jadwal Kajianmu Hari Ini</h2>
                   </div>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => router.push(`/materials/${getTodayMaterial()?.id}/edit`)}
-                      className="px-6 py-2 rounded-xl bg-teal-400 text-white font-bold border-2 border-teal-600 border-b-3 hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all"
-                    >
-                      Edit
-                    </button>
-                    <DeleteButton
-                      label="Hapus"
-                      onClick={() => handleDeleteMaterial(getTodayMaterial()!.id)}
-                      variant="with-label"
-                      showConfirm={true}
-                    />
+
+                  {/* Content & Action Layout */}
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
+                    
+                    {/* KIRI: Informasi */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-2xl md:text-3xl font-black text-slate-800 mb-3 leading-tight truncate">
+                        {getTodayMaterial()?.title}
+                      </h3>
+                      
+                      <div className="flex flex-wrap items-center gap-3">
+                         <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-slate-600 bg-white/80 px-3 py-2 rounded-xl border border-teal-100 shadow-sm">
+                            <Calendar className="h-4 w-4 text-teal-500" />
+                            {new Date(getTodayMaterial()!.date).toLocaleDateString("id-ID", { 
+                                day: 'numeric', month: 'long', year: 'numeric' 
+                            })}
+                         </div>
+                         
+                         {getTodayMaterial()?.startedAt && (
+                           <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-slate-600 bg-white/80 px-3 py-2 rounded-xl border border-teal-100 shadow-sm">
+                              <Clock className="h-4 w-4 text-teal-500" />
+                              {getTodayMaterial()?.startedAt} WIB
+                           </div>
+                         )}
+                      </div>
+                    </div>
+
+                    {/* KANAN: Tombol Aksi (Tumpuk di HP, Sejajar di Desktop) */}
+                    <div className="flex flex-row items-center gap-3 w-full lg:w-auto shrink-0 mt-2 lg:mt-0">
+                      <button
+                        onClick={() => router.push(`/materials/${getTodayMaterial()?.id}/edit`)}
+                        className="flex-1 lg:flex-none lg:w-36 flex justify-center items-center px-6 py-2.5 rounded-xl bg-teal-400 text-white font-bold border-2 border-teal-600 border-b-4 hover:bg-teal-500 hover:border-b-4 active:border-b-2 active:translate-y-0.5 transition-all text-sm md:text-base"
+                      >
+                        Edit
+                      </button>
+                      
+                      <div className="flex-1 lg:flex-none">
+                        <DeleteButton
+                          label="Hapus"
+                          onClick={() => handleDeleteMaterial(getTodayMaterial()!.id)}
+                          variant="with-label"
+                          showConfirm={true}
+                          className="w-full lg:w-36 justify-center text-sm md:text-base"
+                        />
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -258,7 +277,6 @@ const Materials = () => {
                 />
               </div>
 
-              {/* Search Bar */}
               <SearchInput
                 placeholder="Cari materi / ustadz..."
                 value={searchQuery}
@@ -274,110 +292,135 @@ const Materials = () => {
             ) : filteredMaterials.length === 0 ? (
               <EmptyState
                 icon={materials.length === 0 ? "calendar" : "search"}
-                title={materials.length === 0 ? "Yah, tidak ada kajian tersedia sekarang" : "Yah, kajian tidak ditemukan..."}
-                description={materials.length === 0 ? "Belum ada kajian yang dibuat. Cek lagi nanti ya!" : "Coba cari dengan kata kunci atau filter lain ya!"}
-                actionLabel={materials.length === 0 ? undefined : "Reset Filter"}
-                onAction={materials.length === 0 ? undefined : () => {setSelectedProgram("Semua"); setSelectedGrade("Semua"); setSearchQuery("")}}
+                title={
+                  materials.length === 0
+                    ? "Yah, tidak ada kajian tersedia sekarang"
+                    : "Yah, kajian tidak ditemukan..."
+                }
+                description={
+                  materials.length === 0
+                    ? "Belum ada kajian yang dibuat. Cek lagi nanti ya!"
+                    : "Coba cari dengan kata kunci atau filter lain ya!"
+                }
+                actionLabel={
+                  materials.length === 0 ? undefined : "Reset Filter"
+                }
+                onAction={
+                  materials.length === 0
+                    ? undefined
+                    : () => {
+                        setSelectedProgram("Semua");
+                        setSelectedGrade("Semua");
+                        setSearchQuery("");
+                      }
+                }
               />
             ) : (
               <>
                 {searchQuery && (
-                  <SuccessDataFound 
+                  <SuccessDataFound
                     message={`Ditemukan ${filteredMaterials.length} kajian sesuai pencarian`}
                     icon="sparkles"
                   />
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                {/* Responsive Grid: 1 col HP, 2 col Tablet, 3 col Desktop */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   {filteredMaterials.map((material) => (
-                  <div
-                    key={material.id}
-                    className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col h-full"
-                  >
-                    {/* Thumbnail */}
-                    <div className="relative h-52 overflow-hidden border-b-2 border-slate-100">
-                      <img
-                        src={material.thumbnailUrl}
-                        alt={material.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+                    <div
+                      key={material.id}
+                      className="bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col h-full"
+                    >
+                      {/* Thumbnail */}
+                      <div className="relative h-48 md:h-52 overflow-hidden border-b-2 border-slate-100">
+                        <img
+                          src={material.thumbnailUrl}
+                          alt={material.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
 
-                      {/* Badge: Baru */}
-                      {!material.isJoined && (
-                        <span className="absolute top-4 right-4 bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white shadow-md animate-bounce">
-                          BARU!
-                        </span>
-                      )}
-
-                      {/* Badge: Category */}
-                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                        <span className="px-3 py-1 rounded-lg bg-emerald-400 text-white text-xs font-bold border-2 border-emerald-600 shadow-[0_2px_0_0_#065f46]">
-                          {material.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex-1">
-                        {/* Class Badge Inline */}
-                        {material.grade && (
-                          <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-black border border-emerald-200 mb-2 uppercase tracking-wide">
-                            {material.grade}
+                        {/* Badge: Baru */}
+                        {!material.isJoined && (
+                          <span className="absolute top-4 right-4 bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white shadow-md animate-bounce">
+                            BARU!
                           </span>
                         )}
-                        
-                        <h3 className="text-xl font-black text-slate-800 mb-2 leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
-                          {material.title}
-                        </h3>
-                        
-                        <div className="flex items-center gap-2 mb-4">
-                           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
-                             <span className="text-xs">👤</span>
-                           </div>
-                           <p className="text-slate-500 font-bold text-sm">{material.instructor || "TBA"}</p>
+
+                        {/* Badge: Category */}
+                        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                          <span className="px-3 py-1 rounded-lg bg-emerald-400 text-white text-[10px] md:text-xs font-bold border-2 border-emerald-600 shadow-[0_2px_0_0_#065f46]">
+                            {material.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 flex flex-col flex-1">
+                        <div className="flex-1">
+                          {/* Class Badge Inline */}
+                          {material.grade && (
+                            <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-black border border-emerald-200 mb-2 uppercase tracking-wide">
+                              {material.grade}
+                            </span>
+                          )}
+
+                          <h3 className="text-lg md:text-xl font-black text-slate-800 mb-2 leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
+                            {material.title}
+                          </h3>
+
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                              <span className="text-xs">👤</span>
+                            </div>
+                            <p className="text-slate-500 font-bold text-sm">
+                              {material.instructor || "TBA"}
+                            </p>
+                          </div>
+
+                          {/* Info Row */}
+                          <div className="flex items-center gap-3 md:gap-4 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+                              <Calendar className="h-4 w-4 text-emerald-400" />
+                              <span>
+                                {new Date(material.date).toLocaleDateString(
+                                  "id-ID",
+                                  {
+                                    day: "numeric",
+                                    month: "short",
+                                  }
+                                )}
+                              </span>
+                            </div>
+                            <div className="w-px h-4 bg-slate-300"></div>
+                            {material.startedAt && (
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+                                <Clock className="h-4 w-4 text-emerald-400" />
+                                <span>{material.startedAt}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Info Row */}
-                        <div className="flex items-center gap-4 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
-                            <Calendar className="h-4 w-4 text-emerald-400" />
-                            <span>
-                              {new Date(material.date).toLocaleDateString("id-ID", {
-                                day: "numeric",
-                                month: "short",
-                              })}
-                            </span>
-                          </div>
-                          <div className="w-px h-4 bg-slate-300"></div>
-                          {material.startedAt && (
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
-                              <Clock className="h-4 w-4 text-emerald-400" />
-                              <span>{material.startedAt}</span>
-                            </div>
+                        {/* --- BUTTON ACTION DINAMIS --- */}
+                        <div className="mt-auto">
+                          {isPrivileged ? (
+                            <MaterialInstructorActions
+                              materialId={material.id}
+                              onDelete={handleDeleteMaterial}
+                            />
+                          ) : (
+                            <MaterialUserActions
+                              materialId={material.id}
+                              isJoined={material.isJoined}
+                              attendedAt={material.attendedAt}
+                              materialDate={material.date}
+                            />
                           )}
                         </div>
                       </div>
-
-                      {/* --- BUTTON ACTION DINAMIS --- */}
-                      <div className="mt-auto">
-                        {isPrivileged ? (
-                          <MaterialInstructorActions
-                            materialId={material.id}
-                            onDelete={handleDeleteMaterial}
-                          />
-                        ) : (
-                          <MaterialUserActions
-                            materialId={material.id}
-                            isJoined={material.isJoined}
-                            attendedAt={material.attendedAt}
-                            materialDate={material.date}
-                          />
-                        )}
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 </div>
               </>
             )}

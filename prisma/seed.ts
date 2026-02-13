@@ -45,6 +45,7 @@ console.log("🧹 Database cleared");
       password: hashedPassword,
       role: 'instruktur',
       notelp: '082345678901',
+      
       address: 'Bandung, Indonesia',
       bio: 'Spesialis dalam mengajar Al-Quran dan Tafsir',
       bidangKeahlian: 'Al-Quran dan Tafsir',

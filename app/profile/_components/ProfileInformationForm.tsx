@@ -113,7 +113,6 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
       setEditedUser(data.user);
       setIsEditing(false);
 
-      // Notif Sukses Edit Info
       setToast({
         show: true,
         message: "Informasi profile berhasil diperbarui!",
@@ -122,7 +121,6 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
 
     } catch (err) {
       console.error("Error saving user:", err);
-      // Notif Gagal
       setToast({
         show: true,
         message: err instanceof Error ? err.message : "Gagal memperbarui informasi",
@@ -200,7 +198,6 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
       setShowCropDialog(false);
       setSelectedImage(null);
 
-      // Notif Sukses Ganti Foto
       setToast({
         show: true,
         message: "Foto profile berhasil diubah!",
@@ -209,7 +206,6 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
 
     } catch (err) {
       console.error("Error uploading avatar:", err);
-      // Notif Gagal Ganti Foto
       setToast({
         show: true,
         message: "Gagal mengubah foto profile",
@@ -232,7 +228,7 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
     return (
       <div className="rounded-2xl bg-white border border-slate-200 p-8 shadow-sm">
         <div className="flex items-center justify-center h-64">
-          <p className="text-slate-600">Memuat data pengguna...</p>
+          <p className="text-slate-600 font-bold animate-pulse">Memuat data pengguna...</p>
         </div>
       </div>
     );
@@ -242,7 +238,7 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
     return (
       <div className="rounded-2xl bg-white border border-slate-200 p-8 shadow-sm">
         <div className="flex items-center justify-center h-64">
-          <p className="text-red-600">Gagal memuat data pengguna</p>
+          <p className="text-red-500 font-bold">Gagal memuat data pengguna</p>
         </div>
       </div>
     );
@@ -255,13 +251,13 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
   });
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 p-8 shadow-sm relative">
+    <div className="rounded-2xl bg-white p-0 relative">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
         <h2 className="text-2xl font-bold text-slate-900">Informasi Profile</h2>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-all shadow-emerald-200 hover:shadow-emerald-300 shadow-lg active:translate-y-px"
             disabled={isLoading}
           >
             <Edit2 className="h-4 w-4" />
@@ -271,7 +267,7 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={handleSave}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-all shadow-emerald-200 hover:shadow-emerald-300 shadow-lg active:translate-y-px"
               disabled={isSaving}
             >
               <Save className="h-4 w-4" />
@@ -279,7 +275,7 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
             </button>
             <button
               onClick={handleCancel}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition-all active:translate-y-px"
               disabled={isSaving}
             >
               <X className="h-4 w-4" />
@@ -289,19 +285,24 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
         )}
       </div>
 
-      {/* Avatar Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-8">
-        <div className="relative inline-block group">
-          <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+      {/* --- AVATAR SECTION (DIPERBAIKI UNTUK MOBILE) --- */}
+      {/* Gunakan 'flex-col items-center' untuk mobile agar foto di tengah, dan 'sm:flex-row' untuk desktop */}
+      <div className="flex flex-col items-center sm:flex-row sm:items-center gap-6 mb-8">
+        
+        {/* Wrapper Foto: Relative agar tombol kamera menempel pada wrapper ini */}
+        <div className="relative shrink-0">
+          <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-white shadow-xl ring-2 ring-slate-100">
             <AvatarImage 
               src={user.avatar || avatarUrl} 
               alt={user.name} 
               className="object-cover"
             />
-            <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-cyan-500 text-white text-2xl font-bold">
+            <AvatarFallback className="bg-linear-to-br from-emerald-500 to-cyan-500 text-white text-3xl font-bold">
               {user.name?.substring(0, 2).toUpperCase() || "??"}
             </AvatarFallback>
           </Avatar>
+
+          {/* Tombol Kamera: Posisi absolute relatif terhadap wrapper foto di atas */}
           {isEditing && (
             <>
               <input
@@ -313,25 +314,29 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
               />
               <button
                 onClick={handleAvatarClick}
-                className="absolute bottom-1 left-1.5 p-2 rounded-full bg-emerald-500 text-white shadow-lg ring-4 ring-white hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute -bottom-2 -right-2 p-2.5 rounded-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 transition-all hover:scale-110 active:scale-95 z-10 cursor-pointer border-4 border-white"
                 disabled={isUploadingAvatar}
               >
-                <Camera className="h-4 w-4" />
+                <Camera className="h-5 w-5" />
               </button>
             </>
           )}
         </div>
-        <div className="space-y-2 w-full">
-          <h3 className="text-2xl font-bold text-slate-900">{user.name}</h3>
-          <p className="text-slate-600">{user.email}</p>
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className="px-3 py-1 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-500 text-white text-sm font-semibold">
+
+        {/* Text Info: Center di mobile, Left di desktop */}
+        <div className="space-y-2 w-full text-center sm:text-left">
+          <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">{user.name}</h3>
+          <p className="text-slate-500 font-medium text-sm md:text-base">{user.email}</p>
+          
+          {/* Badge Container: Center di mobile, Start di desktop */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+            <span className="px-3 py-1 rounded-full bg-linear-to-r from-emerald-400 to-cyan-500 text-white text-xs font-bold shadow-sm">
               Level {level}
             </span>
-            <span className="px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-bold shadow-[0_6px_18px_-8px_rgba(249,168,37,0.9)]">
+            <span className="px-3 py-1 rounded-full bg-linear-to-r from-amber-400 to-orange-500 text-white text-xs font-bold shadow-sm">
               Mashaallah
             </span>
-            <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm font-semibold">
+            <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-xs font-bold">
               Peringkat #{rank}
             </span>
           </div>
@@ -342,8 +347,8 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-              <User className="h-4 w-4" />
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+              <User className="h-4 w-4 text-emerald-500" />
               Nama Lengkap
             </label>
             {isEditing ? (
@@ -353,26 +358,25 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
                 onChange={(e) =>
                   setEditedUser({ ...editedUser, name: e.target.value })
                 }
-                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all font-medium text-slate-700"
                 disabled={isSaving}
               />
             ) : (
-              <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">{user.name}</p>
+              <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 font-medium border-2 border-transparent">{user.name}</p>
             )}
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-              <Mail className="h-4 w-4" />
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+              <Mail className="h-4 w-4 text-emerald-500" />
               Email
             </label>
-            <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">{user.email}</p>
-            <p className="text-xs text-slate-500 mt-1">Email tidak dapat diubah</p>
+            <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-500 font-medium border-2 border-transparent select-none cursor-not-allowed opacity-80">{user.email}</p>
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-              <Phone className="h-4 w-4" />
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+              <Phone className="h-4 w-4 text-emerald-500" />
               Nomor Telepon
             </label>
             {isEditing ? (
@@ -382,19 +386,19 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
                 onChange={(e) =>
                   setEditedUser({ ...editedUser, notelp: e.target.value || "" })
                 }
-                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all font-medium text-slate-700"
                 disabled={isSaving}
               />
             ) : (
-              <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">
+              <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 font-medium border-2 border-transparent">
                 {user.notelp || "-"}
               </p>
             )}
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-              <MapPin className="h-4 w-4" />
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+              <MapPin className="h-4 w-4 text-emerald-500" />
               Lokasi / Alamat
             </label>
             {isEditing ? (
@@ -404,11 +408,11 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
                 onChange={(e) =>
                   setEditedUser({ ...editedUser, address: e.target.value || "" })
                 }
-                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all font-medium text-slate-700"
                 disabled={isSaving}
               />
             ) : (
-              <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">
+              <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 font-medium border-2 border-transparent">
                 {user.address || "-"}
               </p>
             )}
@@ -416,8 +420,8 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-            <User className="h-4 w-4" />
+          <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+            <User className="h-4 w-4 text-emerald-500" />
             Bio
           </label>
           {isEditing ? (
@@ -427,22 +431,22 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
                 setEditedUser({ ...editedUser, bio: e.target.value || "" })
               }
               rows={4}
-              className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all resize-none disabled:opacity-50"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-200 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all font-medium text-slate-700 resize-none"
               disabled={isSaving}
             />
           ) : (
-            <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">
+            <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 font-medium border-2 border-transparent min-h-[100px]">
               {user.bio || "-"}
             </p>
           )}
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-            <Calendar className="h-4 w-4" />
+          <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
+            <Calendar className="h-4 w-4 text-emerald-500" />
             Bergabung Sejak
           </label>
-          <p className="px-4 py-3 rounded-lg bg-slate-50 text-slate-900">{joinDate}</p>
+          <p className="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 font-medium border-2 border-transparent">{joinDate}</p>
         </div>
       </div>
 
@@ -455,62 +459,49 @@ const ProfileInformationForm = ({ stats, level, rank }: any) => {
         />
       )}
 
-      {/* --- TOAST NOTIFICATION (FIXED MOBILE UI) --- */}
+      {/* --- TOAST NOTIFICATION --- */}
       {toast && (
         <div className={`
-          fixed z-[100] transition-all duration-300
-          /* MOBILE: Top Center, lebar menyesuaikan tapi tidak mentok layar */
-          top-4 left-1/2 -translate-x-1/2 w-full max-w-[90vw] sm:max-w-md
-          
-          /* DESKTOP: Bottom Right */
-          md:top-auto md:left-auto md:bottom-6 md:right-6 md:translate-x-0 md:w-auto
+          fixed z-100 transition-all duration-300
+          top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm
+          md:top-auto md:left-auto md:bottom-8 md:right-8 md:translate-x-0
         `}>
           <div className={`
             flex items-center justify-between gap-3 px-5 py-4 
-            rounded-2xl shadow-2xl border backdrop-blur-md
+            rounded-2xl shadow-2xl border-2 backdrop-blur-md
             ${toast.type === 'success' 
-              ? 'bg-emerald-500 text-white border-emerald-400' 
-              : 'bg-red-500 text-white border-red-400'
+              ? 'bg-emerald-500 text-white border-emerald-600 shadow-emerald-200' 
+              : 'bg-red-500 text-white border-red-600 shadow-red-200'
             }
-            /* Animasi masuk */
             animate-[slideDown_0.5s_cubic-bezier(0.16,1,0.3,1)] 
             md:animate-[slideUp_0.5s_cubic-bezier(0.16,1,0.3,1)]
           `}>
-            
-            {/* Bagian Kiri: Icon & Pesan */}
             <div className="flex items-center gap-3.5 flex-1 min-w-0">
-               {/* Icon Circle */}
               <div className="shrink-0 bg-white/20 rounded-full p-1.5 flex items-center justify-center">
                 {toast.type === 'success' ? (
-                  <Check className="h-4 w-4 text-white stroke-[3]" />
+                  <Check className="h-4 w-4 text-white stroke-3" />
                 ) : (
-                  <AlertCircle className="h-4 w-4 text-white stroke-[3]" />
+                  <AlertCircle className="h-4 w-4 text-white stroke-3" />
                 )}
               </div>
-
-              {/* Teks Pesan */}
-              <p className="text-sm font-semibold leading-snug break-words">
+              <p className="text-sm font-bold leading-snug wrap-break-word">
                 {toast.message}
               </p>
             </div>
-
-            {/* Bagian Kanan: Tombol Close */}
             <button 
               onClick={() => setToast(null)}
               className="shrink-0 ml-1 p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-              aria-label="Tutup notifikasi"
             >
-              <X className="h-4 w-4 text-white/90" />
+              <X className="h-4 w-4 text-white stroke-3" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Animasi CSS */}
       <style jsx>{`
         @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translate(-50%, -20px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
         }
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(20px); }

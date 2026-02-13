@@ -6,10 +6,16 @@ import Sidebar from "@/components/ui/Sidebar";
 import ChatbotButton from "@/components/ui/Chatbot";
 import Loading from "@/components/ui/Loading";
 import SearchInput from "@/components/ui/SearchInput";
-import { UserCircle2, UserPlus, Check, X } from "lucide-react";
-import { Sparkles, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRef } from "react";
+import CartoonNotification from "@/components/ui/Notification";
+import { 
+  UserCircle2, 
+  UserPlus, 
+  Sparkles, 
+  Search, 
+  Trophy
+} from "lucide-react";
 
 interface Member {
   id: string;
@@ -24,14 +30,19 @@ interface Member {
 const Members = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const [search, setSearch] = useState("");
-  const [toast, setToast] = useState<{ show: boolean; message: string } | null>(null);
+  
+  // Notification State
+  const [notification, setNotification] = useState<{
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
 
   const router = useRouter();
 
   const { data: session } = useSession({
-    required: false,
+    required: true,
     onUnauthenticated() {
       window.location.href = "/auth";
     }
@@ -39,25 +50,9 @@ const Members = () => {
 
   useEffect(() => {
     if(session?.user?.id){
-      setUser(session.user)
       fetchMembers();
     }
-    
-    const interval = setInterval(() => {
-      fetchMembers();
-    }, 60000); // 60 seconds
-
-    return () => clearInterval(interval);
   }, [session]);
-
-  useEffect(() => {
-    if (toast?.show) {
-      const timer = setTimeout(() => {
-        setToast(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   
   const lastFetchRef = useRef<number>(0);
@@ -87,6 +82,11 @@ const Members = () => {
       setMembers(mapped);
     } catch (error) {
       console.error("Error fetching members:", error);
+      setNotification({
+        type: "error",
+        title: "Gagal",
+        message: "Gagal memuat data anggota.",
+      });
     } finally {
       setLoading(false);
     }
@@ -100,153 +100,171 @@ const Members = () => {
     setLoading(true);
     try {
       await fetch (`/api/friends/request`, {
-      method: "POST",
-      body: JSON.stringify({ 
-        targetId: id
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-    setLoading(false);
-    setToast({
-      show: true,
-      message: `Permintaan dikirim ke ${name}`,
-    });
+        method: "POST",
+        body: JSON.stringify({ 
+          targetId: id
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      
+      setNotification({
+        type: "success",
+        title: "Permintaan Terkirim!",
+        message: `Permintaan pertemanan dikirim ke ${name}`,
+      });
+      
+      setLoading(false);
     }
     catch (error){
       console.error("Error sending friend request:", error);
       setLoading(false);
-      setToast({
-        show: true,
-        message: `Gagal mengirim permintaan ke ${name}.`,
+      setNotification({
+        type: "error",
+        title: "Permintaan Gagal Dikirim!",
+        message: `Permintaan pertemanan gagal dikirim ke ${name}`,
       });
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100"
-    >
+    <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
-        <div className="flex-1 px-6 lg:px-10 py-12">
+        
+        {/* Main Content Area */}
+        <div className="flex-1 w-full max-w-[100vw] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
           <div className="max-w-7xl mx-auto">
-            <div className="mb-10">
-              <h1 className="text-4xl font-black text-slate-800 mb-3">Daftar Anggota</h1>
-              <p className="text-slate-600 text-lg mb-6">Semua anggota IRMA aktif</p>
-              
-              {/* --- SEARCH BAR --- */}
-              <SearchInput
-                placeholder="Cari nama anggota..."
-                value={search}
-                onChange={setSearch}
-                className="w-full max-w-md mb-6"
-              />
+            
+            {/* Header Section */}
+            <div className="mb-8 lg:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight mb-2">
+                  Daftar Anggota
+                </h1>
+                <p className="text-slate-500 font-medium text-sm lg:text-lg">
+                  Temukan teman dan lihat siapa saja anggota aktif IRMA.
+                </p>
+              </div>
+            </div>
 
-              {/* --- FITUR: MUNGKIN INI YANG KAMU MAKSUD --- */}
+            {/* Search & Suggestions */}
+            <div className="space-y-6 mb-8 lg:mb-10">
+              <div className="w-full md:max-w-md">
+                <SearchInput
+                  placeholder="Cari nama anggota..."
+                  value={search}
+                  onChange={setSearch}
+                />
+              </div>
+
+              {/* Suggestion Box */}
               {search && filteredMembers.length > 0 && (
-                <div className="flex items-center gap-2 mb-6 animate-in fade-in slide-in-from-left-4 duration-500">
-                    <Sparkles className="h-4 w-4 text-teal-500" />
-                    <p className="text-slate-500 text-sm font-medium">
-                        Mungkin ini yang kamu maksud: <span className="text-teal-600 font-bold">"{filteredMembers[0].name}"</span>
-                        {filteredMembers.length > 1 && <span className="font-normal text-slate-400"> dan {filteredMembers.length - 1} lainnya</span>}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border-2 border-teal-100 rounded-xl text-teal-700 animate-in fade-in slide-in-from-left-2">
+                    <Sparkles className="h-4 w-4 text-teal-500 fill-teal-500" />
+                    <p className="text-xs md:text-sm font-bold">
+                        Menemukan: <span className="underline decoration-2 underline-offset-2">{filteredMembers[0].name}</span>
+                        {filteredMembers.length > 1 && <span className="font-normal opacity-80"> +{filteredMembers.length - 1} lainnya</span>}
                     </p>
                 </div>
               )}
-
             </div>
 
             {loading ? (
-              <div className="text-center py-12">
-                <Loading text="Memuat data anggota..." />
+              <div className="text-center py-20">
+                <Loading text="Sedang memanggil anggota..." />
               </div>
             ) : (
               <>
                 {/* --- GRID ANGGOTA --- */}
                 {filteredMembers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredMembers.map((member) => (
                       <div
                         key={member.id}
-                        className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-2 border border-slate-100"
+                        className="bg-white rounded-4xl border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] hover:border-teal-400 hover:shadow-[4px_4px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-1 flex flex-col"
                       >
-                        <div className="p-6">
-                          {/* Avatar */}
-                          <div className="flex justify-center mb-4">
-                            <div className="relative">
-                              <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-teal-50 shadow-lg group-hover:ring-teal-100 transition-all">
-                                <img
-                                  src={member.avatar}
-                                  alt={member.name}
-                                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                                />
-                              </div>
+                        {/* Header Card (Banner & Avatar) */}
+                        <div className="pt-6 px-6 flex flex-col items-center">
+                            {/* Avatar Wrapper (Tanpa Badge Status) */}
+                            <div className="relative mb-3 group-hover:scale-105 transition-transform duration-500">
+                                <div className="w-24 h-24 rounded-full p-1 bg-white border-4 border-slate-100 shadow-md overflow-hidden">
+                                    <img
+                                        src={member.avatar}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover rounded-full bg-slate-50"
+                                    />
+                                </div>
                             </div>
-                          </div>
-
-                          {/* Name & Role */}
-                          <div className="text-center mb-3">
-                            <h3 className="text-xl font-bold text-slate-800 mb-1">
-                              {member.name}
-                            </h3>
-                            <p className="text-teal-600 text-sm font-semibold mb-1">
-                              {member.role}
-                            </p>
-                            <p className="text-slate-500 text-sm">{member.class}</p>
-                          </div>
-
-                          {/* Points & Status */}
-                          <div className="flex items-center justify-between mb-6 pt-4 border-t border-slate-100">
-                            <div>
-                              <p className="text-xs text-slate-500 mb-1">
-                                Poin Keaktifan
-                              </p>
-                              <p className="text-2xl font-bold text-teal-600">
-                                {member.points}
-                              </p>
+                            
+                            {/* Name & Role */}
+                            <div className="text-center w-full">
+                                <h3 className="text-xl font-black text-slate-800 truncate px-2">
+                                    {member.name}
+                                </h3>
+                                <p className="text-sm font-bold text-teal-600 bg-teal-50 px-3 py-0.5 rounded-full inline-block border border-teal-100 mt-1">
+                                    {member.role}
+                                </p>
+                                <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">
+                                    {member.class}
+                                </p>
                             </div>
-                            <div className="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold border border-emerald-100">
-                              {member.status}
-                            </div>
-                          </div>
+                        </div>
 
-                          {/* Buttons */}
-                          <button
-                            onClick={() => router.push(`/members/${member.id}`)}
-                            className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-teal-500/20 transition-all duration-300 flex items-center justify-center gap-2"
-                          >
-                            <UserCircle2 className="h-5 w-5" />
-                            Lihat Profile
-                          </button>
-                          
-                          <button
-                            className="w-full mt-3 py-3 rounded-xl bg-white border-2 border-slate-100 text-slate-600 font-semibold hover:border-teal-200 hover:text-teal-600 hover:bg-teal-50 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center gap-2 active:scale-95"
-                            onClick={() => handleAddFriend(member.id, member.name)}
-                          >
-                            <UserPlus className="h-5 w-5" />
-                            Tambahkan Teman
-                          </button>
+                        {/* Points Section */}
+                        <div className="mt-4 px-6">
+                            <div className="bg-amber-50 rounded-2xl p-3 border-2 border-amber-100 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 bg-amber-100 rounded-lg text-amber-600">
+                                        <Trophy className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-amber-800">Poin Keaktifan</span>
+                                </div>
+                                <span className="text-lg font-black text-amber-600">{member.points}</span>
+                            </div>
+                        </div>
+
+                        {/* Spacer */}
+                        <div className="flex-1 min-h-4"></div>
+
+                        {/* Action Buttons */}
+                        <div className="p-4 bg-slate-50 border-t-2 border-slate-100 grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => router.push(`/members/${member.id}`)}
+                                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white border-2 border-slate-200 text-slate-600 font-bold text-sm shadow-[0_2px_0_0_#cbd5e1] hover:border-teal-400 hover:text-teal-600 hover:shadow-[0_4px_0_0_#34d399] active:border-b-2 active:translate-y-0.5 transition-all"
+                            >
+                                <UserCircle2 className="h-4 w-4" />
+                                Profile
+                            </button>
+
+                            <button
+                                onClick={() => handleAddFriend(member.id, member.name)}
+                                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-teal-400 border-2 border-teal-600 text-white font-bold text-sm shadow-[0_2px_0_0_#0f766e] hover:bg-teal-500 active:border-b-2 active:translate-y-0.5 transition-all"
+                            >
+                                <UserPlus className="h-4 w-4" />
+                                Add
+                            </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  /* --- EMPTY STATE (Jika tidak ada hasil) --- */
-                  <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in zoom-in duration-300">
-                    <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-4 shadow-inner">
-                        <Search className="h-10 w-10 text-slate-300" />
+                  /* --- EMPTY STATE --- */
+                  <div className="flex flex-col items-center justify-center py-12 md:py-20 text-center animate-in fade-in zoom-in duration-300 bg-white rounded-[2.5rem] border-2 border-slate-200 border-dashed">
+                    <div className="w-20 h-20 md:w-24 md:h-24 bg-slate-50 rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-inner border border-slate-100">
+                        <Search className="h-8 w-8 md:h-10 md:w-10 text-slate-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-700 mb-2">
+                    <h3 className="text-xl md:text-2xl font-black text-slate-700 mb-2">
                         Anggota Tidak Ditemukan
                     </h3>
-                    <p className="text-slate-500 max-w-md">
-                        Kami tidak dapat menemukan anggota dengan nama <span className="font-semibold text-teal-600">"{search}"</span>. Coba gunakan kata kunci lain.
+                    <p className="text-slate-500 max-w-xs md:max-w-md text-sm md:text-base px-4">
+                        Kami tidak dapat menemukan anggota dengan nama <span className="font-bold text-teal-600">"{search}"</span>.
                     </p>
                     <button 
                         onClick={() => setSearch("")}
-                        className="mt-6 px-6 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors font-semibold"
+                        className="mt-6 md:mt-8 px-6 py-2.5 bg-slate-100 border-2 border-slate-200 text-slate-600 rounded-xl hover:bg-white hover:border-teal-400 hover:text-teal-600 font-bold transition-all shadow-sm"
                     >
                         Hapus Pencarian
                     </button>
@@ -259,33 +277,16 @@ const Members = () => {
       </div>
       <ChatbotButton />
 
-      {/* --- NOTIFIKASI TOAST --- */}
-      {toast && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="flex items-center gap-3 bg-slate-900/95 backdrop-blur-sm text-white px-5 py-3 rounded-full shadow-2xl animate-[slideDown_0.4s_ease-out] border border-white/10">
-                <div className="bg-emerald-500 rounded-full p-1 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-white stroke-[3]" />
-                </div>
-                <span className="text-sm font-medium tracking-wide pr-2" style={{ fontFamily: "sans-serif" }}>
-                    {toast.message}
-                </span>
-                <button 
-                    onClick={() => setToast(null)}
-                    className="ml-2 text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-3"
-                >
-                    <X className="h-4 w-4" />
-                </button>
-            </div>
-        </div>
+      {/* --- NOTIFIKASI --- */}
+      {notification && (
+        <CartoonNotification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          duration={3000}
+          onClose={() => setNotification(null)}
+        />
       )}
-
-      <style jsx>{`
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-
     </div>
   );
 };

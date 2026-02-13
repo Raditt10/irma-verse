@@ -3,8 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from '@/components/ui/button';
-import { Card } from "@/components/ui/card";
 import SearchBar from "@/components/ui/SearchBar";
 import {
   ArrowRight,
@@ -215,7 +213,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-teal-600 to-cyan-500 text-white relative">
+    <div className="min-h-screen bg-linear-to-br from-emerald-700 via-teal-600 to-cyan-500 text-white relative">
       {/* Background patterns */}
       <div
         className="absolute inset-0 opacity-35 pointer-events-none"
@@ -254,7 +252,7 @@ export default function Home() {
               
               {/* LOGO CARD */}
               <img 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="IRMA Verse" 
                 className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-md" 
               />
@@ -280,16 +278,12 @@ export default function Home() {
                 <Facebook className="h-5 w-5 hover:scale-125 transition-transform cursor-pointer hover:text-white" />
               </div>
               <Link href="/auth">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="relative overflow-hidden px-5 sm:px-7 py-2 text-sm font-bold rounded-2xl border-b-4 border-emerald-600 bg-white text-emerald-700 shadow-xl group transition-all duration-300 active:translate-y-1 hover:scale-105 disabled:opacity-50"
-                >
+                <button className="relative overflow-hidden px-5 sm:px-7 py-2 text-sm font-bold rounded-2xl border-b-4 border-emerald-600 bg-white text-emerald-700 shadow-xl group transition-all duration-300 active:translate-y-1 hover:scale-105 disabled:opacity-50">
                   <span className="flex items-center gap-2 z-10 relative">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-500 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     <span>Login</span>
                   </span>
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
@@ -304,7 +298,7 @@ export default function Home() {
               <div className="space-y-2">
                 <p className="text-sm sm:text-base font-bold text-white/80 tracking-wide">ROHIS DIGITAL SEKOLAH</p>
                 <h2 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight drop-shadow-[4px_4px_0px_rgba(0,0,0,0.15)]">
-                  IRMA <span className="bg-gradient-to-r from-emerald-200 via-white to-cyan-200 bg-clip-text text-transparent">VERSE</span>
+                  IRMA <span className="bg-linear-to-r from-emerald-200 via-white to-cyan-200 bg-clip-text text-transparent">VERSE</span>
                 </h2>
               </div>
 
@@ -316,24 +310,23 @@ export default function Home() {
                 <SearchBar />
               </div>
 
-              <Card className="bg-white border-[3px] border-emerald-200 rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] p-4 max-w-[280px] sm:max-w-xs transform hover:scale-105 hover:-rotate-1 transition-all duration-300 cursor-pointer">
+              <div className="bg-white border-[3px] border-emerald-200 rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] p-4 max-w-[280px] sm:max-w-xs transform hover:scale-105 hover:-rotate-1 transition-all duration-300 cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-slate-50 rounded-2xl border-2 border-slate-100">
-                    <img src="/logo13.png" alt="SMKN 13" className="h-10 w-auto object-contain" />
+                    <img src="/logo13.webp" alt="SMKN 13" className="h-10 w-auto object-contain" />
                   </div>
                   <div>
                     <p className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-tight">Platform Ekskul</p>
                     <p className="text-sm font-bold text-slate-800">SMKN 13 Bandung</p>
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
 
-            {/* Hero Image Model Fixed: HIDDEN ON MOBILE (hidden lg:flex) */}
             <div className="relative mt-8 lg:mt-0 hidden lg:flex justify-center lg:justify-end">
                <div className="absolute inset-0 bg-emerald-400/20 blur-[80px] rounded-full pointer-events-none" />
                <img
-                src="/model.png"
+                src="/model.webp"
                 alt="Role model IRMA"
                 className="relative h-[300px] sm:h-[400px] lg:h-[600px] w-auto object-contain z-0 hover:scale-105 transition-transform duration-500"
                 style={{ 
@@ -365,28 +358,28 @@ export default function Home() {
             ))}
 
             <div className="flex flex-col items-center gap-3 group cursor-pointer">
-              <div className="w-20 h-20 rounded-[1.5rem] bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:-rotate-3 transition-all duration-300">
+              <div className="w-20 h-20 rounded-3xl bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:-rotate-3 transition-all duration-300">
                 <Zap className="h-9 w-9 text-slate-700 group-hover:text-emerald-600 transition-colors duration-300 stroke-[2.5px]" />
               </div>
               <p className="text-sm font-bold text-gray-700 text-center leading-tight">Event Terbaru</p>
             </div>
 
             <div className="flex flex-col items-center gap-3 group cursor-pointer">
-              <div className="w-20 h-20 rounded-[1.5rem] bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-300">
+              <div className="w-20 h-20 rounded-3xl bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-300">
                 <Target className="h-9 w-9 text-slate-700 group-hover:text-emerald-600 transition-colors duration-300 stroke-[2.5px]" />
               </div>
               <p className="text-sm font-bold text-gray-700 text-center leading-tight">Program Kurikulum</p>
             </div>
 
             <div className="flex flex-col items-center gap-3 group cursor-pointer">
-              <div className="w-20 h-20 rounded-[1.5rem] bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:-rotate-3 transition-all duration-300">
+              <div className="w-20 h-20 rounded-3xl bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:-rotate-3 transition-all duration-300">
                 <CalendarDays className="h-9 w-9 text-slate-700 group-hover:text-emerald-600 transition-colors duration-300 stroke-[2.5px]" />
               </div>
               <p className="text-sm font-bold text-gray-700 text-center leading-tight">Absensi Kajian</p>
             </div>
 
             <div className="flex flex-col items-center gap-3 group cursor-pointer">
-              <div className="w-20 h-20 rounded-[1.5rem] bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-300">
+              <div className="w-20 h-20 rounded-3xl bg-white border-[3px] border-emerald-100 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(16,185,129,0.2)] group-hover:shadow-[6px_6px_0px_0px_rgba(16,185,129,0.3)] group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-300">
                 <Heart className="h-9 w-9 text-slate-700 group-hover:text-emerald-600 transition-colors duration-300 stroke-[2.5px]" />
               </div>
               <p className="text-sm font-bold text-gray-700 text-center leading-tight">Fitur Keren Lainnya</p>
@@ -396,7 +389,7 @@ export default function Home() {
       </section>
 
       <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
+        <div className="absolute inset-0 bg-linear-to-br from-white/5 via-transparent to-white/5" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 mb-6 bg-white/20 border-2 border-white/30 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] backdrop-blur-md transform rotate-2">
@@ -404,7 +397,7 @@ export default function Home() {
               <span className="text-sm font-extrabold text-white uppercase tracking-wider">Keunggulan</span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-md">
-              Mengapa Memilih <span className="bg-gradient-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">IRMAVerse?</span>
+              Mengapa Memilih <span className="bg-linear-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent">IRMAVerse?</span>
             </h2>
             <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-medium">
               Rasakan pengalaman berbeda dalam mengelola kegiatan organisasi Islami
@@ -413,7 +406,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
-              <div key={index} className="group relative p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border-[3px] border-white/20 hover:border-emerald-300 hover:bg-white/20 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.15)] hover:-translate-y-2 hover:rotate-1">
+              <div key={index} className="group relative p-8 rounded-4xl bg-white/10 backdrop-blur-md border-[3px] border-white/20 hover:border-emerald-300 hover:bg-white/20 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.15)] hover:-translate-y-2 hover:rotate-1">
                 <div className="relative">
                   <div className="inline-flex p-4 rounded-2xl bg-white/20 mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300 border-2 border-white/10">
                     <benefit.icon className="h-8 w-8 text-emerald-300 stroke-[2.5px]" />
@@ -440,7 +433,7 @@ export default function Home() {
               <span className="text-sm font-extrabold text-white uppercase tracking-wider">Dokumentasi</span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
-               <span className="bg-gradient-to-r from-yellow-200 to-amber-300 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Kegiatan</span> Kami
+               <span className="bg-linear-to-r from-yellow-200 to-amber-300 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Kegiatan</span> Kami
             </h2>
             <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-bold">
                Lihat kegiatan IRMA yang penuh warna dan bersemangat!
@@ -449,7 +442,7 @@ export default function Home() {
 
           <div className="relative max-w-5xl mx-auto">
             {/* Frame Kartun */}
-            <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-[2.5rem] border-[8px] border-white/40 shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] bg-black/20 backdrop-blur-sm overflow-hidden transform hover:scale-[1.01] transition-transform duration-500 group">
+            <div className="relative aspect-video md:aspect-21/9 rounded-4xl border-8 border-white/40 shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] bg-black/20 backdrop-blur-sm overflow-hidden transform hover:scale-[1.01] transition-transform duration-500 group">
               {/* Slides */}
               {galleryItems.map((item, index) => (
                 <div 
@@ -458,7 +451,7 @@ export default function Home() {
                 >
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
                   {/* TEXT OVERLAY (PADDING DI PERBESAR LAGI px-16) */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-16 py-4 sm:p-6 md:p-10 text-white">
+                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent px-16 py-4 sm:p-6 md:p-10 text-white">
                     <h3 className="text-lg sm:text-2xl md:text-3xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.8)] leading-tight">{item.title}</h3>
                     <p className="text-xs sm:text-sm md:text-lg text-white font-bold max-w-2xl drop-shadow-md line-clamp-2 sm:line-clamp-none">{item.description}</p>
                   </div>
@@ -466,11 +459,11 @@ export default function Home() {
               ))}
 
               {/* BUTTONS DIPERBESAR (p-3 jadi p-4, h-6 w-6 jadi h-8 w-8) */}
-              <button onClick={prevSlide} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-3 sm:p-4 rounded-2xl border-b-[4px] border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
+              <button onClick={prevSlide} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-3 sm:p-4 rounded-2xl border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
                 <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8 stroke-[4px]" />
               </button>
               
-              <button onClick={nextSlide} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-3 sm:p-4 rounded-2xl border-b-[4px] border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
+              <button onClick={nextSlide} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-3 sm:p-4 rounded-2xl border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
                 <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8 stroke-[4px]" />
               </button>
             </div>
@@ -496,7 +489,7 @@ export default function Home() {
       </section>
 
       <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/40 via-teal-600/40 to-cyan-600/40" />
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-600/40 via-teal-600/40 to-cyan-600/40" />
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
@@ -518,7 +511,7 @@ export default function Home() {
             Siap Memulai Perjalanan <br />
             <span className="relative inline-block mt-2 transform -rotate-1">
               <span className="relative z-10">Pembelajaran Islami?</span>
-              <div className="absolute bottom-1 left-0 w-full h-4 bg-emerald-500/50 rounded-full -z-0" />
+              <div className="absolute bottom-1 left-0 w-full h-4 bg-emerald-500/50 rounded-full z-0" />
             </span>
           </h2>
 
@@ -528,7 +521,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
             <Link href="/auth" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-8 sm:px-12 py-5 sm:py-6 text-lg group font-extrabold bg-white text-emerald-800 rounded-2xl border-b-[8px] border-emerald-900 active:border-b-0 active:translate-y-2 transition-all duration-150 flex items-center justify-center gap-3 hover:brightness-105 shadow-2xl">
+              <button className="w-full sm:w-auto px-8 sm:px-12 py-5 sm:py-6 text-lg group font-extrabold bg-white text-emerald-800 rounded-2xl border-b-8 border-emerald-900 active:border-b-0 active:translate-y-2 transition-all duration-150 flex items-center justify-center gap-3 hover:brightness-105 shadow-2xl">
                 <Sparkles className="h-6 w-6 stroke-[3px]" />
                 <span>Daftar Sekarang Gratis!</span>
                 <ArrowRight className="h-6 w-6 stroke-[3px] group-hover:translate-x-2 transition-transform duration-300" />
@@ -554,13 +547,13 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="relative bg-black/20 backdrop-blur-sm border-t-[4px] border-white/10">
+      <footer className="relative bg-black/20 backdrop-blur-sm border-t-4 border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-12 mb-12">
             <div className="flex-1 flex flex-col gap-4 min-w-[220px]">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] border-2 border-white/20">
-                  <img src="/logo.png" alt="IRMA" className="w-9 h-9 object-contain" />
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] border-2 border-white/20">
+                  <img src="/logo.webp" alt="IRMA" className="w-9 h-9 object-contain" />
                 </div>
                 <div>
                   <div className="font-extrabold text-xl sm:text-2xl text-white drop-shadow-md">IRMAVerse</div>
