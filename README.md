@@ -5,6 +5,7 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat&logo=socket.io&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 **Irma Verse** adalah platform web komprehensif yang dirancang untuk kebutuhan edukasi dan komunitas. Aplikasi ini mengintegrasikan *Learning Management System* (LMS) dengan fitur sosial interaktif, memungkinkan pengguna untuk belajar, berkompetisi, dan berinteraksi secara *real-time*.
 
