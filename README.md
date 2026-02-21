@@ -139,4 +139,4 @@ Ingin berkontribusi? Silakan ikuti langkah standar GitHub Flow:
 
 ## 📄 Lisensi
 
-*Hak cipta sepenuhnya milik pengembang Raditt10 dan Fauzaro01.*
+_© 2026 BendeharaKu — Hak cipta milik pengembang [Raditt10](https://github.com/Raditt10) dan [Fauzaroo10](https://github.com/Fauzaroo10)
